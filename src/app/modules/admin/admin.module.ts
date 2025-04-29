@@ -7,6 +7,7 @@ import { PlayerRegistrationComponent } from './player-registration/player-regist
 import { FormsModule } from '@angular/forms';
 import { TeamOrganizerComponent} from './team-organizer/team-organizer.component';
 import { DragDropModule } from '@angular/cdk/drag-drop';
+import { MaterialModule } from 'src/app/material/material/material.module';
 
 
 @NgModule({
@@ -19,7 +20,8 @@ import { DragDropModule } from '@angular/cdk/drag-drop';
     CommonModule,
     AdminRoutingModule,
     FormsModule,
-    DragDropModule
+    DragDropModule,
+    MaterialModule
   ]
 })
 export class AdminModule { }

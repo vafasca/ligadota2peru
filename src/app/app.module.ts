@@ -9,6 +9,9 @@ import { provideFirebaseApp, initializeApp } from '@angular/fire/app';
 import { provideFirestore, getFirestore } from '@angular/fire/firestore';
 
 import { environment } from '../environments/environment';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import {MatButtonModule} from '@angular/material/button';
+import {MatSnackBarModule} from '@angular/material/snack-bar';
 
 @NgModule({
   declarations: [
@@ -17,9 +20,12 @@ import { environment } from '../environments/environment';
   imports: [
     BrowserModule,
     AppRoutingModule,
+    MatButtonModule,
+    MatSnackBarModule,
     // 🔥 Inicialización de Firebase
     provideFirebaseApp(() => initializeApp(environment.firebaseConfig)),
-    provideFirestore(() => getFirestore()) // para usar Firestore
+    provideFirestore(() => getFirestore()),
+    BrowserAnimationsModule // para usar Firestore
   ],
   providers: [],
   bootstrap: [AppComponent]

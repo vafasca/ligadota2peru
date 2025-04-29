@@ -5,17 +5,20 @@ import {
   addDoc,
   CollectionReference,
   DocumentData,
-  FirestoreError
+  FirestoreError,
+  onSnapshot,
+  QuerySnapshot
 } from '@angular/fire/firestore';
 import { Player } from '../models/jugador.model';
-import { catchError, from, Observable, throwError } from 'rxjs';
+import { catchError, from, Observable, tap, throwError } from 'rxjs';
 
 
 @Injectable({
   providedIn: 'root'
 })
 export class PlayerService {
-  private readonly playersCollection: CollectionReference<DocumentData>;
+  private playersCollection: CollectionReference<DocumentData>;
+  //private tarifasCollection: any; // Almacena la referencia a la colección de tarifas.
 
   constructor(private firestore: Firestore) {
     this.playersCollection = collection(this.firestore, 'players');
@@ -34,6 +37,31 @@ export class PlayerService {
         return throwError(() => new Error(this.getFirestoreErrorMessage(error)));
       })
     );
+  }
+
+  getPlayers(): Observable<any[]> {
+    return new Observable<any[]>((observer) => {
+      // Escucha los cambios en la colección utilizando onSnapshot.
+      const unsubscribe = onSnapshot(
+        this.playersCollection,
+        (snapshot: QuerySnapshot) => {
+          // Mapea los documentos a un array de datos.
+          const players = snapshot.docs.map(doc => ({
+            id: doc.id, // Incluye el ID del documento.
+            ...doc.data() // Combina los datos del documento.
+          }));
+
+          observer.next(players); // Emite los datos actualizados.
+        },
+        (error) => {
+          console.error('Error al escuchar cambios en tarifas:', error); // Registra el error.
+          observer.error(error); // Notifica al observador sobre el error.
+        }
+      );
+
+      // Retorna la función de limpieza para evitar fugas de memoria.
+      return () => unsubscribe();
+    });
   }
 
     /**

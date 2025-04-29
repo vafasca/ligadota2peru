@@ -2,7 +2,8 @@ import { Component } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { Player } from '../models/jugador.model';
 import { PlayerService } from '../services/player.service';
-import { finalize } from 'rxjs';
+import { finalize, Subscription } from 'rxjs';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-player-registration',
@@ -11,11 +12,28 @@ import { finalize } from 'rxjs';
 })
 export class PlayerRegistrationComponent {
 
-  constructor(private playerSvc:PlayerService) { }
-
-  players: Player[] = [];
+  private subscription: Subscription = new Subscription();
+  isLoading = false;
   selectedAvatar: string | ArrayBuffer = 'https://placehold.co/400';
-  isLoading = false; // Para controlar el estado de carga
+  players: Player[] = [];
+
+  constructor(private playerSvc:PlayerService, private snackBar: MatSnackBar) { }
+
+  ngOnInit(): void {
+    this.loadPlayers();  // Carga de tarifas al iniciar el componente
+  }
+
+  private loadPlayers(): void {
+    this.subscription = this.playerSvc.getPlayers().subscribe(
+      (players) => {
+        this.players = players;  // Asignación de tarifas obtenidas a la lista de planes
+        console.log('Jugadores obtenidos:', this.players);  // Registro de tarifas obtenidas
+      },
+      (error) => {
+        console.error('Error al obtener las tarifas:', error);  // Manejo de errores
+      }
+    );
+  }
 
   onFileSelected(event: Event): void {
     const input = event.target as HTMLInputElement;
@@ -44,19 +62,29 @@ export class PlayerRegistrationComponent {
       };
 
       this.playerSvc.addPlayer(newPlayer)
-        .pipe(
-          finalize(() => this.isLoading = false)
-        )
+        .pipe(finalize(() => this.isLoading = false))
         .subscribe({
           next: () => {
-            console.log('Jugador guardado en Firestore');
+            this.snackBar.open('✅ Jugador registrado con éxito', 'Cerrar', {
+              duration: 3000,
+              panelClass: ['snackbar-success'],
+              verticalPosition: 'top',
+              horizontalPosition: 'right'
+            });
             form.resetForm();
             this.selectedAvatar = 'https://placehold.co/400';
           },
           error: (error) => {
+            this.snackBar.open('❌ Error al registrar jugador', 'Cerrar', {
+              duration: 3000,
+              panelClass: ['snackbar-error'],
+              verticalPosition: 'top',
+              horizontalPosition: 'right'
+            });
             console.error('Error al guardar el jugador:', error);
           }
         });
     }
   }
+
 }
