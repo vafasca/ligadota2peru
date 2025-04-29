@@ -1,6 +1,8 @@
 import { Component } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { Player } from '../models/jugador.model';
+import { PlayerService } from '../services/player.service';
+import { finalize } from 'rxjs';
 
 @Component({
   selector: 'app-player-registration',
@@ -8,8 +10,12 @@ import { Player } from '../models/jugador.model';
   styleUrls: ['./player-registration.component.css']
 })
 export class PlayerRegistrationComponent {
-  players: Player[] = []; // Array para almacenar todos los jugadores
+
+  constructor(private playerSvc:PlayerService) { }
+
+  players: Player[] = [];
   selectedAvatar: string | ArrayBuffer = 'https://placehold.co/400';
+  isLoading = false; // Para controlar el estado de carga
 
   onFileSelected(event: Event): void {
     const input = event.target as HTMLInputElement;
@@ -24,6 +30,8 @@ export class PlayerRegistrationComponent {
 
   onSubmit(form: NgForm): void {
     if (form.valid) {
+      this.isLoading = true;
+
       const newPlayer: Player = {
         avatar: this.selectedAvatar.toString(),
         nick: form.value.nick,
@@ -34,23 +42,21 @@ export class PlayerRegistrationComponent {
         rating: form.value.rating,
         observations: form.value.observations
       };
-  
-      this.players.push(newPlayer);
-      console.log('Jugador registrado:', newPlayer);
-      console.log('Todos los jugadores:', this.players);
-      
-      form.resetForm();
-      this.selectedAvatar = 'https://placehold.co/400';
-    } else {
-      console.error('Formulario inválido. Razones:');
-      
-      // Mostrar detalles del error
-      Object.keys(form.controls).forEach(key => {
-        const controlErrors = form.controls[key].errors;
-        if (controlErrors) {
-          console.log(`Campo: ${key}, Errores:`, controlErrors);
-        }
-      });
+
+      this.playerSvc.addPlayer(newPlayer)
+        .pipe(
+          finalize(() => this.isLoading = false)
+        )
+        .subscribe({
+          next: () => {
+            console.log('Jugador guardado en Firestore');
+            form.resetForm();
+            this.selectedAvatar = 'https://placehold.co/400';
+          },
+          error: (error) => {
+            console.error('Error al guardar el jugador:', error);
+          }
+        });
     }
   }
 }
