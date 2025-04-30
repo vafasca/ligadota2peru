@@ -1,3 +1,5 @@
+import { Match } from "./match.model";
+
 export interface Player {
     avatar: string;
     nick: string;
@@ -9,4 +11,6 @@ export interface Player {
     observations?: string;
     isCaptain?: boolean; // Campo adicional necesario
     registrationDate?: Date;
+    // Relación con partidas
+    matches?: Match[];
   }

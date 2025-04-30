@@ -21,6 +21,10 @@ export class PlayerRegistrationComponent {
 
   ngOnInit(): void {
     this.loadPlayers();  // Carga de tarifas al iniciar el componente
+    // this.playerSvc.addMatch('edfrrSC9hlQsjARWFnxV', '987654321').subscribe({
+    //   next: () => console.log('Match agregado correctamente'),
+    //   error: (err) => console.error('Error al agregar la partida:', err),
+    // });
   }
 
   private loadPlayers(): void {
