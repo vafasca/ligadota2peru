@@ -1,5 +1,6 @@
 import { Component, ElementRef, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
+import { Player } from 'src/app/modules/admin/models/jugador.model';
 import { Match } from 'src/app/modules/admin/models/match.model';
 
 @Component({
@@ -11,8 +12,8 @@ export class PlayerProfileComponent {
   @ViewChild('matchesContainer') matchesContainer!: ElementRef;
   showAllMatches = false;
   
-  // Datos completos del jugador simulado
-  player = {
+  // Datos del jugador con estructura mejorada
+  player: Player = {
     avatar: 'https://cdn.dota2.com/apps/dota2/images/heroes/antimage_full.png',
     nick: 'AntiMagePro',
     idDota: 123456789,
@@ -37,14 +38,15 @@ export class PlayerProfileComponent {
       instagram: 'https://www.instagram.com/',
       facebook: 'https://www.facebook.com/',
       tiktok: 'https://www.tiktok.com/'
-    }
+    },
+    matches: []
   };
 
   // Historial de partidas simulado
-  matches = [
+  matches: Match[] = [
     {
       id: '1',
-      result: 'win' as const, // <-- 'win' literal
+      result: 'win',
       date: new Date('2023-05-15T20:30:00'),
       heroName: 'Anti-Mage',
       heroImage: 'https://cdn.dota2.com/apps/dota2/images/heroes/antimage_full.png',
@@ -55,7 +57,7 @@ export class PlayerProfileComponent {
     },
     {
       id: '2',
-      result: 'loss' as const, // <-- 'loss' literal
+      result: 'loss',
       date: new Date('2023-05-14T18:45:00'),
       heroName: 'Juggernaut',
       heroImage: 'https://cdn.dota2.com/apps/dota2/images/heroes/juggernaut_full.png',
@@ -66,7 +68,7 @@ export class PlayerProfileComponent {
     },
     {
       id: '3',
-      result: 'win' as const, // <-- 'win' literal
+      result: 'win',
       date: new Date('2023-05-15T20:30:00'),
       heroName: 'Anti-Mage',
       heroImage: 'https://cdn.dota2.com/apps/dota2/images/heroes/mars_full.png',
@@ -77,7 +79,7 @@ export class PlayerProfileComponent {
     },
     {
       id: '4',
-      result: 'win' as const, // <-- 'win' literal
+      result: 'win',
       date: new Date('2023-05-15T20:30:00'),
       heroName: 'Anti-Mage',
       heroImage: 'https://cdn.dota2.com/apps/dota2/images/heroes/axe_full.png',
@@ -88,7 +90,7 @@ export class PlayerProfileComponent {
     },
     {
       id: '5',
-      result: 'loss' as const, // <-- 'loss' literal
+      result: 'loss',
       date: new Date('2023-05-14T18:45:00'),
       heroName: 'Juggernaut',
       heroImage: 'https://cdn.dota2.com/apps/dota2/images/heroes/sven_full.png',
@@ -97,7 +99,6 @@ export class PlayerProfileComponent {
       assists: 12,
       ratingChange: -10
     }
-    // ... resto de las partidas
   ];
 
   // Estadísticas calculadas
@@ -106,11 +107,13 @@ export class PlayerProfileComponent {
     wins: 0,
     losses: 0,
     winRate: 0,
-    avgKDA: '0/0/0' // Inicializa con un valor por defecto
+    avgKDA: '0/0/0'
   };
 
   constructor(private router: Router) {
     this.calculateStats();
+    // Asignamos las partidas al jugador
+    this.player.matches = this.matches;
   }
 
   private calculateStats(): void {
@@ -121,7 +124,6 @@ export class PlayerProfileComponent {
     this.stats.avgKDA = this.calculateAvgKDA();
   }
 
-  // Función para calcular el KDA promedio
   private calculateAvgKDA(): string {
     if (this.matches.length === 0) return '0/0/0';
     
@@ -136,12 +138,10 @@ export class PlayerProfileComponent {
     return `${avgKills}/${avgDeaths}/${avgAssists}`;
   }
 
-  // Función para cambiar el estado
   toggleStatus(): void {
     this.player.status = this.player.status === 'Activo' ? 'Inactivo' : 'Activo';
   }
 
-  // Función para obtener la clase CSS del estado
   getStatusClass(): string {
     switch(this.player.status.toLowerCase()) {
       case 'activo': return 'status-activo';
@@ -151,32 +151,25 @@ export class PlayerProfileComponent {
     }
   }
 
-  // Función para mostrar más/menos partidas
   toggleMatches(): void {
     if (this.showAllMatches) {
-      // Si estamos ocultando las partidas, hacer scroll al principio
       this.matchesContainer.nativeElement.scrollTo({
         top: 0,
         behavior: 'smooth'
       });
       
-      // Esperar a que termine la animación del scroll antes de colapsar
       setTimeout(() => {
         this.showAllMatches = !this.showAllMatches;
       }, 300);
     } else {
-      // Si estamos mostrando más partidas, simplemente cambiar el estado
       this.showAllMatches = !this.showAllMatches;
     }
   }
 
-  // Función para cerrar sesión
   logout(): void {
-    // Aquí iría la lógica para cerrar sesión
     this.router.navigate(['/login']);
   }
 
-  // Función para obtener las partidas visibles
   get visibleMatches(): Match[] {
     return this.showAllMatches ? this.matches : this.matches.slice(0, 3);
   }

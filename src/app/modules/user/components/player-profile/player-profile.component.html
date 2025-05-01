@@ -24,33 +24,95 @@
       <div class="social-media-grid">
         <!-- Fila 1 -->
         <div class="social-media-row">
-          <a *ngIf="player.socialMedia?.twitch" [href]="player.socialMedia.twitch" target="_blank" title="Twitch">
-            <img src="https://cdn-icons-png.flaticon.com/512/5968/5968819.png" alt="Twitch">
-          </a>
-          <a *ngIf="player.socialMedia?.youtube" [href]="player.socialMedia.youtube" target="_blank" title="YouTube">
-            <img src="https://cdn-icons-png.flaticon.com/512/733/733646.png" alt="YouTube">
-          </a>
-          <a *ngIf="player.socialMedia?.kick" [href]="player.socialMedia.kick" target="_blank" title="Kick">
-            <img src="https://kick.com/favicon.ico" alt="Kick">
-          </a>
-          <a *ngIf="player.socialMedia?.twitter" [href]="player.socialMedia.twitter" target="_blank" title="Twitter">
-            <img src="https://cdn-icons-png.flaticon.com/512/733/733579.png" alt="Twitter">
-          </a>
+          <ng-container *ngIf="player.socialMedia?.twitch; else noTwitch">
+            <a [href]="player.socialMedia?.twitch" target="_blank" title="Twitch">
+              <img src="https://cdn-icons-png.flaticon.com/512/5968/5968819.png" alt="Twitch">
+            </a>
+          </ng-container>
+          <ng-template #noTwitch>
+            <div class="social-icon-disabled" title="Twitch no disponible">
+              <img src="https://cdn-icons-png.flaticon.com/512/5968/5968819.png" alt="Twitch">
+            </div>
+          </ng-template>
+    
+          <ng-container *ngIf="player.socialMedia?.youtube; else noYoutube">
+            <a [href]="player.socialMedia?.youtube" target="_blank" title="YouTube">
+              <img src="https://cdn-icons-png.flaticon.com/128/174/174883.png" alt="YouTube">
+            </a>
+          </ng-container>
+          <ng-template #noYoutube>
+            <div class="social-icon-disabled" title="YouTube no disponible">
+              <img src="https://cdn-icons-png.flaticon.com/128/174/174883.png" alt="YouTube">
+            </div>
+          </ng-template>
+    
+          <ng-container *ngIf="player.socialMedia?.kick; else noKick">
+            <a [href]="player.socialMedia?.kick" target="_blank" title="Kick">
+              <img src="https://kick.com/favicon.ico" alt="Kick">
+            </a>
+          </ng-container>
+          <ng-template #noKick>
+            <div class="social-icon-disabled" title="Kick no disponible">
+              <img src="https://kick.com/favicon.ico" alt="Kick">
+            </div>
+          </ng-template>
+    
+          <ng-container *ngIf="player.socialMedia?.twitter; else noTwitter">
+            <a [href]="player.socialMedia?.twitter" target="_blank" title="X">
+              <img src="https://cdn-icons-png.flaticon.com/128/5968/5968830.png" alt="X">
+            </a>
+          </ng-container>
+          <ng-template #noTwitter>
+            <div class="social-icon-disabled" title="X no disponible">
+              <img src="https://cdn-icons-png.flaticon.com/128/5968/5968830.png" alt="X">
+            </div>
+          </ng-template>
         </div>
         <!-- Fila 2 -->
         <div class="social-media-row">
-          <a *ngIf="player.socialMedia?.discord" [href]="player.socialMedia.discord" target="_blank" title="Discord">
-            <img src="https://cdn-icons-png.flaticon.com/512/5968/5968756.png" alt="Discord">
-          </a>
-          <a *ngIf="player.socialMedia?.instagram" [href]="player.socialMedia.instagram" target="_blank" title="Instagram">
-            <img src="https://cdn-icons-png.flaticon.com/512/2111/2111463.png" alt="Instagram">
-          </a>
-          <a *ngIf="player.socialMedia?.facebook" [href]="player.socialMedia.facebook" target="_blank" title="Facebook">
-            <img src="https://cdn-icons-png.flaticon.com/512/5968/5968764.png" alt="Facebook">
-          </a>
-          <a *ngIf="player.socialMedia?.tiktok" [href]="player.socialMedia.tiktok" target="_blank" title="TikTok">
-            <img src="https://cdn-icons-png.flaticon.com/512/3046/3046126.png" alt="TikTok">
-          </a>
+          <ng-container *ngIf="player.socialMedia?.discord; else noDiscord">
+            <a [href]="player.socialMedia?.discord" target="_blank" title="Discord">
+              <img src="https://cdn-icons-png.flaticon.com/512/5968/5968756.png" alt="Discord">
+            </a>
+          </ng-container>
+          <ng-template #noDiscord>
+            <div class="social-icon-disabled" title="Discord no disponible">
+              <img src="https://cdn-icons-png.flaticon.com/512/5968/5968756.png" alt="Discord">
+            </div>
+          </ng-template>
+    
+          <ng-container *ngIf="player.socialMedia?.instagram; else noInstagram">
+            <a [href]="player.socialMedia?.instagram" target="_blank" title="Instagram">
+              <img src="https://cdn-icons-png.flaticon.com/512/2111/2111463.png" alt="Instagram">
+            </a>
+          </ng-container>
+          <ng-template #noInstagram>
+            <div class="social-icon-disabled" title="Instagram no disponible">
+              <img src="https://cdn-icons-png.flaticon.com/512/2111/2111463.png" alt="Instagram">
+            </div>
+          </ng-template>
+    
+          <ng-container *ngIf="player.socialMedia?.facebook; else noFacebook">
+            <a [href]="player.socialMedia?.facebook" target="_blank" title="Facebook">
+              <img src="https://cdn-icons-png.flaticon.com/512/5968/5968764.png" alt="Facebook">
+            </a>
+          </ng-container>
+          <ng-template #noFacebook>
+            <div class="social-icon-disabled" title="Facebook no disponible">
+              <img src="https://cdn-icons-png.flaticon.com/512/5968/5968764.png" alt="Facebook">
+            </div>
+          </ng-template>
+    
+          <ng-container *ngIf="player.socialMedia?.tiktok; else noTiktok">
+            <a [href]="player.socialMedia?.tiktok" target="_blank" title="TikTok">
+              <img src="https://cdn-icons-png.flaticon.com/512/3046/3046126.png" alt="TikTok">
+            </a>
+          </ng-container>
+          <ng-template #noTiktok>
+            <div class="social-icon-disabled" title="TikTok no disponible">
+              <img src="https://cdn-icons-png.flaticon.com/512/3046/3046126.png" alt="TikTok">
+            </div>
+          </ng-template>
         </div>
       </div>
     </div>
@@ -69,17 +131,23 @@
         <div class="stat-label">Rating</div>
         <div class="stat-value">{{player.rating}}</div>
       </div>
-      <div class="stat-card">
-        <div class="stat-label">Categoría</div>
-        <div class="stat-value">{{player.category}}</div>
+      
+      <!-- Rol Principal con categoría integrada -->
+      <div class="stat-card role-card">
+        <div class="role-header">
+          <div class="stat-label">Rol Principal</div>
+          <div class="role-category">{{player.category}}</div>
+        </div>
+        <div class="stat-value role-name">{{player.role}}</div>
       </div>
-      <div class="stat-card">
-        <div class="stat-label">Rol Principal</div>
-        <div class="stat-value">{{player.role}}</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-label">Rol Secundario</div>
-        <div class="stat-value">{{player.secondaryRole}} ({{player.secondaryCategory}})</div>
+      
+      <!-- Rol Secundario con categoría integrada -->
+      <div class="stat-card role-card">
+        <div class="role-header">
+          <div class="stat-label">Rol Secundario</div>
+          <div class="role-category">{{player.secondaryCategory}}</div>
+        </div>
+        <div class="stat-value role-name">{{player.secondaryRole}}</div>
       </div>
     </div>
 
