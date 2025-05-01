@@ -19,6 +19,44 @@
   box-shadow: 0 0 15px rgba(122, 7, 7, 0.5);
 }
 
+/* Estilos para el contenedor y botón de lobby */
+.lobby-container {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  margin: 20px 0;
+}
+
+.lobby-button {
+  background: linear-gradient(135deg, #e4ae0d 0%, #7a0707 100%);
+  color: #000;
+  padding: 15px 40px;
+  border: none;
+  border-radius: 6px;
+  font-size: 18px;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  cursor: pointer;
+  transition: all 0.3s;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border: 2px solid #e4ae0d;
+}
+
+.lobby-button:hover {
+  background: linear-gradient(135deg, #7a0707 0%, #e4ae0d 100%);
+  color: #fff;
+  transform: translateY(-3px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5);
+}
+
+.lobby-button i {
+  font-size: 22px;
+}
+
 .avatar-info-container {
   display: flex;
   align-items: center;
@@ -95,17 +133,49 @@
   transition: all 0.3s;
   font-size: 14px;
   letter-spacing: 1px;
+  min-width: 100px;
+  text-align: center;
 }
 
 .dota-button:hover {
   background: #e4ae0d;
   color: #000;
-  transform: scale(1.01);
+  transform: scale(1.05);
   box-shadow: 0 0 15px rgba(228, 174, 13, 0.7);
 }
 
+/* Estilo mejorado para el botón de estado */
 .status-toggle {
-  min-width: 150px;
+  background: linear-gradient(135deg, #00aa00 0%, #007700 100%);
+  color: #fff;
+  border: 2px solid #00ff00;
+  box-shadow: 0 0 10px rgba(0, 255, 0, 0.3);
+}
+
+.status-toggle:hover {
+  background: linear-gradient(135deg, #007700 0%, #00aa00 100%);
+  color: #fff;
+  box-shadow: 0 0 15px rgba(0, 255, 0, 0.5);
+}
+
+/* Estilos para los botones de estado y salir */
+.status-control {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.status-toggle, .logout-button {
+  flex: 1;
+  min-width: 120px;
+}
+
+.logout-button {
+  background: #333;
+}
+
+.logout-button:hover {
+  background: #555;
 }
 
 .social-icon-disabled {
@@ -256,7 +326,7 @@
 }
 
 .matches-scroll-container {
-  max-height: 220px; /* Altura para mostrar aproximadamente 3 partidas */
+  max-height: 220px;
   overflow: hidden;
   transition: max-height 0.3s ease;
   border-radius: 8px;
@@ -295,27 +365,8 @@
 }
 
 .matches-list.expanded {
-  max-height: 600px; /* Altura mayor para scroll */
+  max-height: 600px;
   overflow-y: auto;
-}
-
-/* Estilos para la barra de scroll */
-.matches-list.expanded::-webkit-scrollbar {
-  width: 8px;
-}
-
-.matches-list.expanded::-webkit-scrollbar-track {
-  background: rgba(0, 0, 0, 0.3);
-  border-radius: 4px;
-}
-
-.matches-list.expanded::-webkit-scrollbar-thumb {
-  background: #7a0707;
-  border-radius: 4px;
-}
-
-.matches-list.expanded::-webkit-scrollbar-thumb:hover {
-  background: #e4ae0d;
 }
 
 .match-card {
@@ -424,15 +475,6 @@
   vertical-align: middle;
 }
 
-.logout-button {
-  background: #333;
-  margin-left: 10px;
-}
-
-.logout-button:hover {
-  background: #555;
-}
-
 .load-more {
   width: 100%;
   margin-top: 10px;
@@ -456,10 +498,10 @@
   }
 }
 
-@media (max-width: 800px) {
+@media (max-width: 850px) {
   .profile-header {
     flex-direction: column;
-    align-items: center; /* Añade esto para centrar todo verticalmente */
+    align-items: center;
   }
   
   .avatar-info-container {
@@ -467,29 +509,34 @@
     flex-direction: column;
     text-align: center;
     margin-bottom: 20px;
-    align-items: center; /* Centra los elementos hijos horizontalmente */
-    width: 100%; /* Asegura que ocupe todo el ancho disponible */
+    align-items: center;
+    width: 100%;
   }
   
   .avatar-container {
     margin-right: 0;
     margin-bottom: 15px;
     display: flex;
-    justify-content: center; /* Centra el avatar horizontalmente */
+    justify-content: center;
   }
   
   .player-info {
     display: flex;
     flex-direction: column;
-    align-items: center; /* Centra el contenido del player-info */
+    align-items: center;
     width: 100%;
   }
   
   .status-control {
     display: flex;
-    justify-content: center; /* Centra los botones */
+    justify-content: center;
     flex-wrap: wrap;
     gap: 10px;
+    width: 100%;
+  }
+  
+  .status-toggle, .logout-button {
+    flex: 1 0 120px;
   }
   
   .social-media-container {
@@ -502,7 +549,7 @@
     width: 100%;
     min-width: auto;
     display: flex;
-    justify-content: center; /* Centra las redes sociales */
+    justify-content: center;
   }
   
   .social-media-grid {
@@ -537,5 +584,11 @@
   .dota-button {
     padding: 8px 15px;
     font-size: 12px;
+  }
+  
+  .lobby-button {
+    padding: 12px 20px;
+    font-size: 16px;
+    width: 50%;
   }
 }

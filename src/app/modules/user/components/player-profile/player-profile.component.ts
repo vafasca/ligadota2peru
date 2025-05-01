@@ -170,6 +170,10 @@ export class PlayerProfileComponent {
     this.router.navigate(['/login']);
   }
 
+  goToLobby(): void {
+    this.router.navigate(['/lobby']);
+  }
+
   get visibleMatches(): Match[] {
     return this.showAllMatches ? this.matches : this.matches.slice(0, 3);
   }
