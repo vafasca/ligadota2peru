@@ -4,7 +4,7 @@ import { RouterModule, Routes } from '@angular/router';
 const routes: Routes = [
   {
     path: '',
-    redirectTo: '/admin',
+    redirectTo: '/user',
     pathMatch: 'full',
   },
   {
@@ -13,8 +13,13 @@ const routes: Routes = [
       import('./modules/admin/admin.module').then((m) => m.AdminModule),
   },
   {
+    path: 'user',
+    loadChildren: () =>
+      import('./modules/user/user.module').then((m) => m.UserModule),
+  },
+  {
     path: '**',
-    redirectTo: '/admin',
+    redirectTo: '/user',
     pathMatch: 'full',
   },
 ];

@@ -1,0 +1,136 @@
+<div class="profile-container">
+  <div class="profile-header">
+    <div class="avatar-info-container">
+      <div class="avatar-container">
+        <img [src]="player.avatar" alt="Avatar" class="profile-avatar">
+        <div class="status-indicator" [ngClass]="getStatusClass()"></div>
+      </div>
+      <div class="player-info">
+        <h1 class="dota-font">{{player.nick}}</h1>
+        <div class="player-id">ID Dota 2: {{player.idDota}}</div>
+        <div class="status-control">
+          <button class="dota-button status-toggle" (click)="toggleStatus()">
+            {{player.status}}
+          </button>
+          <button class="dota-button logout-button" (click)="logout()">
+            Salir
+          </button>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Redes Sociales en horizontal -->
+    <div class="social-media-container">
+      <div class="social-media-grid">
+        <!-- Fila 1 -->
+        <div class="social-media-row">
+          <a *ngIf="player.socialMedia?.twitch" [href]="player.socialMedia.twitch" target="_blank" title="Twitch">
+            <img src="https://cdn-icons-png.flaticon.com/512/5968/5968819.png" alt="Twitch">
+          </a>
+          <a *ngIf="player.socialMedia?.youtube" [href]="player.socialMedia.youtube" target="_blank" title="YouTube">
+            <img src="https://cdn-icons-png.flaticon.com/512/733/733646.png" alt="YouTube">
+          </a>
+          <a *ngIf="player.socialMedia?.kick" [href]="player.socialMedia.kick" target="_blank" title="Kick">
+            <img src="https://kick.com/favicon.ico" alt="Kick">
+          </a>
+          <a *ngIf="player.socialMedia?.twitter" [href]="player.socialMedia.twitter" target="_blank" title="Twitter">
+            <img src="https://cdn-icons-png.flaticon.com/512/733/733579.png" alt="Twitter">
+          </a>
+        </div>
+        <!-- Fila 2 -->
+        <div class="social-media-row">
+          <a *ngIf="player.socialMedia?.discord" [href]="player.socialMedia.discord" target="_blank" title="Discord">
+            <img src="https://cdn-icons-png.flaticon.com/512/5968/5968756.png" alt="Discord">
+          </a>
+          <a *ngIf="player.socialMedia?.instagram" [href]="player.socialMedia.instagram" target="_blank" title="Instagram">
+            <img src="https://cdn-icons-png.flaticon.com/512/2111/2111463.png" alt="Instagram">
+          </a>
+          <a *ngIf="player.socialMedia?.facebook" [href]="player.socialMedia.facebook" target="_blank" title="Facebook">
+            <img src="https://cdn-icons-png.flaticon.com/512/5968/5968764.png" alt="Facebook">
+          </a>
+          <a *ngIf="player.socialMedia?.tiktok" [href]="player.socialMedia.tiktok" target="_blank" title="TikTok">
+            <img src="https://cdn-icons-png.flaticon.com/512/3046/3046126.png" alt="TikTok">
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="profile-content">
+    <div class="stats-section">
+      <div class="stat-card">
+        <div class="stat-label">MMR</div>
+        <div class="stat-value">
+          {{player.mmr}}
+          <img [src]="player.medalImage" [alt]="player.medal" class="medal-image" title="{{player.medal}}">
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Rating</div>
+        <div class="stat-value">{{player.rating}}</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Categoría</div>
+        <div class="stat-value">{{player.category}}</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Rol Principal</div>
+        <div class="stat-value">{{player.role}}</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Rol Secundario</div>
+        <div class="stat-value">{{player.secondaryRole}} ({{player.secondaryCategory}})</div>
+      </div>
+    </div>
+
+    <div class="matches-section">
+      <h2 class="section-title dota-font">Historial de Partidas</h2>
+      <div class="matches-list">
+        <div *ngFor="let match of visibleMatches" class="match-card">
+          <div class="match-result" [ngClass]="{'win': match.result === 'win', 'loss': match.result === 'loss'}">
+            {{match.result === 'win' ? 'VICTORIA' : 'DERROTA'}}
+          </div>
+          <div class="match-details">
+            <div class="match-date">{{match.date | date:'short'}}</div>
+            <div class="match-hero">
+              <img [src]="match.heroImage" alt="Hero" class="hero-image">
+              <span>{{match.heroName}}</span>
+            </div>
+            <div class="match-stats">
+              <span>KDA: {{match.kills}}/{{match.deaths}}/{{match.assists}}</span>
+              <span>Puntos: {{match.ratingChange > 0 ? '+' : ''}}{{match.ratingChange}}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <button *ngIf="matches.length > 5" class="dota-button load-more" (click)="toggleMatches()">
+        {{ showAllMatches ? 'Mostrar menos' : 'Mostrar más (' + (matches.length - 5) + ')' }}
+      </button>
+    </div>
+
+    <div class="additional-info">
+      <h2 class="section-title dota-font">Información Adicional</h2>
+      <div class="info-card">
+        <h3>Observaciones</h3>
+        <p>{{player.observations}}</p>
+      </div>
+      <div class="info-card">
+        <h3>Estadísticas Generales</h3>
+        <div class="general-stats">
+          <div class="stat-row">
+            <span>Partidas jugadas:</span>
+            <span>{{stats.totalMatches}}</span>
+          </div>
+          <div class="stat-row">
+            <span>Win Rate:</span>
+            <span>{{stats.winRate}}%</span>
+          </div>
+          <div class="stat-row">
+            <span>KDA Promedio:</span>
+            <span>{{stats.avgKDA}}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

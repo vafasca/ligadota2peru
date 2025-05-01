@@ -1,16 +1,31 @@
+// player.model.ts
 import { Match } from "./match.model";
 
 export interface Player {
     avatar: string;
     nick: string;
     idDota: number;
-    category: string;  // Debería contener el rol y categoría ej: "Core 1"
+    category: string;
     mmr: number;
+    medal: string;
+    medalImage: string;
     status: string;
     rating: number;
+    role: string;
+    secondaryRole: string;
+    secondaryCategory: string;
     observations?: string;
-    isCaptain?: boolean; // Campo adicional necesario
+    isCaptain?: boolean;
     registrationDate?: Date;
-    // Relación con partidas
+    socialMedia?: {
+      twitch?: string;
+      youtube?: string;
+      kick?: string;
+      facebook?: string;
+      twitter?: string;
+      instagram?: string;
+      discord?: string;
+      tiktok?: string;
+    };
     matches?: Match[];
-  }
+}
