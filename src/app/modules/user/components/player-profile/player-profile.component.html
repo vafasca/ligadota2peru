@@ -85,26 +85,28 @@
 
     <div class="matches-section">
       <h2 class="section-title dota-font">Historial de Partidas</h2>
-      <div class="matches-list">
-        <div *ngFor="let match of visibleMatches" class="match-card">
-          <div class="match-result" [ngClass]="{'win': match.result === 'win', 'loss': match.result === 'loss'}">
-            {{match.result === 'win' ? 'VICTORIA' : 'DERROTA'}}
-          </div>
-          <div class="match-details">
-            <div class="match-date">{{match.date | date:'short'}}</div>
-            <div class="match-hero">
-              <img [src]="match.heroImage" alt="Hero" class="hero-image">
-              <span>{{match.heroName}}</span>
+      <div #matchesContainer class="matches-scroll-container" [class.expanded]="showAllMatches">
+        <div class="matches-list">
+          <div *ngFor="let match of matches" class="match-card">
+            <div class="match-result" [ngClass]="{'win': match.result === 'win', 'loss': match.result === 'loss'}">
+              {{match.result === 'win' ? 'VICTORIA' : 'DERROTA'}}
             </div>
-            <div class="match-stats">
-              <span>KDA: {{match.kills}}/{{match.deaths}}/{{match.assists}}</span>
-              <span>Puntos: {{match.ratingChange > 0 ? '+' : ''}}{{match.ratingChange}}</span>
+            <div class="match-details">
+              <div class="match-date">{{match.date | date:'short'}}</div>
+              <div class="match-hero">
+                <img [src]="match.heroImage" alt="Hero" class="hero-image">
+                <span>{{match.heroName}}</span>
+              </div>
+              <div class="match-stats">
+                <span>KDA: {{match.kills}}/{{match.deaths}}/{{match.assists}}</span>
+                <span>Puntos: {{match.ratingChange > 0 ? '+' : ''}}{{match.ratingChange}}</span>
+              </div>
             </div>
           </div>
         </div>
       </div>
-      <button *ngIf="matches.length > 5" class="dota-button load-more" (click)="toggleMatches()">
-        {{ showAllMatches ? 'Mostrar menos' : 'Mostrar más (' + (matches.length - 5) + ')' }}
+      <button *ngIf="matches.length > 3" class="dota-button load-more" (click)="toggleMatches()">
+        {{ showAllMatches ? 'Mostrar menos' : 'Ver más (' + (matches.length - 2) + ')' }}
       </button>
     </div>
 

@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ElementRef, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { Match } from 'src/app/modules/admin/models/match.model';
 
@@ -8,6 +8,7 @@ import { Match } from 'src/app/modules/admin/models/match.model';
   styleUrls: ['./player-profile.component.css']
 })
 export class PlayerProfileComponent {
+  @ViewChild('matchesContainer') matchesContainer!: ElementRef;
   showAllMatches = false;
   
   // Datos completos del jugador simulado
@@ -152,7 +153,21 @@ export class PlayerProfileComponent {
 
   // Función para mostrar más/menos partidas
   toggleMatches(): void {
-    this.showAllMatches = !this.showAllMatches;
+    if (this.showAllMatches) {
+      // Si estamos ocultando las partidas, hacer scroll al principio
+      this.matchesContainer.nativeElement.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+      });
+      
+      // Esperar a que termine la animación del scroll antes de colapsar
+      setTimeout(() => {
+        this.showAllMatches = !this.showAllMatches;
+      }, 300);
+    } else {
+      // Si estamos mostrando más partidas, simplemente cambiar el estado
+      this.showAllMatches = !this.showAllMatches;
+    }
   }
 
   // Función para cerrar sesión
@@ -163,6 +178,6 @@ export class PlayerProfileComponent {
 
   // Función para obtener las partidas visibles
   get visibleMatches(): Match[] {
-    return this.showAllMatches ? this.matches : this.matches.slice(0, 5);
+    return this.showAllMatches ? this.matches : this.matches.slice(0, 3);
   }
 }

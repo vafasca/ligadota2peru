@@ -100,7 +100,7 @@
 .dota-button:hover {
   background: #e4ae0d;
   color: #000;
-  transform: scale(1.05);
+  transform: scale(1.01);
   box-shadow: 0 0 15px rgba(228, 174, 13, 0.7);
 }
 
@@ -193,17 +193,80 @@
   padding-bottom: 5px;
 }
 
+.matches-scroll-container {
+  max-height: 220px; /* Altura para mostrar aproximadamente 3 partidas */
+  overflow: hidden;
+  transition: max-height 0.3s ease;
+  border-radius: 8px;
+  position: relative;
+}
+
+.matches-scroll-container.expanded {
+  overflow-y: auto;
+  border: 1px solid #7a0707;
+  background: rgba(0, 0, 0, 0.3);
+}
+
+/* Estilos para la barra de scroll */
+.matches-scroll-container.expanded::-webkit-scrollbar {
+  width: 6px;
+}
+
+.matches-scroll-container.expanded::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 3px;
+}
+
+.matches-scroll-container.expanded::-webkit-scrollbar-thumb {
+  background: #7a0707;
+  border-radius: 3px;
+}
+
+.matches-scroll-container.expanded::-webkit-scrollbar-thumb:hover {
+  background: #e4ae0d;
+}
+
 .matches-list {
   display: grid;
   grid-template-columns: 1fr;
   gap: 10px;
 }
 
+.matches-list.expanded {
+  max-height: 600px; /* Altura mayor para scroll */
+  overflow-y: auto;
+}
+
+/* Estilos para la barra de scroll */
+.matches-list.expanded::-webkit-scrollbar {
+  width: 8px;
+}
+
+.matches-list.expanded::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 4px;
+}
+
+.matches-list.expanded::-webkit-scrollbar-thumb {
+  background: #7a0707;
+  border-radius: 4px;
+}
+
+.matches-list.expanded::-webkit-scrollbar-thumb:hover {
+  background: #e4ae0d;
+}
+
 .match-card {
-  display: flex;
   background: rgba(0, 0, 0, 0.5);
-  border-radius: 8px;
-  overflow: hidden;
+  border-radius: 6px;
+  margin-bottom: 8px;
+  display: flex;
+  transition: transform 0.2s ease;
+}
+
+.match-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 2px 5px rgba(122, 7, 7, 0.3);
 }
 
 .match-result {
@@ -309,13 +372,15 @@
 }
 
 .load-more {
-  margin-top: 15px;
   width: 100%;
+  margin-top: 10px;
   background: #333;
+  transition: all 0.2s ease;
 }
 
 .load-more:hover {
   background: #555;
+  box-shadow: 0 0 8px rgba(228, 174, 13, 0.4);
 }
 
 /* Responsive adjustments */
@@ -329,9 +394,10 @@
   }
 }
 
-@media (max-width: 768px) {
+@media (max-width: 800px) {
   .profile-header {
     flex-direction: column;
+    align-items: center; /* Añade esto para centrar todo verticalmente */
   }
   
   .avatar-info-container {
@@ -339,11 +405,29 @@
     flex-direction: column;
     text-align: center;
     margin-bottom: 20px;
+    align-items: center; /* Centra los elementos hijos horizontalmente */
+    width: 100%; /* Asegura que ocupe todo el ancho disponible */
   }
   
   .avatar-container {
     margin-right: 0;
     margin-bottom: 15px;
+    display: flex;
+    justify-content: center; /* Centra el avatar horizontalmente */
+  }
+  
+  .player-info {
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Centra el contenido del player-info */
+    width: 100%;
+  }
+  
+  .status-control {
+    display: flex;
+    justify-content: center; /* Centra los botones */
+    flex-wrap: wrap;
+    gap: 10px;
   }
   
   .social-media-container {
@@ -355,6 +439,8 @@
     border-top: 1px solid #7a0707;
     width: 100%;
     min-width: auto;
+    display: flex;
+    justify-content: center; /* Centra las redes sociales */
   }
   
   .social-media-grid {
