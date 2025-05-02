@@ -18,6 +18,14 @@ const routes: Routes = [
       import('./modules/user/user.module').then((m) => m.UserModule),
   },
   {
+    path: 'main-menu',
+    loadChildren: () =>
+      import('./modules/main-menu/main-menu.module').then(
+        (m) => m.MainMenuModule
+      ),
+  },
+  { path: 'auth', loadChildren: () => import('./modules/auth/auth.module').then(m => m.AuthModule) },
+  {
     path: '**',
     redirectTo: '/user',
     pathMatch: 'full',

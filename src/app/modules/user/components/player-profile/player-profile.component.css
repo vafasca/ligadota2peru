@@ -140,7 +140,7 @@
 .dota-button:hover {
   background: #e4ae0d;
   color: #000;
-  transform: scale(1.05);
+  transform: scale(1.01);
   box-shadow: 0 0 15px rgba(228, 174, 13, 0.7);
 }
 

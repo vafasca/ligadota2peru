@@ -1,0 +1,251 @@
+<div class="lobby-container">
+    <!-- Cabecera del perfil (igual que en profile) -->
+    <div class="profile-header">
+      <div class="avatar-info-container">
+        <div class="avatar-container">
+          <img [src]="player.avatar" alt="Avatar" class="profile-avatar">
+          <div class="status-indicator" [ngClass]="getStatusClass()"></div>
+        </div>
+        <div class="player-info">
+          <h1 class="dota-font">{{player.nick}}</h1>
+          <div class="player-id">ID Dota 2: {{player.idDota}}</div>
+          <div class="status-control">
+            <button class="dota-button status-toggle" (click)="toggleStatus()">
+              {{player.status}}
+            </button>
+            <button class="dota-button logout-button" (click)="logout()">
+              Salir
+            </button>
+          </div>
+        </div>
+      </div>
+      
+      <div class="social-media-container">
+        <div class="social-media-grid">
+          <!-- Redes sociales como en el componente anterior -->
+          <div class="social-media-row">
+            <ng-container *ngIf="player.socialMedia?.twitch; else noTwitch">
+              <a [href]="player.socialMedia?.twitch" target="_blank" title="Twitch">
+                <img src="https://cdn-icons-png.flaticon.com/512/5968/5968819.png" alt="Twitch">
+              </a>
+            </ng-container>
+            <ng-template #noTwitch>
+              <div class="social-icon-disabled" title="Twitch no disponible">
+                <img src="https://cdn-icons-png.flaticon.com/512/5968/5968819.png" alt="Twitch">
+              </div>
+            </ng-template>
+  
+            <ng-container *ngIf="player.socialMedia?.youtube; else noYoutube">
+              <a [href]="player.socialMedia?.youtube" target="_blank" title="YouTube">
+                <img src="https://cdn-icons-png.flaticon.com/128/174/174883.png" alt="YouTube">
+              </a>
+            </ng-container>
+            <ng-template #noYoutube>
+              <div class="social-icon-disabled" title="YouTube no disponible">
+                <img src="https://cdn-icons-png.flaticon.com/128/174/174883.png" alt="YouTube">
+              </div>
+            </ng-template>
+  
+            <ng-container *ngIf="player.socialMedia?.kick; else noKick">
+              <a [href]="player.socialMedia?.kick" target="_blank" title="Kick">
+                <img src="https://kick.com/favicon.ico" alt="Kick">
+              </a>
+            </ng-container>
+            <ng-template #noKick>
+              <div class="social-icon-disabled" title="Kick no disponible">
+                <img src="https://kick.com/favicon.ico" alt="Kick">
+              </div>
+            </ng-template>
+  
+            <ng-container *ngIf="player.socialMedia?.twitter; else noTwitter">
+              <a [href]="player.socialMedia?.twitter" target="_blank" title="X">
+                <img src="https://cdn-icons-png.flaticon.com/128/5968/5968830.png" alt="X">
+              </a>
+            </ng-container>
+            <ng-template #noTwitter>
+              <div class="social-icon-disabled" title="X no disponible">
+                <img src="https://cdn-icons-png.flaticon.com/128/5968/5968830.png" alt="X">
+              </div>
+            </ng-template>
+          </div>
+          
+          <div class="social-media-row">
+            <ng-container *ngIf="player.socialMedia?.discord; else noDiscord">
+              <a [href]="player.socialMedia?.discord" target="_blank" title="Discord">
+                <img src="https://cdn-icons-png.flaticon.com/512/5968/5968756.png" alt="Discord">
+              </a>
+            </ng-container>
+            <ng-template #noDiscord>
+              <div class="social-icon-disabled" title="Discord no disponible">
+                <img src="https://cdn-icons-png.flaticon.com/512/5968/5968756.png" alt="Discord">
+              </div>
+            </ng-template>
+  
+            <ng-container *ngIf="player.socialMedia?.instagram; else noInstagram">
+              <a [href]="player.socialMedia?.instagram" target="_blank" title="Instagram">
+                <img src="https://cdn-icons-png.flaticon.com/512/2111/2111463.png" alt="Instagram">
+              </a>
+            </ng-container>
+            <ng-template #noInstagram>
+              <div class="social-icon-disabled" title="Instagram no disponible">
+                <img src="https://cdn-icons-png.flaticon.com/512/2111/2111463.png" alt="Instagram">
+              </div>
+            </ng-template>
+  
+            <ng-container *ngIf="player.socialMedia?.facebook; else noFacebook">
+              <a [href]="player.socialMedia?.facebook" target="_blank" title="Facebook">
+                <img src="https://cdn-icons-png.flaticon.com/512/5968/5968764.png" alt="Facebook">
+              </a>
+            </ng-container>
+            <ng-template #noFacebook>
+              <div class="social-icon-disabled" title="Facebook no disponible">
+                <img src="https://cdn-icons-png.flaticon.com/512/5968/5968764.png" alt="Facebook">
+              </div>
+            </ng-template>
+  
+            <ng-container *ngIf="player.socialMedia?.tiktok; else noTiktok">
+              <a [href]="player.socialMedia?.tiktok" target="_blank" title="TikTok">
+                <img src="https://cdn-icons-png.flaticon.com/512/3046/3046126.png" alt="TikTok">
+              </a>
+            </ng-container>
+            <ng-template #noTiktok>
+              <div class="social-icon-disabled" title="TikTok no disponible">
+                <img src="https://cdn-icons-png.flaticon.com/512/3046/3046126.png" alt="TikTok">
+              </div>
+            </ng-template>
+          </div>
+        </div>
+      </div>
+    </div>
+  
+    <!-- Contenido principal del lobby -->
+    <div class="lobby-content">
+      <h1 class="lobby-title dota-font">LOBBY DE SELECCIÓN</h1>
+      <div class="lobby-subtitle">Jugadores disponibles para partida</div>
+      
+      <!-- Filtros de búsqueda -->
+      <div class="filters-container">
+        <div class="filter-group">
+          <label for="categoryFilter" class="filter-label">Categoría:</label>
+          <select id="categoryFilter" class="dota-select" [(ngModel)]="selectedCategory">
+            <option value="all">Todas</option>
+            <option *ngFor="let cat of categories" [value]="cat">{{cat}}</option>
+          </select>
+        </div>
+        
+        <div class="filter-group">
+          <label for="roleFilter" class="filter-label">Rol:</label>
+          <select id="roleFilter" class="dota-select" [(ngModel)]="selectedRole">
+            <option value="all">Todos</option>
+            <option *ngFor="let role of roles" [value]="role">{{role}}</option>
+          </select>
+        </div>
+        
+        <button class="dota-button filter-button" (click)="applyFilters()">
+          Filtrar
+        </button>
+        
+        <button class="dota-button refresh-button" (click)="refreshPlayers()">
+          <i class="fas fa-sync-alt"></i> Actualizar
+        </button>
+      </div>
+      
+      <!-- Lista de jugadores por categoría -->
+      <div class="players-by-category" *ngFor="let category of filteredCategories">
+        <h2 class="category-title dota-font">{{category}} <span class="player-count">({{getPlayersByCategory(category).length}} jugadores)</span></h2>
+        
+        <div class="role-columns-container">
+          <!-- Columna para cada rol -->
+          <div class="role-column-wrapper" *ngFor="let role of roles">
+            <h3 class="role-title">{{role}} <span class="role-player-count">({{getPlayersByCategoryAndRole(category, role).length}})</span></h3>
+            <div class="role-column">
+              <div class="players-container">
+                <div class="player-card" 
+                     *ngFor="let player of getPlayersByCategoryAndRole(category, role)"
+                     [ngClass]="{'selected': isSelected(player)}"
+                     (click)="toggleSelectPlayer(player)">
+                  <div class="player-avatar-container">
+                    <img [src]="player.avatar" alt="Avatar" class="player-avatar">
+                    <div class="player-status" [ngClass]="getPlayerStatusClass(player)"></div>
+                  </div>
+                  
+                  <div class="player-info">
+                    <div class="player-nick">{{player.nick}}</div>
+                    <div class="player-mmr">
+                      <span>{{player.mmr}}</span>
+                      <img [src]="player.medalImage" [alt]="player.medal" class="player-medal" title="{{player.medal}}">
+                    </div>
+                    <div class="player-role">Rating {{player.rating}}</div>
+                  </div>
+                </div>
+                
+                <div class="empty-role" *ngIf="getPlayersByCategoryAndRole(category, role).length === 0">
+                  No hay jugadores disponibles
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Equipos formados -->
+      <div class="teams-container" *ngIf="selectedPlayers.length > 0">
+        <h2 class="teams-title dota-font">EQUIPOS FORMADOS</h2>
+        
+        <div class="teams-columns">
+          <div class="team-column radiant">
+            <h3 class="team-name">RADIANT</h3>
+            <div class="team-players">
+              <div class="team-player" *ngFor="let player of radiantTeam">
+                <img [src]="player.avatar" alt="Avatar" class="team-player-avatar">
+                <div class="team-player-info">
+                  <div class="team-player-nick">{{player.nick}}</div>
+                  <div class="team-player-mmr">{{player.mmr}} <img [src]="player.medalImage" class="team-player-medal"></div>
+                </div>
+                <button class="dota-button small-button remove-player" (click)="removeFromTeam(player.idDota)">
+                  <i class="fas fa-times"></i>
+                </button>
+              </div>
+              <div class="empty-team" *ngIf="radiantTeam.length === 0">
+                Agrega jugadores al equipo
+              </div>
+            </div>
+            <button class="dota-button team-action-button" (click)="balanceTeams()">
+              Balancear equipos
+            </button>
+          </div>
+          
+          <div class="team-column dire">
+            <h3 class="team-name">DIRE</h3>
+            <div class="team-players">
+              <div class="team-player" *ngFor="let player of direTeam">
+                <img [src]="player.avatar" alt="Avatar" class="team-player-avatar">
+                <div class="team-player-info">
+                  <div class="team-player-nick">{{player.nick}}</div>
+                  <div class="team-player-mmr">{{player.mmr}} <img [src]="player.medalImage" class="team-player-medal"></div>
+                </div>
+                <button class="dota-button small-button remove-player" (click)="removeFromTeam(player.idDota)">
+                  <i class="fas fa-times"></i>
+                </button>
+              </div>
+              <div class="empty-team" *ngIf="direTeam.length === 0">
+                Agrega jugadores al equipo
+              </div>
+            </div>
+            <button class="dota-button team-action-button" (click)="randomizeTeams()">
+              Aleatorizar
+            </button>
+          </div>
+        </div>
+        
+        <div class="teams-actions">
+          <button class="dota-button start-button" [disabled]="!canStartMatch()" (click)="startMatch()">
+            INICIAR PARTIDA
+          </button>
+          <button class="dota-button clear-button" (click)="clearTeams()">
+            Limpiar equipos
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
