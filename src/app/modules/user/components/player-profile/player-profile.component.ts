@@ -1,7 +1,10 @@
 import { Component, ElementRef, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
+import { Subscription } from 'rxjs';
 import { Player } from 'src/app/modules/admin/models/jugador.model';
 import { Match } from 'src/app/modules/admin/models/match.model';
+import { PlayerService } from 'src/app/modules/admin/services/player.service';
+import { AuthService } from 'src/app/modules/auth/services/auth.service';
 
 @Component({
   selector: 'app-player-profile',
@@ -12,96 +15,36 @@ export class PlayerProfileComponent {
   @ViewChild('matchesContainer') matchesContainer!: ElementRef;
   showAllMatches = false;
   
-  // Datos del jugador con estructura mejorada
+  // Datos del jugador inicializados vacíos
   player: Player = {
-    avatar: 'https://cdn.dota2.com/apps/dota2/images/heroes/antimage_full.png',
-    nick: 'AntiMagePro',
-    idDota: 123456789,
-    category: 'Tier 2',
-    mmr: 9300,
-    medal: 'Immortal',
-    medalImage: 'https://hawk.live/images/dota-2-seasonal-ranking-medals/seasonal-rank-immortal.png',
-    rating: 87,
-    status: 'Activo',
-    role: 'Carry (Safe Lane)',
-    secondaryRole: 'Mid Lane',
-    secondaryCategory: 'Tier 3',
-    observations: 'Jugador especializado en late game. Excelente farmeo y manejo de objetivos. ' +
-                 'Prefiere héroes de agilidad que escalan bien con items. ' +
-                 'Necesita mejorar participación temprana en teamfights.',
+    uid: '',
+    avatar: '',
+    nick: '',
+    idDota: 0,
+    category: '',
+    mmr: 0,
+    medal: '',
+    medalImage: '',
+    rating: 0,
+    status: 'Activo', // Valor por defecto
+    role: '',
+    secondaryRole: '',
+    secondaryCategory: '',
+    observations: '',
     socialMedia: {
-      twitch: 'https://twitch.tv',
-      youtube: 'https://youtube.com',
-      kick: 'https://kick.com',
-      twitter: 'https://x.com',
-      discord: 'https://discord.com',
-      instagram: 'https://www.instagram.com/',
-      facebook: 'https://www.facebook.com/',
-      tiktok: 'https://www.tiktok.com/'
+      twitch: '',
+      youtube: '',
+      kick: '',
+      twitter: '',
+      discord: '',
+      instagram: '',
+      facebook: '',
+      tiktok: ''
     },
     matches: []
   };
 
-  // Historial de partidas simulado
-  matches: Match[] = [
-    {
-      id: '1',
-      result: 'win',
-      date: new Date('2023-05-15T20:30:00'),
-      heroName: 'Anti-Mage',
-      heroImage: 'https://cdn.dota2.com/apps/dota2/images/heroes/antimage_full.png',
-      kills: 12,
-      deaths: 8,
-      assists: 8,
-      ratingChange: 25
-    },
-    {
-      id: '2',
-      result: 'loss',
-      date: new Date('2023-05-14T18:45:00'),
-      heroName: 'Juggernaut',
-      heroImage: 'https://cdn.dota2.com/apps/dota2/images/heroes/juggernaut_full.png',
-      kills: 8,
-      deaths: 8,
-      assists: 1,
-      ratingChange: -10
-    },
-    {
-      id: '3',
-      result: 'win',
-      date: new Date('2023-05-15T20:30:00'),
-      heroName: 'Anti-Mage',
-      heroImage: 'https://cdn.dota2.com/apps/dota2/images/heroes/mars_full.png',
-      kills: 12,
-      deaths: 13,
-      assists: 8,
-      ratingChange: 25
-    },
-    {
-      id: '4',
-      result: 'win',
-      date: new Date('2023-05-15T20:30:00'),
-      heroName: 'Anti-Mage',
-      heroImage: 'https://cdn.dota2.com/apps/dota2/images/heroes/axe_full.png',
-      kills: 12,
-      deaths: 3,
-      assists: 8,
-      ratingChange: 25
-    },
-    {
-      id: '5',
-      result: 'loss',
-      date: new Date('2023-05-14T18:45:00'),
-      heroName: 'Juggernaut',
-      heroImage: 'https://cdn.dota2.com/apps/dota2/images/heroes/sven_full.png',
-      kills: 8,
-      deaths: 15,
-      assists: 12,
-      ratingChange: -10
-    }
-  ];
-
-  // Estadísticas calculadas
+  matches: Match[] = [];
   stats = {
     totalMatches: 0,
     wins: 0,
@@ -110,17 +53,97 @@ export class PlayerProfileComponent {
     avgKDA: '0/0/0'
   };
 
-  constructor(private router: Router) {
-    this.calculateStats();
-    // Asignamos las partidas al jugador
-    this.player.matches = this.matches;
+  isLoading = true;
+  errorMessage = '';
+  private authSub!: Subscription;
+  private playerSub!: Subscription;
+  private matchesSub!: Subscription;
+
+  constructor(
+    private router: Router,
+    private playerService: PlayerService,
+    private authService: AuthService
+  ) {}
+
+  ngOnInit(): void {
+    this.setupAuthListener();
+  }
+
+  ngOnDestroy(): void {
+    this.cleanupSubscriptions();
+  }
+
+  private setupAuthListener(): void {
+    this.authSub = this.authService.currentUser$.subscribe({
+      next: (user) => {
+        if (user?.uid) {
+          this.loadPlayerData(user.uid);
+        } else {
+          this.handleUnauthenticated();
+        }
+      },
+      error: (err) => {
+        console.error('Error en auth listener:', err);
+        this.handleUnauthenticated();
+      }
+    });
+  }
+
+  private loadPlayerData(uid: string): void {
+    this.isLoading = true;
+    this.errorMessage = '';
+
+    this.playerSub = this.playerService.getPlayer(uid).subscribe({
+      next: (playerData) => {
+        if (playerData) {
+          this.player = playerData;
+          console.log('Datos del jugador cargados:', this.player);
+          this.loadPlayerMatches(uid);
+        } else {
+          this.errorMessage = 'Perfil no encontrado. Completa tu registro.';
+          this.isLoading = false;
+          this.router.navigate(['/complete-profile']);
+        }
+      },
+      error: (err) => {
+        console.error('Error cargando jugador:', err);
+        this.errorMessage = 'Error al cargar perfil. Intenta nuevamente.';
+        this.isLoading = false;
+      }
+    });
+  }
+
+  private loadPlayerMatches(uid: string): void {
+    this.matchesSub = this.playerService.getPlayerMatches(uid).subscribe({
+      next: (matches) => {
+        this.matches = matches;
+        this.player.matches = matches;
+        this.calculateStats();
+        this.isLoading = false;
+      },
+      error: (err) => {
+        console.error('Error cargando partidas:', err);
+        this.isLoading = false;
+        this.calculateStats(); // Mostrar stats aunque falle la carga
+      }
+    });
+  }
+
+  private handleUnauthenticated(): void {
+    this.errorMessage = 'Debes iniciar sesión para ver este perfil';
+    this.isLoading = false;
+    setTimeout(() => {
+      this.router.navigate(['/login']);
+    }, 1500);
   }
 
   private calculateStats(): void {
     this.stats.totalMatches = this.matches.length;
     this.stats.wins = this.matches.filter(m => m.result === 'win').length;
     this.stats.losses = this.matches.filter(m => m.result === 'loss').length;
-    this.stats.winRate = Math.round((this.stats.wins / this.stats.totalMatches) * 100) || 0;
+    this.stats.winRate = this.stats.totalMatches > 0 
+      ? Math.round((this.stats.wins / this.stats.totalMatches) * 100) 
+      : 0;
     this.stats.avgKDA = this.calculateAvgKDA();
   }
 
@@ -139,7 +162,19 @@ export class PlayerProfileComponent {
   }
 
   toggleStatus(): void {
-    this.player.status = this.player.status === 'Activo' ? 'Inactivo' : 'Activo';
+    if (!this.player.uid) return;
+    
+    const newStatus = this.player.status === 'Activo' ? 'Inactivo' : 'Activo';
+    const updateSub = this.playerService.updatePlayer(this.player.uid, { status: newStatus }).subscribe({
+      next: () => {
+        this.player.status = newStatus;
+        updateSub.unsubscribe();
+      },
+      error: (err) => {
+        console.error('Error al actualizar estado:', err);
+        updateSub.unsubscribe();
+      }
+    });
   }
 
   getStatusClass(): string {
@@ -167,7 +202,9 @@ export class PlayerProfileComponent {
   }
 
   logout(): void {
-    this.router.navigate(['/login']);
+    this.authService.logout().then(() => {
+      this.router.navigate(['/login']);
+    });
   }
 
   goToLobby(): void {
@@ -176,5 +213,11 @@ export class PlayerProfileComponent {
 
   get visibleMatches(): Match[] {
     return this.showAllMatches ? this.matches : this.matches.slice(0, 3);
+  }
+
+  private cleanupSubscriptions(): void {
+    if (this.authSub) this.authSub.unsubscribe();
+    if (this.playerSub) this.playerSub.unsubscribe();
+    if (this.matchesSub) this.matchesSub.unsubscribe();
   }
 }

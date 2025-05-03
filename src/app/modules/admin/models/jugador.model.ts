@@ -2,6 +2,7 @@
 import { Match } from "./match.model";
 
 export interface Player {
+    uid: string;
     avatar: string;
     nick: string;
     idDota: number;

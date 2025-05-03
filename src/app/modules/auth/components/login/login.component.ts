@@ -1,0 +1,89 @@
+import { Component, inject } from '@angular/core';
+import { NgForm } from '@angular/forms';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { Router } from '@angular/router';
+import { Auth, signInWithEmailAndPassword } from '@angular/fire/auth';
+import { AuthService } from '../../services/auth.service';
+
+
+
+
+@Component({
+  selector: 'app-login',
+  templateUrl: './login.component.html',
+  styleUrls: ['./login.component.css']
+})
+export class LoginComponent {
+  isLoading = false;
+  errorMessage = '';
+  showPassword = false;
+
+  constructor(
+    private authService: AuthService,
+    private router: Router,
+    private snackBar: MatSnackBar
+  ) {}
+
+  async onSubmit(form: NgForm) {
+    if (form.valid) {
+      this.isLoading = true;
+      this.errorMessage = '';
+      
+      const { email, password } = form.value;
+      
+      try {
+        const result = await this.authService.login(email, password);
+        
+        if (result.success) {
+          this.showSuccess('Inicio de sesión exitoso');
+          this.router.navigate(['/admin']);
+        } else if (result.needsVerification) {
+          this.router.navigate(['/waiting-verification'], { 
+            state: { email: email } 
+          });
+          this.showError(result.message || 'Por favor verifica tu correo electrónico');
+        } else {
+          this.showError(result.message || 'Error al iniciar sesión');
+        }
+      } catch (error) {
+        console.error('Error en login:', error);
+        this.showError('Ocurrió un error inesperado. Inténtalo de nuevo.');
+      } finally {
+        this.isLoading = false;
+      }
+    } else {
+      this.showError('Por favor completa todos los campos correctamente');
+    }
+  }
+
+  togglePasswordVisibility(): void {
+    this.showPassword = !this.showPassword;
+  }
+
+  navigateToRegister(): void {
+    this.router.navigate(['/register']);
+  }
+
+  resetPassword(): void {
+    this.router.navigate(['/forgot-password']);
+  }
+
+  private showSuccess(message: string): void {
+    this.snackBar.open(message, 'Cerrar', {
+      duration: 3000,
+      panelClass: ['snackbar-success'],
+      verticalPosition: 'top',
+      horizontalPosition: 'right'
+    });
+  }
+
+  private showError(message: string): void {
+    this.errorMessage = message;
+    this.snackBar.open(message, 'Cerrar', {
+      duration: 5000,
+      panelClass: ['snackbar-error'],
+      verticalPosition: 'top',
+      horizontalPosition: 'right'
+    });
+  }
+}

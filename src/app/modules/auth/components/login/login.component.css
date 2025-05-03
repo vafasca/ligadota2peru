@@ -1,0 +1,158 @@
+.login-container {
+  background: url('/assets/backgrounddota2.jpg') no-repeat center center fixed;
+  background-size: cover;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+}
+
+.login-form {
+  background: rgba(0, 0, 0, 0.7);
+  padding: 30px;
+  border-radius: 10px;
+  border: 2px solid #7a0707;
+  width: 100%;
+  max-width: 400px;
+  box-shadow: 0 0 15px rgba(122, 7, 7, 0.5);
+}
+
+.dota-font {
+  font-family: 'Radiance', sans-serif;
+  color: #e4ae0d;
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  margin-bottom: 25px;
+  text-shadow: 0 0 5px rgba(228, 174, 13, 0.7);
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-group label {
+  display: block;
+  color: #e4ae0d;
+  margin-bottom: 8px;
+  font-weight: bold;
+}
+
+.dota-input {
+  width: 100%;
+  padding: 10px 15px;
+  background: rgba(0, 0, 0, 0.5);
+  border: 1px solid #7a0707;
+  color: #fff;
+  border-radius: 4px;
+  font-size: 16px;
+  transition: all 0.3s;
+}
+
+.dota-input:focus {
+  outline: 2px solid #e4ae0d;
+  border-color: transparent;
+  box-shadow: 0 0 8px rgba(228, 174, 13, 0.5);
+}
+
+.dota-button {
+  background: #7a0707;
+  color: #fff;
+  padding: 12px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: bold;
+  text-transform: uppercase;
+  width: 100%;
+  font-size: 16px;
+  letter-spacing: 1px;
+  transition: all 0.3s;
+  margin-top: 10px;
+}
+
+.dota-button:hover:not(:disabled) {
+  background: #e4ae0d;
+  color: #000;
+  transform: scale(1.02);
+  box-shadow: 0 0 15px rgba(228, 174, 13, 0.7);
+}
+
+.dota-button:disabled {
+  background: #444;
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.login-links {
+  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.login-link {
+  color: #e4ae0d;
+  text-align: center;
+  text-decoration: none;
+  font-size: 14px;
+  cursor: pointer;
+  transition: color 0.3s;
+}
+
+.login-link:hover {
+  color: #fff;
+  text-decoration: underline;
+}
+
+.password-input-container {
+  position: relative;
+}
+
+.toggle-password {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: #666;
+  cursor: pointer;
+}
+
+.error-message {
+  color: #ff4444;
+  background-color: rgba(255, 68, 68, 0.1);
+  padding: 12px;
+  border-radius: 4px;
+  margin-top: 20px;
+  border-left: 4px solid #ff4444;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.error-message i {
+  font-size: 1.2em;
+}
+
+.snackbar-error {
+  background-color: #ff4444 !important;
+  color: white !important;
+}
+
+.snackbar-success {
+  background-color: #4CAF50 !important;
+  color: white !important;
+}
+
+@media (max-width: 480px) {
+  .login-form {
+    padding: 20px;
+  }
+  
+  .dota-font {
+    font-size: 1.5rem;
+  }
+}

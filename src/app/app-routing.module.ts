@@ -2,11 +2,7 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
 const routes: Routes = [
-  {
-    path: '',
-    redirectTo: '/user',
-    pathMatch: 'full',
-  },
+
   {
     path: 'admin',
     loadChildren: () =>
@@ -24,11 +20,10 @@ const routes: Routes = [
         (m) => m.MainMenuModule
       ),
   },
-  { path: 'auth', loadChildren: () => import('./modules/auth/auth.module').then(m => m.AuthModule) },
   {
-    path: '**',
-    redirectTo: '/user',
-    pathMatch: 'full',
+    path: '',
+    loadChildren: () =>
+      import('./modules/auth/auth.module').then((m) => m.AuthModule),
   },
 ];
 

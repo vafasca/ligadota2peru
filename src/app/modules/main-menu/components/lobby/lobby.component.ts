@@ -9,6 +9,7 @@ import { Player } from 'src/app/modules/admin/models/jugador.model';
 })
 export class LobbyComponent {
   player: Player = {
+    uid: '8D76ITmh2dcjDj88VJW5vL7Eoqa2',
     avatar: 'https://cdn.dota2.com/apps/dota2/images/heroes/antimage_full.png',
     nick: 'AntiMagePro',
     idDota: 123456789,
@@ -36,6 +37,7 @@ export class LobbyComponent {
 
   availablePlayers: Player[] = [
     {
+      uid: '8D76ITmh2dcjDj88VJW5v22L7Eoqa2',
       avatar: 'https://cdn.dota2.com/apps/dota2/images/heroes/nevermore_full.png',
       nick: 'serranogamer',
       idDota: 987654321,
@@ -50,6 +52,7 @@ export class LobbyComponent {
       secondaryCategory: 'Tier 1'
     },
     {
+      uid: '8D76ITmh2dcjDj88VJW5vL7Eoqa3',
       avatar: 'https://cdn.dota2.com/apps/dota2/images/heroes/crystal_maiden_full.png',
       nick: 'Stingerdota',
       idDota: 876543219,
@@ -65,6 +68,7 @@ export class LobbyComponent {
     },
     // Nuevos jugadores (3 mid Tier 1)
     {
+      uid: '8D76ITmh2dcjDj88VJW5vL7Eoqa4',
       avatar: 'https://cdn.dota2.com/apps/dota2/images/heroes/puck_full.png',
       nick: 'sideral',
       idDota: 112233445,
@@ -79,6 +83,7 @@ export class LobbyComponent {
       secondaryCategory: 'Tier 2'
     },
     {
+      uid: '8D76ITmh2dcjDj88VJW5vL7Eoqa5',
       avatar: 'https://cdn.dota2.com/apps/dota2/images/heroes/storm_spirit_full.png',
       nick: 'noah_god',
       idDota: 556677889,
@@ -93,6 +98,7 @@ export class LobbyComponent {
       secondaryCategory: 'Tier 2'
     },
     {
+      uid: '8D76ITmh2dcjDj88VJW5vL7Eoqa6',
       avatar: 'https://cdn.dota2.com/apps/dota2/images/heroes/templar_assassin_full.png',
       nick: 'Leostyle',
       idDota: 334455667,
@@ -109,6 +115,7 @@ export class LobbyComponent {
     
     // Otros jugadores para diversidad
     {
+      uid: '8D76ITmh2dcjDj88VJW5vL7Eoqa7',
       avatar: 'https://cdn.dota2.com/apps/dota2/images/heroes/axe_full.png',
       nick: 'Wisper',
       idDota: 998877665,
@@ -123,6 +130,7 @@ export class LobbyComponent {
       secondaryCategory: 'Tier 3'
     },
     {
+      uid: '8D76ITmh2dcjDj88VJW5vL7Eoqa8',
       avatar: 'https://cdn.dota2.com/apps/dota2/images/heroes/witch_doctor_full.png',
       nick: 'Scofield',
       idDota: 443322110,
@@ -137,6 +145,7 @@ export class LobbyComponent {
       secondaryCategory: 'Tier 3'
     },
     {
+      uid: '8D76ITmh2dcjDj88VJW5vL7Eoqa9',
       avatar: 'https://cdn.dota2.com/apps/dota2/images/heroes/juggernaut_full.png',
       nick: 'vanngg',
       idDota: 778899001,
@@ -151,6 +160,7 @@ export class LobbyComponent {
       secondaryCategory: 'Tier 2'
     },
     {
+      uid: '8D76ITmh2dcjDj88VJW5vL7Eoqa10',
       avatar: 'https://cdn.dota2.com/apps/dota2/images/heroes/lion_full.png',
       nick: 'Gelatita',
       idDota: 665544332,
@@ -165,6 +175,7 @@ export class LobbyComponent {
       secondaryCategory: 'Tier 3'
     },
     {
+      uid: '8D76ITmh2dcjDj88VJW5vL7Eoqa11',
       avatar: 'https://cdn.dota2.com/apps/dota2/images/heroes/phantom_assassin_full.png',
       nick: 'elmacarius',
       idDota: 229988776,

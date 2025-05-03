@@ -1,65 +1,147 @@
 <div class="register-container">
-    <div class="form-container">
-      <h2 class="dota-font">Registro de Jugadores</h2>
-      
-      <!-- Sección de avatar centrado -->
-      <div class="avatar-section">
-        <div class="avatar-preview-container">
-          <img [src]="selectedAvatar || '/assets/default-avatar.jpg'" alt="avatar preview" class="avatar-preview">
-          <input type="file" id="avatar" name="avatar" (change)="onFileSelected($event)" class="dota-file-input">
-          <label for="avatar" class="avatar-label">Seleccionar Foto</label>
+  <div class="form-container">
+    <h2 class="dota-font">Registro de Jugadores</h2>
+    
+    <!-- Sección de avatar centrado -->
+    <div class="avatar-section">
+      <div class="avatar-preview-container">
+        <img [src]="selectedAvatar || '/assets/default-avatar.jpg'" alt="avatar preview" class="avatar-preview">
+        <input type="file" id="avatar" name="avatar" (change)="onFileSelected($event)" class="dota-file-input">
+        <label for="avatar" class="avatar-label">Seleccionar Foto</label>
+      </div>
+    </div>
+
+    <form (ngSubmit)="onSubmit(playerForm)" #playerForm="ngForm">
+      <div class="form-grid">
+        <!-- Información básica -->
+        <div class="form-group">
+          <label for="nick">Nick de Jugador</label>
+          <input type="text" id="nick" name="nick" ngModel required class="dota-input">
+        </div>
+
+        <div class="form-group">
+          <label for="idDota">ID Dota 2</label>
+          <input type="number" id="idDota" name="idDota" ngModel required class="dota-input">
+        </div>
+
+        <div class="form-group">
+          <label for="category">Categoría Principal</label>
+          <select id="category" name="category" ngModel required class="dota-select">
+            <option value="Tier1">Tier 1</option>
+            <option value="Tier2">Tier 2</option>
+            <option value="Tier3">Tier 3</option>
+            <option value="Tier4">Tier 4</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="secondaryCategory">Categoría Secundaria</label>
+          <select id="secondaryCategory" name="secondaryCategory" ngModel class="dota-select">
+            <option value="">Ninguna</option>
+            <option value="Tier1">Tier 1</option>
+            <option value="Tier2">Tier 2</option>
+            <option value="Tier3">Tier 3</option>
+            <option value="Tier4">Tier 4</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="mmr">MMR</label>
+          <input type="number" id="mmr" name="mmr" ngModel required class="dota-input">
+        </div>
+
+        <div class="form-group">
+          <label for="status">Estado</label>
+          <select id="status" name="status" ngModel required class="dota-select">
+            <option value="Activo">Activo</option>
+            <option value="Inactivo">Inactivo</option>
+            <option value="Suspendido">Suspendido</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="rating">Puntuación (0-100)</label>
+          <input type="number" id="rating" name="rating" ngModel required min="0" max="100" class="dota-input">
+        </div>
+
+        <!-- Roles -->
+        <div class="form-group">
+          <label for="role">Rol Principal</label>
+          <select id="role" name="role" ngModel required class="dota-select">
+            <option value="Carry (Safe Lane)">Carry (Safe Lane)</option>
+            <option value="Mid Lane">Mid Lane</option>
+            <option value="Offlane">Offlane</option>
+            <option value="Soft Support">Soft Support (4)</option>
+            <option value="Hard Support">Hard Support (5)</option>
+            <option value="Por definir">Por definir</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="secondaryRole">Rol Secundario</label>
+          <select id="secondaryRole" name="secondaryRole" ngModel class="dota-select">
+            <option value="">Ninguno</option>
+            <option value="Carry (Safe Lane)">Carry (Safe Lane)</option>
+            <option value="Mid Lane">Mid Lane</option>
+            <option value="Offlane">Offlane</option>
+            <option value="Soft Support">Soft Support (4)</option>
+            <option value="Hard Support">Hard Support (5)</option>
+          </select>
+        </div>
+
+        <!-- Redes Sociales -->
+        <div class="form-group full-width">
+          <h3 class="social-media-title">Redes Sociales</h3>
+        </div>
+
+        <div class="form-group">
+          <label for="twitch">Twitch</label>
+          <input type="url" id="twitch" name="twitch" ngModel class="dota-input" placeholder="https://twitch.tv/tu_canal">
+        </div>
+
+        <div class="form-group">
+          <label for="youtube">YouTube</label>
+          <input type="url" id="youtube" name="youtube" ngModel class="dota-input" placeholder="https://youtube.com/tu_canal">
+        </div>
+
+        <div class="form-group">
+          <label for="kick">Kick</label>
+          <input type="url" id="kick" name="kick" ngModel class="dota-input" placeholder="https://kick.com/tu_canal">
+        </div>
+
+        <div class="form-group">
+          <label for="twitter">Twitter/X</label>
+          <input type="url" id="twitter" name="twitter" ngModel class="dota-input" placeholder="https://x.com/tu_perfil">
+        </div>
+
+        <div class="form-group">
+          <label for="discord">Discord</label>
+          <input type="text" id="discord" name="discord" ngModel class="dota-input" placeholder="Usuario#1234">
+        </div>
+
+        <div class="form-group">
+          <label for="instagram">Instagram</label>
+          <input type="url" id="instagram" name="instagram" ngModel class="dota-input" placeholder="https://instagram.com/tu_perfil">
+        </div>
+
+        <div class="form-group">
+          <label for="facebook">Facebook</label>
+          <input type="url" id="facebook" name="facebook" ngModel class="dota-input" placeholder="https://facebook.com/tu_perfil">
+        </div>
+
+        <div class="form-group">
+          <label for="tiktok">TikTok</label>
+          <input type="url" id="tiktok" name="tiktok" ngModel class="dota-input" placeholder="https://tiktok.com/@tu_perfil">
+        </div>
+
+        <!-- Observaciones -->
+        <div class="form-group full-width">
+          <label for="observations">Observaciones</label>
+          <textarea id="observations" name="observations" ngModel class="dota-textarea" placeholder="Detalles sobre el estilo de juego, preferencias de héroes, fortalezas, debilidades..."></textarea>
         </div>
       </div>
-  
-      <form (ngSubmit)="onSubmit(playerForm)" #playerForm="ngForm">
-        <div class="form-grid">
-          <!-- Resto de los campos del formulario... -->
-          <div class="form-group">
-            <label for="nick">Nick de Jugador</label>
-            <input type="text" id="nick" name="nick" ngModel required class="dota-input">
-          </div>
-  
-          <div class="form-group">
-            <label for="idDota">ID Dota 2</label>
-            <input type="number" id="idDota" name="idDota" ngModel required class="dota-input">
-          </div>
-  
-          <div class="form-group">
-            <label for="category">Categoría</label>
-            <select id="category" name="category" ngModel required class="dota-select">
-              <option value="Tier1">Tier1</option>
-              <option value="Tier2">Tier2</option>
-              <option value="Tier3">Tier3</option>
-              <option value="Tier4">Tier4</option>
-            </select>
-          </div>
-  
-          <div class="form-group">
-            <label for="mmr">MMR</label>
-            <input type="number" id="mmr" name="mmr" ngModel required class="dota-input">
-          </div>
-  
-          <div class="form-group">
-            <label for="status">Estado</label>
-            <select id="status" name="status" ngModel required class="dota-select">
-              <option value="Activo">Activo</option>
-              <option value="Inactivo">Inactivo</option>
-              <option value="Suspendido">Suspendido</option>
-            </select>
-          </div>
-  
-          <div class="form-group">
-            <label for="rating">Puntuación</label>
-            <input type="number" id="rating" name="rating" ngModel required class="dota-input">
-          </div>
-  
-          <div class="form-group full-width">
-            <label for="observations">Observaciones</label>
-            <textarea id="observations" name="observations" ngModel class="dota-textarea"></textarea>
-          </div>
-        </div>
-  
-        <button type="submit" class="dota-button">Registrar Jugador</button>
-      </form>
-    </div>
+
+      <button type="submit" class="dota-button">Registrar Jugador</button>
+    </form>
   </div>
+</div>

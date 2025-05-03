@@ -1,0 +1,96 @@
+<div class="register-container">
+    <div class="register-overlay"></div>
+    <div class="register-form">
+      <div class="dota-logo-container">
+        <img src="https://cdn.cloudflare.steamstatic.com/apps/dota2/images/dota_react/global/dota2_logo_symbol.png" 
+             alt="Dota 2 Logo" class="dota-logo">
+      </div>
+      
+      <h2 class="dota-font">UNIRSE A LA BATALLA</h2>
+      <p class="dota-subtitle">Registra tu cuenta para comenzar</p>
+      
+      <form (ngSubmit)="onSubmit(registerForm)" #registerForm="ngForm" class="dota-form">
+        <div class="form-group">
+          <label for="email" class="dota-label">
+            <i class="fas fa-envelope"></i> Correo Electrónico
+          </label>
+          <input type="email" id="email" name="email" 
+                 [(ngModel)]="currentEmail"
+                 (blur)="checkEmail(currentEmail)"
+                 (input)="emailExists && resetEmailField()"
+                 required email class="dota-input" 
+                 placeholder="radiant@dota2.com"
+                 [class.error-border]="emailExists">
+          
+          <div *ngIf="emailExists" class="email-exists-message">
+            <span><i class="fas fa-exclamation-triangle"></i> Héroe ya registrado</span>
+            <button type="button" class="clear-email-btn" (click)="resetEmailField()">
+              <i class="fas fa-times"></i> Cambiar
+            </button>
+          </div>
+        </div>
+  
+        <div class="form-group">
+          <label for="password" class="dota-label">
+            <i class="fas fa-lock"></i> Contraseña Secreta
+          </label>
+          <div class="password-input-container">
+            <input [type]="showPassword ? 'text' : 'password'" id="password" name="password" 
+                   [(ngModel)]="password"
+                   (input)="checkPasswordStrength(password)"
+                   required minlength="6" 
+                   class="dota-input" placeholder="••••••••">
+            <button type="button" class="toggle-password" (click)="togglePasswordVisibility()">
+              <i class="fas" [class.fa-eye]="!showPassword" [class.fa-eye-slash]="showPassword"></i>
+            </button>
+          </div>
+          <div class="password-strength">
+            <div class="strength-bar" [class.weak]="passwordStrength === 'weak'"></div>
+            <div class="strength-bar" [class.medium]="passwordStrength === 'medium'"></div>
+            <div class="strength-bar" [class.strong]="passwordStrength === 'strong'"></div>
+            <span class="strength-text">{{getPasswordStrengthText()}}</span>
+          </div>
+        </div>
+  
+        <div class="form-group">
+          <label for="confirmPassword" class="dota-label">
+            <i class="fas fa-lock"></i> Confirmar Contraseña
+          </label>
+          <div class="password-input-container">
+            <input [type]="showConfirmPassword ? 'text' : 'password'" id="confirmPassword" name="confirmPassword" 
+                   [(ngModel)]="confirmPassword"
+                   required class="dota-input" placeholder="••••••••">
+            <button type="button" class="toggle-password" (click)="toggleConfirmPasswordVisibility()">
+              <i class="fas" [class.fa-eye]="!showConfirmPassword" [class.fa-eye-slash]="showConfirmPassword"></i>
+            </button>
+          </div>
+        </div>
+  
+        <button type="submit" class="dota-button" [disabled]="isLoading || emailExists || passwordStrength === 'weak'">
+          <span *ngIf="!isLoading">
+            <i class="fas fa-user-plus"></i> UNIRSE A LA BATALLA
+          </span>
+          <span *ngIf="isLoading">
+            <i class="fas fa-spinner fa-spin"></i> CARGANDO...
+          </span>
+        </button>
+  
+        <div class="register-links">
+          <a routerLink="/login" class="register-link">
+            <i class="fas fa-sign-in-alt"></i> ¿Ya eres un héroe? Inicia Sesión
+          </a>
+          <a routerLink="/forgot-password" class="register-link">
+            <i class="fas fa-key"></i> ¿Olvidaste tu contraseña?
+          </a>
+        </div>
+  
+        <div *ngIf="errorMessage && !emailExists" class="error-message">
+          <i class="fas fa-skull-crossbones"></i> {{ errorMessage }}
+        </div>
+      </form>
+      
+      <div class="dota-footer">
+        <p>© Dota 2 Battle Arena - Todos los derechos reservados</p>
+      </div>
+    </div>
+  </div>
