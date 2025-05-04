@@ -4,17 +4,17 @@ import { RouterModule, Routes } from '@angular/router';
 const routes: Routes = [
 
   {
-    path: 'admin',
+    path: 'completar_registro',
     loadChildren: () =>
       import('./modules/admin/admin.module').then((m) => m.AdminModule),
   },
   {
-    path: 'user',
+    path: 'profile',
     loadChildren: () =>
       import('./modules/user/user.module').then((m) => m.UserModule),
   },
   {
-    path: 'main-menu',
+    path: 'lobby',
     loadChildren: () =>
       import('./modules/main-menu/main-menu.module').then(
         (m) => m.MainMenuModule

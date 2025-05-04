@@ -8,13 +8,14 @@ import { WaitingVerificationComponent } from './components/waiting-verification/
 import { authGuard } from './guards/auth.guard';
 
 const routes: Routes = [{ path: 'login', component: LoginComponent },
-  { path: 'register', component: RegisterComponent },
-  { path: 'forgot-password', component: ForgotPasswordComponent },
-  { path: '', redirectTo: 'login', pathMatch: 'full' },
+  { path: 'registro', component: RegisterComponent },
+  { path: 'recuperar-contrasena', component: ForgotPasswordComponent },
+  { path: '', component: LoginComponent },
   {
-    path: 'waiting-verification',
+    path: 'verificacion',
     component: WaitingVerificationComponent
-  }
+  },
+  { path: '', redirectTo: 'login', pathMatch: 'full' },
 ];
 
 @NgModule({

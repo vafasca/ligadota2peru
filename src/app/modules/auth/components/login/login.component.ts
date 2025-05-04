@@ -36,7 +36,7 @@ export class LoginComponent {
         
         if (result.success) {
           this.showSuccess('Inicio de sesión exitoso');
-          this.router.navigate(['/admin']);
+          this.router.navigate(['/completar_registro']);
         } else if (result.needsVerification) {
           this.router.navigate(['/waiting-verification'], { 
             state: { email: email } 
@@ -61,11 +61,11 @@ export class LoginComponent {
   }
 
   navigateToRegister(): void {
-    this.router.navigate(['/register']);
+    this.router.navigate(['/registro']);
   }
 
   resetPassword(): void {
-    this.router.navigate(['/forgot-password']);
+    this.router.navigate(['/recuperar-contrasena']);
   }
 
   private showSuccess(message: string): void {

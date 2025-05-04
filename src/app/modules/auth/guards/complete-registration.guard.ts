@@ -24,7 +24,7 @@ export const completeRegistrationGuard: CanActivateFn = (route, state) => {
       playerService.checkPlayerExists(user.uid).pipe(
         map(playerExists => {
           return playerExists 
-            ? router.createUrlTree(['/user']) // Redirigir si existe perfil
+            ? router.createUrlTree(['/profile']) // Redirigir si existe perfil
             : true; // Permitir acceso si no existe
         }),
         catchError(error => {

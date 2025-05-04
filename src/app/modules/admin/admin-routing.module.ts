@@ -13,7 +13,7 @@ const routes: Routes = [
     canActivate: [authGuard, completeRegistrationGuard],
   },
   {
-    path: 'complete-registration',
+    path: 'completarregistro',
     component: PlayerRegistrationComponent,
     canActivate: [authGuard, completeRegistrationGuard]
   },

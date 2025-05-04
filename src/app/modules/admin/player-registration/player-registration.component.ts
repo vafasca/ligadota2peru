@@ -113,8 +113,8 @@ export class PlayerRegistrationComponent {
           next: () => {
             this.showSnackbar('✅ Registro de jugador completado con éxito', 'success');
             form.resetForm();
-            this.selectedAvatar = 'https://placehold.co/400';
-            this.router.navigate(['/user']);
+            this.selectedAvatar = 'assets/medallas/profile_default.png';
+            this.router.navigate(['/profile']);
           },
           error: (error) => {
             console.error('Error al guardar el jugador:', error);
@@ -128,45 +128,45 @@ export class PlayerRegistrationComponent {
 
   private calculateMedalAndImage(mmr: number): { medal: string, medalImage: string } {
     const medalRanges = [
-      { name: 'Heraldo 1', min: 1, max: 154, image: 'herald-1' },
-      { name: 'Heraldo 2', min: 154, max: 308, image: 'herald-2' },
-      { name: 'Heraldo 3', min: 308, max: 462, image: 'herald-3' },
-      { name: 'Heraldo 4', min: 462, max: 616, image: 'herald-4' },
-      { name: 'Heraldo 5', min: 616, max: 770, image: 'herald-5' },
-      { name: 'Guardián 1', min: 770, max: 924, image: 'guardian-1' },
-      { name: 'Guardián 2', min: 924, max: 1078, image: 'guardian-2' },
-      { name: 'Guardián 3', min: 1078, max: 1232, image: 'guardian-3' },
-      { name: 'Guardián 4', min: 1232, max: 1386, image: 'guardian-4' },
-      { name: 'Guardián 5', min: 1386, max: 1540, image: 'guardian-5' },
-      { name: 'Cruzado 1', min: 1540, max: 1694, image: 'crusader-1' },
-      { name: 'Cruzado 2', min: 1694, max: 1848, image: 'crusader-2' },
-      { name: 'Cruzado 3', min: 1848, max: 2002, image: 'crusader-3' },
-      { name: 'Cruzado 4', min: 2002, max: 2156, image: 'crusader-4' },
-      { name: 'Cruzado 5', min: 2156, max: 2310, image: 'crusader-5' },
-      { name: 'Arconte 1', min: 2310, max: 2464, image: 'archon-1' },
-      { name: 'Arconte 2', min: 2464, max: 2618, image: 'archon-2' },
-      { name: 'Arconte 3', min: 2618, max: 2772, image: 'archon-3' },
-      { name: 'Arconte 4', min: 2772, max: 2926, image: 'archon-4' },
-      { name: 'Arconte 5', min: 2926, max: 3080, image: 'archon-5' },
-      { name: 'Leyenda 1', min: 3080, max: 3234, image: 'legend-1' },
-      { name: 'Leyenda 2', min: 3234, max: 3388, image: 'legend-2' },
-      { name: 'Leyenda 3', min: 3388, max: 3542, image: 'legend-3' },
-      { name: 'Leyenda 4', min: 3542, max: 3696, image: 'legend-4' },
-      { name: 'Leyenda 5', min: 3696, max: 3850, image: 'legend-5' },
-      { name: 'Antiguo 1', min: 3850, max: 4004, image: 'ancient-1' },
-      { name: 'Antiguo 2', min: 4004, max: 4158, image: 'ancient-2' },
-      { name: 'Antiguo 3', min: 4158, max: 4312, image: 'ancient-3' },
-      { name: 'Antiguo 4', min: 4312, max: 4466, image: 'ancient-4' },
-      { name: 'Antiguo 5', min: 4466, max: 4620, image: 'ancient-5' },
-      { name: 'Divino 1', min: 4620, max: 4820, image: 'divine-1' },
-      { name: 'Divino 2', min: 4820, max: 5020, image: 'divine-2' },
-      { name: 'Divino 3', min: 5020, max: 5220, image: 'divine-3' },
-      { name: 'Divino 4', min: 5220, max: 5420, image: 'divine-4' },
-      { name: 'Divino 5', min: 5420, max: 5620, image: 'divine-5' },
+      { name: 'Heraldo 1', min: 1, max: 154, image: 'seasonal-rank-herald-1' },
+      { name: 'Heraldo 2', min: 154, max: 308, image: 'seasonal-rank-herald-2' },
+      { name: 'Heraldo 3', min: 308, max: 462, image: 'seasonal-rank-herald-3' },
+      { name: 'Heraldo 4', min: 462, max: 616, image: 'seasonal-rank-herald-4' },
+      { name: 'Heraldo 5', min: 616, max: 770, image: 'seasonal-rank-herald-5' },
+      { name: 'Guardián 1', min: 770, max: 924, image: 'seasonal-rank-guardian-1' },
+      { name: 'Guardián 2', min: 924, max: 1078, image: 'seasonal-rank-guardian-2' },
+      { name: 'Guardián 3', min: 1078, max: 1232, image: 'seasonal-rank-guardian-3' },
+      { name: 'Guardián 4', min: 1232, max: 1386, image: 'seasonal-rank-guardian-4' },
+      { name: 'Guardián 5', min: 1386, max: 1540, image: 'seasonal-rank-guardian-5' },
+      { name: 'Cruzado 1', min: 1540, max: 1694, image: 'seasonal-rank-crusader-1' },
+      { name: 'Cruzado 2', min: 1694, max: 1848, image: 'seasonal-rank-crusader-2' },
+      { name: 'Cruzado 3', min: 1848, max: 2002, image: 'seasonal-rank-crusader-3' },
+      { name: 'Cruzado 4', min: 2002, max: 2156, image: 'seasonal-rank-crusader-4' },
+      { name: 'Cruzado 5', min: 2156, max: 2310, image: 'seasonal-rank-crusader-5' },
+      { name: 'Arconte 1', min: 2310, max: 2464, image: 'seasonal-rank-archon-1' },
+      { name: 'Arconte 2', min: 2464, max: 2618, image: 'seasonal-rank-archon-2' },
+      { name: 'Arconte 3', min: 2618, max: 2772, image: 'seasonal-rank-archon-3' },
+      { name: 'Arconte 4', min: 2772, max: 2926, image: 'seasonal-rank-archon-4' },
+      { name: 'Arconte 5', min: 2926, max: 3080, image: 'seasonal-rank-archon-5' },
+      { name: 'Leyenda 1', min: 3080, max: 3234, image: 'seasonal-rank-legend-1' },
+      { name: 'Leyenda 2', min: 3234, max: 3388, image: 'seasonal-rank-legend-2' },
+      { name: 'Leyenda 3', min: 3388, max: 3542, image: 'seasonal-rank-legend-3' },
+      { name: 'Leyenda 4', min: 3542, max: 3696, image: 'seasonal-rank-legend-4' },
+      { name: 'Leyenda 5', min: 3696, max: 3850, image: 'seasonal-rank-legend-5' },
+      { name: 'Antiguo 1', min: 3850, max: 4004, image: 'seasonal-rank-ancient-1' },
+      { name: 'Antiguo 2', min: 4004, max: 4158, image: 'seasonal-rank-ancient-2' },
+      { name: 'Antiguo 3', min: 4158, max: 4312, image: 'seasonal-rank-ancient-3' },
+      { name: 'Antiguo 4', min: 4312, max: 4466, image: 'seasonal-rank-ancient-4' },
+      { name: 'Antiguo 5', min: 4466, max: 4620, image: 'seasonal-rank-ancient-5' },
+      { name: 'Divino 1', min: 4620, max: 4820, image: 'seasonal-rank-divine-1' },
+      { name: 'Divino 2', min: 4820, max: 5020, image: 'seasonal-rank-divine-2' },
+      { name: 'Divino 3', min: 5020, max: 5220, image: 'seasonal-rank-divine-3' },
+      { name: 'Divino 4', min: 5220, max: 5420, image: 'seasonal-rank-divine-4' },
+      { name: 'Divino 5', min: 5420, max: 5620, image: 'seasonal-rank-divine-5' },
       { name: 'Inmortal', min: 5620, max: 8300, image: 'immortal' },
-      { name: 'Top 1000 Inmortal', min: 8300, max: 10000, image: 'immortal' },
-      { name: 'Top 100 Inmortal', min: 10000, max: 12000, image: 'immortal-top-100' },
-      { name: 'Top 10 Inmortal', min: 12000, max: Infinity, image: 'immortal-top-10' }
+      { name: 'Top 1000 Inmortal', min: 8300, max: 10000, image: 'seasonal-rank-immortal-top-100' },
+      { name: 'Top 100 Inmortal', min: 10000, max: 12000, image: 'seasonal-rank-immortal-top-100' },
+      { name: 'Top 10 Inmortal', min: 12000, max: Infinity, image: 'seasonal-rank-immortal-top-10' }
     ];
 
     const foundMedal = medalRanges.find(range => mmr >= range.min && mmr < range.max) || 
@@ -174,7 +174,7 @@ export class PlayerRegistrationComponent {
 
     return {
       medal: foundMedal.name,
-      medalImage: `https://cdn.cloudflare.steamstatic.com/apps/dota2/images/dota_react/rank_icons/${foundMedal.image}.png`
+      medalImage: `assets/medallas/${foundMedal.image}.png`
     };
   }
 

@@ -1,6 +1,8 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { Player } from 'src/app/modules/admin/models/jugador.model';
+import { Auth, onAuthStateChanged } from '@angular/fire/auth';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-lobby',
@@ -8,6 +10,9 @@ import { Player } from 'src/app/modules/admin/models/jugador.model';
   styleUrls: ['./lobby.component.css']
 })
 export class LobbyComponent {
+  private authSubscription: Subscription = new Subscription();
+  currentUserUid: string | null = null;
+
   player: Player = {
     uid: '8D76ITmh2dcjDj88VJW5vL7Eoqa2',
     avatar: 'https://cdn.dota2.com/apps/dota2/images/heroes/antimage_full.png',
@@ -66,7 +71,6 @@ export class LobbyComponent {
       secondaryRole: 'Soft Support',
       secondaryCategory: 'Tier 3'
     },
-    // Nuevos jugadores (3 mid Tier 1)
     {
       uid: '8D76ITmh2dcjDj88VJW5vL7Eoqa4',
       avatar: 'https://cdn.dota2.com/apps/dota2/images/heroes/puck_full.png',
@@ -112,8 +116,6 @@ export class LobbyComponent {
       secondaryRole: 'Carry (Safe Lane)',
       secondaryCategory: 'Tier 1'
     },
-    
-    // Otros jugadores para diversidad
     {
       uid: '8D76ITmh2dcjDj88VJW5vL7Eoqa7',
       avatar: 'https://cdn.dota2.com/apps/dota2/images/heroes/axe_full.png',
@@ -203,10 +205,33 @@ export class LobbyComponent {
   radiantTeam: Player[] = [];
   direTeam: Player[] = [];
 
-  constructor(private router: Router) {}
+  constructor(private router: Router, private auth: Auth) {
+    this.setupAuthListener();
+  }
+
+  private setupAuthListener(): void {
+    onAuthStateChanged(this.auth, (user) => {
+      console.log('AUTH_STATE_CHANGED - USUARIO RECIBIDO:', user);
+      this.currentUserUid = user?.uid || null;
+      console.log('CURRENT_USER_UID ACTUALIZADO:', this.currentUserUid);
+      
+      if (!this.currentUserUid) {
+        console.log('🚨 [LOBBY] REDIRIGIENDO A LOGIN');
+        this.router.navigate(['/login']);
+      } else {
+        console.log('🔄 [LOBBY] USUARIO AUTENTICADO');
+        // Actualizar el UID del jugador principal si es necesario
+        this.player.uid = this.currentUserUid;
+      }
+    });
+  }
 
   ngOnInit(): void {
     this.applyFilters();
+  }
+
+  ngOnDestroy(): void {
+    this.authSubscription.unsubscribe();
   }
 
   // Métodos para el perfil del jugador
@@ -243,7 +268,6 @@ export class LobbyComponent {
   }
 
   refreshPlayers(): void {
-    // En una aplicación real, aquí harías una llamada al servidor
     console.log('Refrescando lista de jugadores...');
   }
 
@@ -286,19 +310,15 @@ export class LobbyComponent {
   }
 
   viewProfile(player: Player): void {
-    // Navegar al perfil del jugador usando idDota
     console.log('Ver perfil de:', player.idDota);
-    // this.router.navigate(['/profile', player.idDota]);
   }
 
   addToTeam(player: Player): void {
-    // Verificar si ya está en algún equipo
     if (this.radiantTeam.some(p => p.idDota === player.idDota) || 
         this.direTeam.some(p => p.idDota === player.idDota)) {
       return;
     }
 
-    // Agregar al equipo con menos jugadores
     if (this.radiantTeam.length <= this.direTeam.length) {
       this.radiantTeam.push(player);
     } else {
@@ -312,7 +332,6 @@ export class LobbyComponent {
   }
 
   balanceTeams(): void {
-    // Algoritmo simple para balancear equipos por MMR
     const allPlayers = [...this.radiantTeam, ...this.direTeam];
     allPlayers.sort((a, b) => b.mmr - a.mmr);
     
@@ -331,13 +350,11 @@ export class LobbyComponent {
   randomizeTeams(): void {
     const allPlayers = [...this.radiantTeam, ...this.direTeam];
     
-    // Mezclar aleatoriamente
     for (let i = allPlayers.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
       [allPlayers[i], allPlayers[j]] = [allPlayers[j], allPlayers[i]];
     }
     
-    // Dividir en dos equipos
     const half = Math.ceil(allPlayers.length / 2);
     this.radiantTeam = allPlayers.slice(0, half);
     this.direTeam = allPlayers.slice(half);
@@ -350,20 +367,17 @@ export class LobbyComponent {
   }
 
   canStartMatch(): boolean {
-    // Requerimos al menos 2 jugadores en cada equipo
     return this.radiantTeam.length >= 2 && this.direTeam.length >= 2;
   }
 
   startMatch(): void {
     if (!this.canStartMatch()) return;
     
-    // Enviar los equipos al servidor
     console.log('Iniciando partida con equipos:', {
       radiant: this.radiantTeam,
       dire: this.direTeam
     });
     
-    // Navegar a la pantalla de partida
     this.router.navigate(['/match']);
   }
 }
