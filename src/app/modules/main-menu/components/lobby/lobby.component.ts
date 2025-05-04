@@ -1,8 +1,9 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
-import { Player } from 'src/app/modules/admin/models/jugador.model';
-import { Auth, onAuthStateChanged } from '@angular/fire/auth';
 import { Subscription } from 'rxjs';
+import { Player } from 'src/app/modules/admin/models/jugador.model';
+import { Auth, onAuthStateChanged, signOut } from '@angular/fire/auth';
+import { PlayerService } from 'src/app/modules/admin/services/player.service';
 
 @Component({
   selector: 'app-lobby',
@@ -10,265 +11,193 @@ import { Subscription } from 'rxjs';
   styleUrls: ['./lobby.component.css']
 })
 export class LobbyComponent {
+  
   private authSubscription: Subscription = new Subscription();
+  private playersSub!: Subscription;
   currentUserUid: string | null = null;
+  isLoading = true;
+  errorMessage = '';
 
   player: Player = {
-    uid: '8D76ITmh2dcjDj88VJW5vL7Eoqa2',
-    avatar: 'https://cdn.dota2.com/apps/dota2/images/heroes/antimage_full.png',
-    nick: 'AntiMagePro',
-    idDota: 123456789,
-    category: 'Tier 2',
-    mmr: 9300,
-    medal: 'Immortal',
-    medalImage: 'https://hawk.live/images/dota-2-seasonal-ranking-medals/seasonal-rank-immortal.png',
-    rating: 87,
+    uid: '',
+    avatar: '',
+    nick: '',
+    idDota: 0,
+    category: '',
+    mmr: 0,
+    medal: '',
+    medalImage: '',
+    rating: 0,
     status: 'Activo',
-    role: 'Carry (Safe Lane)',
-    secondaryRole: 'Mid Lane',
-    secondaryCategory: 'Tier 3',
-    observations: 'Jugador especializado en late game. Excelente farmeo y manejo de objetivos.',
+    role: '',
+    secondaryRole: '',
+    secondaryCategory: '',
+    observations: '',
     socialMedia: {
-      twitch: 'https://twitch.tv',
-      youtube: 'https://youtube.com',
-      kick: 'https://kick.com',
-      twitter: 'https://x.com',
-      discord: 'https://discord.com',
-      instagram: 'https://www.instagram.com/',
-      facebook: 'https://www.facebook.com/',
-      tiktok: 'https://www.tiktok.com/'
-    }
+      twitch: '',
+      youtube: '',
+      kick: '',
+      twitter: '',
+      discord: '',
+      instagram: '',
+      facebook: '',
+      tiktok: ''
+    },
+    matches: []
   };
 
-  availablePlayers: Player[] = [
-    {
-      uid: '8D76ITmh2dcjDj88VJW5v22L7Eoqa2',
-      avatar: 'https://cdn.dota2.com/apps/dota2/images/heroes/nevermore_full.png',
-      nick: 'serranogamer',
-      idDota: 987654321,
-      mmr: 8500,
-      medal: 'Immortal',
-      medalImage: 'https://hawk.live/images/dota-2-seasonal-ranking-medals/seasonal-rank-immortal.png',
-      category: 'Tier 1',
-      role: 'Mid Lane',
-      status: 'Activo',
-      rating: 85,
-      secondaryRole: 'Carry (Safe Lane)',
-      secondaryCategory: 'Tier 1'
-    },
-    {
-      uid: '8D76ITmh2dcjDj88VJW5vL7Eoqa3',
-      avatar: 'https://cdn.dota2.com/apps/dota2/images/heroes/crystal_maiden_full.png',
-      nick: 'Stingerdota',
-      idDota: 876543219,
-      mmr: 4500,
-      medal: 'Ancient',
-      medalImage: 'https://hawk.live/images/dota-2-seasonal-ranking-medals/seasonal-rank-ancient-5.png',
-      category: 'Tier 3',
-      role: 'Hard Support',
-      status: 'Activo',
-      rating: 45,
-      secondaryRole: 'Soft Support',
-      secondaryCategory: 'Tier 3'
-    },
-    {
-      uid: '8D76ITmh2dcjDj88VJW5vL7Eoqa4',
-      avatar: 'https://cdn.dota2.com/apps/dota2/images/heroes/puck_full.png',
-      nick: 'sideral',
-      idDota: 112233445,
-      mmr: 9200,
-      medal: 'Immortal',
-      medalImage: 'https://hawk.live/images/dota-2-seasonal-ranking-medals/seasonal-rank-immortal.png',
-      category: 'Tier 1',
-      role: 'Mid Lane',
-      status: 'Activo',
-      rating: 89,
-      secondaryRole: 'Offlane',
-      secondaryCategory: 'Tier 2'
-    },
-    {
-      uid: '8D76ITmh2dcjDj88VJW5vL7Eoqa5',
-      avatar: 'https://cdn.dota2.com/apps/dota2/images/heroes/storm_spirit_full.png',
-      nick: 'noah_god',
-      idDota: 556677889,
-      mmr: 8900,
-      medal: 'Immortal',
-      medalImage: 'https://hawk.live/images/dota-2-seasonal-ranking-medals/seasonal-rank-immortal.png',
-      category: 'Tier 1',
-      role: 'Mid Lane',
-      status: 'Activo',
-      rating: 87,
-      secondaryRole: 'Carry (Safe Lane)',
-      secondaryCategory: 'Tier 2'
-    },
-    {
-      uid: '8D76ITmh2dcjDj88VJW5vL7Eoqa6',
-      avatar: 'https://cdn.dota2.com/apps/dota2/images/heroes/templar_assassin_full.png',
-      nick: 'Leostyle',
-      idDota: 334455667,
-      mmr: 9100,
-      medal: 'Immortal',
-      medalImage: 'https://hawk.live/images/dota-2-seasonal-ranking-medals/seasonal-rank-immortal.png',
-      category: 'Tier 1',
-      role: 'Mid Lane',
-      status: 'Activo',
-      rating: 88,
-      secondaryRole: 'Carry (Safe Lane)',
-      secondaryCategory: 'Tier 1'
-    },
-    {
-      uid: '8D76ITmh2dcjDj88VJW5vL7Eoqa7',
-      avatar: 'https://cdn.dota2.com/apps/dota2/images/heroes/axe_full.png',
-      nick: 'Wisper',
-      idDota: 998877665,
-      mmr: 7800,
-      medal: 'Divine',
-      medalImage: 'https://hawk.live/images/dota-2-seasonal-ranking-medals/seasonal-rank-divine-5.png',
-      category: 'Tier 2',
-      role: 'Offlane',
-      status: 'Activo',
-      rating: 78,
-      secondaryRole: 'Mid Lane',
-      secondaryCategory: 'Tier 3'
-    },
-    {
-      uid: '8D76ITmh2dcjDj88VJW5vL7Eoqa8',
-      avatar: 'https://cdn.dota2.com/apps/dota2/images/heroes/witch_doctor_full.png',
-      nick: 'Scofield',
-      idDota: 443322110,
-      mmr: 5200,
-      medal: 'Legend',
-      medalImage: 'https://hawk.live/images/dota-2-seasonal-ranking-medals/seasonal-rank-legend-5.png',
-      category: 'Tier 3',
-      role: 'Soft Support',
-      status: 'Activo',
-      rating: 52,
-      secondaryRole: 'Hard Support',
-      secondaryCategory: 'Tier 3'
-    },
-    {
-      uid: '8D76ITmh2dcjDj88VJW5vL7Eoqa9',
-      avatar: 'https://cdn.dota2.com/apps/dota2/images/heroes/juggernaut_full.png',
-      nick: 'vanngg',
-      idDota: 778899001,
-      mmr: 8300,
-      medal: 'Immortal',
-      medalImage: 'https://hawk.live/images/dota-2-seasonal-ranking-medals/seasonal-rank-immortal.png',
-      category: 'Tier 1',
-      role: 'Carry (Safe Lane)',
-      status: 'Activo',
-      rating: 83,
-      secondaryRole: 'Mid Lane',
-      secondaryCategory: 'Tier 2'
-    },
-    {
-      uid: '8D76ITmh2dcjDj88VJW5vL7Eoqa10',
-      avatar: 'https://cdn.dota2.com/apps/dota2/images/heroes/lion_full.png',
-      nick: 'Gelatita',
-      idDota: 665544332,
-      mmr: 1800,
-      medal: 'Ancient 1',
-      medalImage: 'https://hawk.live/images/dota-2-seasonal-ranking-medals/seasonal-rank-ancient-1.png',
-      category: 'Tier 4',
-      role: 'Hard Support',
-      status: 'Activo',
-      rating: 48,
-      secondaryRole: 'Soft Support',
-      secondaryCategory: 'Tier 3'
-    },
-    {
-      uid: '8D76ITmh2dcjDj88VJW5vL7Eoqa11',
-      avatar: 'https://cdn.dota2.com/apps/dota2/images/heroes/phantom_assassin_full.png',
-      nick: 'elmacarius',
-      idDota: 229988776,
-      mmr: 8100,
-      medal: 'Divine',
-      medalImage: 'https://hawk.live/images/dota-2-seasonal-ranking-medals/seasonal-rank-divine-5.png',
-      category: 'Tier 2',
-      role: 'Carry (Safe Lane)',
-      status: 'Activo',
-      rating: 81,
-      secondaryRole: 'Mid Lane',
-      secondaryCategory: 'Tier 2'
-    }
-  ];
-
-  // Filtros
-  categories: string[] = ['Tier 1', 'Tier 2', 'Tier 3', 'Tier 4'];
+  availablePlayers: Player[] = [];
+  categories: string[] = [];
   roles: string[] = ['Carry (Safe Lane)', 'Mid Lane', 'Offlane', 'Hard Support', 'Soft Support'];
   selectedCategory: string = 'all';
   selectedRole: string = 'all';
-  filteredCategories: string[] = this.categories;
+  filteredCategories: string[] = [];
 
-  // Jugadores seleccionados y equipos
   selectedPlayers: Player[] = [];
   radiantTeam: Player[] = [];
   direTeam: Player[] = [];
 
-  constructor(private router: Router, private auth: Auth) {
+  constructor(
+    private router: Router,
+    private auth: Auth,
+    private playerService: PlayerService
+  ) {}
+
+  ngOnInit(): void {
     this.setupAuthListener();
   }
 
   private setupAuthListener(): void {
-    onAuthStateChanged(this.auth, (user) => {
-      console.log('AUTH_STATE_CHANGED - USUARIO RECIBIDO:', user);
+    this.authSubscription = new Subscription();
+    
+    const unsubscribe = onAuthStateChanged(this.auth, (user) => {
+      console.log('[LOBBY] Auth state changed:', user ? 'Authenticated' : 'Not authenticated');
       this.currentUserUid = user?.uid || null;
-      console.log('CURRENT_USER_UID ACTUALIZADO:', this.currentUserUid);
       
-      if (!this.currentUserUid) {
-        console.log('🚨 [LOBBY] REDIRIGIENDO A LOGIN');
-        this.router.navigate(['/login']);
+      if (user) {
+        this.loadPlayerData(user.uid);
+        this.loadAvailablePlayers();
       } else {
-        console.log('🔄 [LOBBY] USUARIO AUTENTICADO');
-        // Actualizar el UID del jugador principal si es necesario
-        this.player.uid = this.currentUserUid;
+        this.handleUnauthenticated();
+      }
+    });
+    
+    this.authSubscription.add({ unsubscribe });
+  }
+
+  private loadPlayerData(uid: string): void {
+    this.isLoading = true;
+    this.playerService.getPlayer(uid).subscribe({
+      next: (playerData) => {
+        if (playerData) {
+          this.player = playerData;
+          this.isLoading = false;
+        } else {
+          this.errorMessage = 'Perfil no encontrado';
+          this.isLoading = false;
+          this.router.navigate(['/complete-profile']);
+        }
+      },
+      error: (err) => {
+        console.error('[LOBBY] Error loading player:', err);
+        this.errorMessage = 'Error al cargar perfil';
+        this.isLoading = false;
       }
     });
   }
 
-  ngOnInit(): void {
-    this.applyFilters();
+  private loadAvailablePlayers(): void {
+    this.playersSub = this.playerService.getPlayers().subscribe({
+      next: (players) => {
+        // Filtrar jugadores activos incluyendo al usuario actual si está activo
+        this.availablePlayers = players.filter(p => 
+          p.status === 'Activo' && 
+          (p.uid !== this.currentUserUid || this.player.status === 'Activo')
+        );
+        
+        // Extraer categorías únicas de todos los jugadores (no solo activos)
+        const allCategories = new Set(players.map(p => p.category).filter(c => c));
+        this.categories = ['Tier1', 'Tier2', 'Tier3', 'Tier4'];
+        console.log('[LOBBY] Available players:', this.categories);
+        
+        // Mostrar todas las categorías siempre
+        this.filteredCategories = this.categories;
+        console.log('[LOBBY] Filtered categories:', this.filteredCategories);
+        this.isLoading = false;
+      },
+      error: (err) => {
+        console.error('[LOBBY] Error loading players:', err);
+        this.errorMessage = 'Error al cargar jugadores';
+        this.isLoading = false;
+      }
+    });
   }
 
-  ngOnDestroy(): void {
-    this.authSubscription.unsubscribe();
-  }
-
-  // Métodos para el perfil del jugador
-  toggleStatus(): void {
-    this.player.status = this.player.status === 'Activo' ? 'Inactivo' : 'Activo';
-  }
-
-  getStatusClass(): string {
-    switch(this.player.status.toLowerCase()) {
-      case 'activo': return 'status-activo';
-      case 'inactivo': return 'status-inactivo';
-      case 'suspendido': return 'status-suspendido';
-      default: return '';
-    }
-  }
-
-  logout(): void {
+  private handleUnauthenticated(): void {
+    this.errorMessage = 'Debes iniciar sesión';
+    this.isLoading = false;
     this.router.navigate(['/login']);
   }
 
-  // Métodos para el lobby
-  applyFilters(): void {
-    if (this.selectedCategory === 'all' && this.selectedRole === 'all') {
-      this.filteredCategories = this.categories;
-    } else {
-      this.filteredCategories = this.categories.filter(cat => {
-        const players = this.getPlayersByCategory(cat);
-        if (this.selectedRole !== 'all') {
-          return players.some(p => p.role === this.selectedRole);
-        }
-        return players.length > 0;
-      });
+  toggleStatus(): void {
+    if (!this.player.uid) return;
+    
+    const newStatus = this.player.status === 'Activo' ? 'Inactivo' : 'Activo';
+    const updateSub = this.playerService.updatePlayer(this.player.uid, { status: newStatus }).subscribe({
+      next: () => {
+        this.player.status = newStatus;
+        this.loadAvailablePlayers(); // Refresh the player list
+        updateSub.unsubscribe();
+      },
+      error: (err) => {
+        console.error('[LOBBY] Error updating status:', err);
+        updateSub.unsubscribe();
+      }
+    });
+  }
+
+  getStatusClass(): string {
+    const status = this.player.status.toLowerCase();
+    return status === 'activo' ? 'status-activo' : 
+           status === 'inactivo' ? 'status-inactivo' : 
+           status === 'suspendido' ? 'status-suspendido' : '';
+  }
+
+  async logout(): Promise<void> {
+    try {
+      // Actualizar el estado a "Inactivo" antes de cerrar sesión
+      if (this.player.uid) {
+        await new Promise<void>((resolve, reject) => {
+          const updateSub = this.playerService.updatePlayer(this.player.uid, { status: 'Inactivo' })
+            .subscribe({
+              next: () => {
+                updateSub.unsubscribe();
+                resolve();
+              },
+              error: (err) => {
+                updateSub.unsubscribe();
+                reject(err);
+              }
+            });
+        });
+      }
+      
+      // Cerrar sesión
+      await signOut(this.auth);
+      this.router.navigate(['/login']);
+    } catch (error) {
+      console.error('[LOBBY] Logout error:', error);
     }
   }
 
+  // Lobby methods
+  applyFilters(): void {
+    // Mostrar todas las categorías siempre
+    this.filteredCategories = this.categories;
+  }
+
   refreshPlayers(): void {
-    console.log('Refrescando lista de jugadores...');
+    this.loadAvailablePlayers();
   }
 
   getPlayersByCategory(category: string): Player[] {
@@ -286,12 +215,10 @@ export class LobbyComponent {
   }
 
   getPlayerStatusClass(player: Player): string {
-    switch(player.status?.toLowerCase()) {
-      case 'activo': return 'status-activo';
-      case 'inactivo': return 'status-inactivo';
-      case 'suspendido': return 'status-suspendido';
-      default: return 'status-activo';
-    }
+    const status = player.status?.toLowerCase();
+    return status === 'activo' ? 'status-activo' : 
+           status === 'inactivo' ? 'status-inactivo' : 
+           status === 'suspendido' ? 'status-suspendido' : '';
   }
 
   toggleSelectPlayer(player: Player): void {
@@ -310,12 +237,12 @@ export class LobbyComponent {
   }
 
   viewProfile(player: Player): void {
-    console.log('Ver perfil de:', player.idDota);
+    console.log('View profile:', player.uid);
   }
 
   addToTeam(player: Player): void {
-    if (this.radiantTeam.some(p => p.idDota === player.idDota) || 
-        this.direTeam.some(p => p.idDota === player.idDota)) {
+    if (this.radiantTeam.some(p => p.uid === player.uid) || 
+        this.direTeam.some(p => p.uid === player.uid)) {
       return;
     }
 
@@ -373,11 +300,18 @@ export class LobbyComponent {
   startMatch(): void {
     if (!this.canStartMatch()) return;
     
-    console.log('Iniciando partida con equipos:', {
+    console.log('Starting match with teams:', {
       radiant: this.radiantTeam,
       dire: this.direTeam
     });
     
     this.router.navigate(['/match']);
+  }
+
+  ngOnDestroy(): void {
+    this.authSubscription.unsubscribe();
+    if (this.playersSub) {
+      this.playersSub.unsubscribe();
+    }
   }
 }

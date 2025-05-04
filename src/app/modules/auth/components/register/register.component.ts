@@ -152,7 +152,7 @@ export class RegisterComponent {
       this.showSuccess('¡Registro exitoso! Hemos enviado un correo de verificación');
       
       // Redirigir a página de espera de verificación
-      this.router.navigate(['/waiting-verification'], { 
+      this.router.navigate(['/verificacion'], { 
         state: { 
           email: email,
           justRegistered: true

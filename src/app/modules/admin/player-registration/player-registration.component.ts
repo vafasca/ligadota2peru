@@ -15,7 +15,7 @@ import { Auth, onAuthStateChanged  } from '@angular/fire/auth';
 export class PlayerRegistrationComponent {
   private subscription: Subscription = new Subscription();
   isLoading = false;
-  selectedAvatar: string | ArrayBuffer = 'https://placehold.co/400';
+  selectedAvatar: string | ArrayBuffer = 'assets/medallas/profile_default.png';
   players: Player[] = [];
   currentUserUid: string | null = null;
 

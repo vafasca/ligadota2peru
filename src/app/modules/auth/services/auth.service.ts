@@ -34,7 +34,7 @@ export class AuthService {
       if (user) {
         console.log('[Auth] Usuario autenticado:', user.email);
         if (!user.emailVerified && !this.isWaitingVerificationPage()) {
-          this.router.navigate(['/waiting-verification'], {
+          this.router.navigate(['/verificacion'], {
             state: { email: user.email }
           });
         }
@@ -45,7 +45,7 @@ export class AuthService {
   }
 
   private isWaitingVerificationPage(): boolean {
-    return this.router.url.includes('waiting-verification');
+    return this.router.url.includes('verificacion');
   }
 
   // Obtiene el UID del usuario actual de forma sincrónica

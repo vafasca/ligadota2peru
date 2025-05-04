@@ -5,7 +5,6 @@ import { Player } from 'src/app/modules/admin/models/jugador.model';
 import { Match } from 'src/app/modules/admin/models/match.model';
 import { PlayerService } from 'src/app/modules/admin/services/player.service';
 import { AuthService } from 'src/app/modules/auth/services/auth.service';
-import { Auth, onAuthStateChanged, signOut  } from '@angular/fire/auth';
 
 @Component({
   selector: 'app-player-profile',
@@ -16,6 +15,7 @@ export class PlayerProfileComponent {
   @ViewChild('matchesContainer') matchesContainer!: ElementRef;
   showAllMatches = false;
   
+  // Datos del jugador inicializados vacíos
   player: Player = {
     uid: '',
     avatar: '',
@@ -26,7 +26,7 @@ export class PlayerProfileComponent {
     medal: '',
     medalImage: '',
     rating: 0,
-    status: 'Activo',
+    status: 'Activo', // Valor por defecto
     role: '',
     secondaryRole: '',
     secondaryCategory: '',
@@ -55,57 +55,38 @@ export class PlayerProfileComponent {
 
   isLoading = true;
   errorMessage = '';
-  private authSubscription: Subscription = new Subscription();
+  private authSub!: Subscription;
   private playerSub!: Subscription;
   private matchesSub!: Subscription;
-  currentUserUid: string | null = null;
 
   constructor(
     private router: Router,
     private playerService: PlayerService,
-    private auth: Auth
+    private authService: AuthService
   ) {}
 
   ngOnInit(): void {
     this.setupAuthListener();
-    this.setupBeforeUnloadListener();
+  }
+
+  ngOnDestroy(): void {
+    this.cleanupSubscriptions();
   }
 
   private setupAuthListener(): void {
-    this.authSubscription = new Subscription();
-    
-    const unsubscribe = onAuthStateChanged(this.auth, (user) => {
-      console.log('[PROFILE] Estado de autenticación cambiado:', user ? 'Autenticado' : 'No autenticado');
-      this.currentUserUid = user?.uid || null;
-      
-      if (user) {
-        console.log('[PROFILE] Detalles del usuario:', {
-          uid: user.uid,
-          email: user.email
-        });
-        this.loadPlayerData(user.uid);
-      } else {
-        console.log('[PROFILE] No hay usuario autenticado');
+    this.authSub = this.authService.currentUser$.subscribe({
+      next: (user) => {
+        if (user?.uid) {
+          this.loadPlayerData(user.uid);
+        } else {
+          this.handleUnauthenticated();
+        }
+      },
+      error: (err) => {
+        console.error('Error en auth listener:', err);
         this.handleUnauthenticated();
       }
     });
-    
-    this.authSubscription.add({ unsubscribe });
-  }
-
-  private setupBeforeUnloadListener(): void {
-    window.addEventListener('beforeunload', () => {
-      if (this.auth.currentUser) {
-        // Opcional: Enviar señal al backend para registrar cierre
-        this.cleanupBeforeUnload();
-      }
-    });
-  }
-
-  private cleanupBeforeUnload(): void {
-    // Limpiar datos sensibles del localStorage/sessionStorage
-    localStorage.removeItem('firebase:authUser');
-    sessionStorage.clear();
   }
 
   private loadPlayerData(uid: string): void {
@@ -116,17 +97,16 @@ export class PlayerProfileComponent {
       next: (playerData) => {
         if (playerData) {
           this.player = playerData;
-          console.log('[PROFILE] Datos del jugador cargados:', this.player);
+          console.log('Datos del jugador cargados:', this.player);
           this.loadPlayerMatches(uid);
         } else {
           this.errorMessage = 'Perfil no encontrado. Completa tu registro.';
           this.isLoading = false;
-          console.log('[PROFILE] Redirigiendo a complete-profile');
           this.router.navigate(['/complete-profile']);
         }
       },
       error: (err) => {
-        console.error('[PROFILE] Error cargando jugador:', err);
+        console.error('Error cargando jugador:', err);
         this.errorMessage = 'Error al cargar perfil. Intenta nuevamente.';
         this.isLoading = false;
       }
@@ -140,12 +120,11 @@ export class PlayerProfileComponent {
         this.player.matches = matches;
         this.calculateStats();
         this.isLoading = false;
-        console.log('[PROFILE] Partidas cargadas:', matches.length);
       },
       error: (err) => {
-        console.error('[PROFILE] Error cargando partidas:', err);
+        console.error('Error cargando partidas:', err);
         this.isLoading = false;
-        this.calculateStats();
+        this.calculateStats(); // Mostrar stats aunque falle la carga
       }
     });
   }
@@ -153,11 +132,8 @@ export class PlayerProfileComponent {
   private handleUnauthenticated(): void {
     this.errorMessage = 'Debes iniciar sesión para ver este perfil';
     this.isLoading = false;
-    console.log('[PROFILE] Redirigiendo a login');
     setTimeout(() => {
-      this.router.navigate(['/login']).then(() => {
-        window.location.reload(); // Limpia el estado de la aplicación
-      });
+      this.router.navigate(['/login']);
     }, 1500);
   }
 
@@ -169,7 +145,6 @@ export class PlayerProfileComponent {
       ? Math.round((this.stats.wins / this.stats.totalMatches) * 100) 
       : 0;
     this.stats.avgKDA = this.calculateAvgKDA();
-    console.log('[PROFILE] Estadísticas calculadas:', this.stats);
   }
 
   private calculateAvgKDA(): string {
@@ -190,30 +165,28 @@ export class PlayerProfileComponent {
     if (!this.player.uid) return;
     
     const newStatus = this.player.status === 'Activo' ? 'Inactivo' : 'Activo';
-    console.log('[PROFILE] Cambiando estado a:', newStatus);
-    
     const updateSub = this.playerService.updatePlayer(this.player.uid, { status: newStatus }).subscribe({
       next: () => {
         this.player.status = newStatus;
-        console.log('[PROFILE] Estado actualizado correctamente');
         updateSub.unsubscribe();
       },
       error: (err) => {
-        console.error('[PROFILE] Error al actualizar estado:', err);
+        console.error('Error al actualizar estado:', err);
         updateSub.unsubscribe();
       }
     });
   }
 
-  get statusClass(): string {
-    const status = this.player.status.toLowerCase();
-    return status === 'activo' ? 'status-activo' : 
-           status === 'inactivo' ? 'status-inactivo' : 
-           status === 'suspendido' ? 'status-suspendido' : '';
+  getStatusClass(): string {
+    switch(this.player.status.toLowerCase()) {
+      case 'activo': return 'status-activo';
+      case 'inactivo': return 'status-inactivo';
+      case 'suspendido': return 'status-suspendido';
+      default: return '';
+    }
   }
 
   toggleMatches(): void {
-    console.log('[PROFILE] Alternando visualización de partidas');
     if (this.showAllMatches) {
       this.matchesContainer.nativeElement.scrollTo({
         top: 0,
@@ -229,66 +202,33 @@ export class PlayerProfileComponent {
   }
 
   async logout(): Promise<void> {
-    console.log('[PROFILE] Cerrando sesión...');
     try {
-      await signOut(this.auth);
-      console.log('[PROFILE] Sesión cerrada en Firebase');
+      // Actualizar el estado a "Inactivo" antes de cerrar sesión
+      if (this.player.uid) {
+        await new Promise<void>((resolve, reject) => {
+          const updateSub = this.playerService.updatePlayer(this.player.uid, { status: 'Inactivo' })
+            .subscribe({
+              next: () => {
+                updateSub.unsubscribe();
+                resolve();
+              },
+              error: (err) => {
+                updateSub.unsubscribe();
+                reject(err);
+              }
+            });
+        });
+      }
       
-      this.clearLocalData();
-      
-      await this.router.navigate(['/login']);
-      window.location.reload(); // Limpieza completa
+      // Cerrar sesión usando el AuthService
+      await this.authService.logout();
+      this.router.navigate(['/login']);
     } catch (error) {
-      console.error('[PROFILE] Error al cerrar sesión:', error);
+      console.error('Logout error:', error);
     }
   }
 
-  private clearLocalData(): void {
-    // Resetear todas las propiedades del componente
-    this.player = {
-      uid: '',
-      avatar: '',
-      nick: '',
-      idDota: 0,
-      category: '',
-      mmr: 0,
-      medal: '',
-      medalImage: '',
-      rating: 0,
-      status: 'Activo',
-      role: '',
-      secondaryRole: '',
-      secondaryCategory: '',
-      observations: '',
-      socialMedia: {
-        twitch: '',
-        youtube: '',
-        kick: '',
-        twitter: '',
-        discord: '',
-        instagram: '',
-        facebook: '',
-        tiktok: ''
-      },
-      matches: []
-    };
-
-    this.matches = [];
-    this.stats = {
-      totalMatches: 0,
-      wins: 0,
-      losses: 0,
-      winRate: 0,
-      avgKDA: '0/0/0'
-    };
-
-    // Limpiar almacenamiento local
-    localStorage.removeItem('firebase:authUser');
-    sessionStorage.clear();
-  }
-
   goToLobby(): void {
-    console.log('[PROFILE] Navegando al lobby');
     this.router.navigate(['/lobby']);
   }
 
@@ -296,13 +236,8 @@ export class PlayerProfileComponent {
     return this.showAllMatches ? this.matches : this.matches.slice(0, 3);
   }
 
-  ngOnDestroy(): void {
-    this.authSubscription.unsubscribe();
-    this.cleanupSubscriptions();
-    window.removeEventListener('beforeunload', () => {});
-  }
-
   private cleanupSubscriptions(): void {
+    if (this.authSub) this.authSub.unsubscribe();
     if (this.playerSub) this.playerSub.unsubscribe();
     if (this.matchesSub) this.matchesSub.unsubscribe();
   }
