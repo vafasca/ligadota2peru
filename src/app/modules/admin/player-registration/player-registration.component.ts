@@ -163,7 +163,7 @@ export class PlayerRegistrationComponent {
       { name: 'Divino 3', min: 5020, max: 5220, image: 'seasonal-rank-divine-3' },
       { name: 'Divino 4', min: 5220, max: 5420, image: 'seasonal-rank-divine-4' },
       { name: 'Divino 5', min: 5420, max: 5620, image: 'seasonal-rank-divine-5' },
-      { name: 'Inmortal', min: 5620, max: 8300, image: 'immortal' },
+      { name: 'Inmortal', min: 5620, max: 8300, image: 'seasonal-rank-immortal' },
       { name: 'Top 1000 Inmortal', min: 8300, max: 10000, image: 'seasonal-rank-immortal-top-100' },
       { name: 'Top 100 Inmortal', min: 10000, max: 12000, image: 'seasonal-rank-immortal-top-100' },
       { name: 'Top 10 Inmortal', min: 12000, max: Infinity, image: 'seasonal-rank-immortal-top-10' }

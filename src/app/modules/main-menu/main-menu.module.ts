@@ -5,6 +5,7 @@ import { MainMenuRoutingModule } from './main-menu-routing.module';
 import { MainMenuComponent } from './main-menu.component';
 import { LobbyComponent } from './components/lobby/lobby.component';
 import { FormsModule } from '@angular/forms';
+import { DragDropModule } from '@angular/cdk/drag-drop';
 
 
 @NgModule({
@@ -15,7 +16,8 @@ import { FormsModule } from '@angular/forms';
   imports: [
     CommonModule,
     MainMenuRoutingModule,
-    FormsModule
+    FormsModule,
+    DragDropModule
   ]
 })
 export class MainMenuModule { }

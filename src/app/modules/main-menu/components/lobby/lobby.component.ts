@@ -4,6 +4,7 @@ import { Subscription } from 'rxjs';
 import { Player } from 'src/app/modules/admin/models/jugador.model';
 import { Auth, onAuthStateChanged, signOut } from '@angular/fire/auth';
 import { PlayerService } from 'src/app/modules/admin/services/player.service';
+import { CdkDragDrop } from '@angular/cdk/drag-drop';
 
 @Component({
   selector: 'app-lobby',
@@ -11,7 +12,6 @@ import { PlayerService } from 'src/app/modules/admin/services/player.service';
   styleUrls: ['./lobby.component.css']
 })
 export class LobbyComponent {
-  
   private authSubscription: Subscription = new Subscription();
   private playersSub!: Subscription;
   currentUserUid: string | null = null;
@@ -46,16 +46,15 @@ export class LobbyComponent {
     matches: []
   };
 
+  // Variable para almacenar el rol temporal
+  tempRole: string = '';
+
   availablePlayers: Player[] = [];
   categories: string[] = [];
   roles: string[] = ['Carry (Safe Lane)', 'Mid Lane', 'Offlane', 'Hard Support', 'Soft Support'];
   selectedCategory: string = 'all';
   selectedRole: string = 'all';
   filteredCategories: string[] = [];
-
-  selectedPlayers: Player[] = [];
-  radiantTeam: Player[] = [];
-  direTeam: Player[] = [];
 
   constructor(
     private router: Router,
@@ -65,6 +64,25 @@ export class LobbyComponent {
 
   ngOnInit(): void {
     this.setupAuthListener();
+    // Al iniciar, cargamos el rol temporal si existe
+    this.loadTempRole();
+  }
+
+  private loadTempRole(): void {
+    const savedRole = sessionStorage.getItem('tempRole');
+    if (savedRole) {
+      this.tempRole = savedRole;
+    } else {
+      this.tempRole = this.player.role;
+    }
+  }
+
+  private saveTempRole(): void {
+    sessionStorage.setItem('tempRole', this.tempRole);
+  }
+
+  private clearTempRole(): void {
+    sessionStorage.removeItem('tempRole');
   }
 
   private setupAuthListener(): void {
@@ -91,6 +109,10 @@ export class LobbyComponent {
       next: (playerData) => {
         if (playerData) {
           this.player = playerData;
+          // Si no hay rol temporal, usamos el de la BD
+          if (!this.tempRole) {
+            this.tempRole = this.player.role;
+          }
           this.isLoading = false;
         } else {
           this.errorMessage = 'Perfil no encontrado';
@@ -109,20 +131,14 @@ export class LobbyComponent {
   private loadAvailablePlayers(): void {
     this.playersSub = this.playerService.getPlayers().subscribe({
       next: (players) => {
-        // Filtrar jugadores activos incluyendo al usuario actual si está activo
         this.availablePlayers = players.filter(p => 
           p.status === 'Activo' && 
           (p.uid !== this.currentUserUid || this.player.status === 'Activo')
         );
         
-        // Extraer categorías únicas de todos los jugadores (no solo activos)
         const allCategories = new Set(players.map(p => p.category).filter(c => c));
-        this.categories = ['Tier1', 'Tier2', 'Tier3', 'Tier4'];
-        console.log('[LOBBY] Available players:', this.categories);
-        
-        // Mostrar todas las categorías siempre
+        this.categories = ['Tier1', 'Tier2', 'Tier3', 'Tier4', 'Tier5'];
         this.filteredCategories = this.categories;
-        console.log('[LOBBY] Filtered categories:', this.filteredCategories);
         this.isLoading = false;
       },
       error: (err) => {
@@ -131,6 +147,17 @@ export class LobbyComponent {
         this.isLoading = false;
       }
     });
+  }
+
+  drop(event: CdkDragDrop<any>) {
+    if (event.previousContainer !== event.container) {
+      // Solo permitir mover al jugador a roles vacíos
+      if (!event.container.data.player) {
+        const newRole = event.container.data.role;
+        this.tempRole = newRole;
+        this.saveTempRole();
+      }
+    }
   }
 
   private handleUnauthenticated(): void {
@@ -146,7 +173,7 @@ export class LobbyComponent {
     const updateSub = this.playerService.updatePlayer(this.player.uid, { status: newStatus }).subscribe({
       next: () => {
         this.player.status = newStatus;
-        this.loadAvailablePlayers(); // Refresh the player list
+        this.loadAvailablePlayers();
         updateSub.unsubscribe();
       },
       error: (err) => {
@@ -165,7 +192,9 @@ export class LobbyComponent {
 
   async logout(): Promise<void> {
     try {
-      // Actualizar el estado a "Inactivo" antes de cerrar sesión
+      // Limpiar el rol temporal al cerrar sesión
+      this.clearTempRole();
+      
       if (this.player.uid) {
         await new Promise<void>((resolve, reject) => {
           const updateSub = this.playerService.updatePlayer(this.player.uid, { status: 'Inactivo' })
@@ -182,7 +211,6 @@ export class LobbyComponent {
         });
       }
       
-      // Cerrar sesión
       await signOut(this.auth);
       this.router.navigate(['/login']);
     } catch (error) {
@@ -190,9 +218,7 @@ export class LobbyComponent {
     }
   }
 
-  // Lobby methods
   applyFilters(): void {
-    // Mostrar todas las categorías siempre
     this.filteredCategories = this.categories;
   }
 
@@ -221,91 +247,8 @@ export class LobbyComponent {
            status === 'suspendido' ? 'status-suspendido' : '';
   }
 
-  toggleSelectPlayer(player: Player): void {
-    const index = this.selectedPlayers.findIndex(p => p.idDota === player.idDota);
-    if (index === -1) {
-      this.selectedPlayers.push(player);
-      this.addToTeam(player);
-    } else {
-      this.selectedPlayers.splice(index, 1);
-      this.removeFromTeam(player.idDota);
-    }
-  }
-
-  isSelected(player: Player): boolean {
-    return this.selectedPlayers.some(p => p.idDota === player.idDota);
-  }
-
   viewProfile(player: Player): void {
     console.log('View profile:', player.uid);
-  }
-
-  addToTeam(player: Player): void {
-    if (this.radiantTeam.some(p => p.uid === player.uid) || 
-        this.direTeam.some(p => p.uid === player.uid)) {
-      return;
-    }
-
-    if (this.radiantTeam.length <= this.direTeam.length) {
-      this.radiantTeam.push(player);
-    } else {
-      this.direTeam.push(player);
-    }
-  }
-
-  removeFromTeam(idDota: number): void {
-    this.radiantTeam = this.radiantTeam.filter(p => p.idDota !== idDota);
-    this.direTeam = this.direTeam.filter(p => p.idDota !== idDota);
-  }
-
-  balanceTeams(): void {
-    const allPlayers = [...this.radiantTeam, ...this.direTeam];
-    allPlayers.sort((a, b) => b.mmr - a.mmr);
-    
-    this.radiantTeam = [];
-    this.direTeam = [];
-    
-    allPlayers.forEach((player, index) => {
-      if (index % 2 === 0) {
-        this.radiantTeam.push(player);
-      } else {
-        this.direTeam.push(player);
-      }
-    });
-  }
-
-  randomizeTeams(): void {
-    const allPlayers = [...this.radiantTeam, ...this.direTeam];
-    
-    for (let i = allPlayers.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [allPlayers[i], allPlayers[j]] = [allPlayers[j], allPlayers[i]];
-    }
-    
-    const half = Math.ceil(allPlayers.length / 2);
-    this.radiantTeam = allPlayers.slice(0, half);
-    this.direTeam = allPlayers.slice(half);
-  }
-
-  clearTeams(): void {
-    this.radiantTeam = [];
-    this.direTeam = [];
-    this.selectedPlayers = [];
-  }
-
-  canStartMatch(): boolean {
-    return this.radiantTeam.length >= 2 && this.direTeam.length >= 2;
-  }
-
-  startMatch(): void {
-    if (!this.canStartMatch()) return;
-    
-    console.log('Starting match with teams:', {
-      radiant: this.radiantTeam,
-      dire: this.direTeam
-    });
-    
-    this.router.navigate(['/match']);
   }
 
   ngOnDestroy(): void {
