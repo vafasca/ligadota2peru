@@ -1,0 +1,27 @@
+<h2 mat-dialog-title>Añadir Jugador a {{data.role}}</h2>
+<mat-dialog-content>
+  <mat-selection-list [(ngModel)]="selectedPlayer">
+    <mat-list-option *ngFor="let player of data.players" [value]="player.uid">
+      <div class="player-option">
+        <img [src]="player.avatar" alt="Avatar" class="player-avatar">
+        <div class="player-info">
+          <div class="player-nick">{{player.nick}}</div>
+          <div class="player-mmr">{{player.mmr}} MMR</div>
+          <div class="player-category">{{player.category}}</div>
+        </div>
+      </div>
+    </mat-list-option>
+  </mat-selection-list>
+
+  <div *ngIf="data.players.length === 0" class="no-players">
+    No hay jugadores disponibles para este rol
+  </div>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-button (click)="onCancel()">Cancelar</button>
+  <button mat-raised-button color="primary" 
+          (click)="onAdd()" 
+          [disabled]="!selectedPlayer || data.players.length === 0">
+    Añadir Jugador
+  </button>
+</mat-dialog-actions>

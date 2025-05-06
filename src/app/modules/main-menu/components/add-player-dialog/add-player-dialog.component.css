@@ -1,0 +1,39 @@
+.player-option {
+    display: flex;
+    align-items: center;
+    padding: 8px 0;
+  }
+  
+  .player-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    margin-right: 12px;
+    border: 2px solid #e4ae0d;
+  }
+  
+  .player-info {
+    flex: 1;
+  }
+  
+  .player-nick {
+    font-weight: bold;
+    color: #e4ae0d;
+  }
+  
+  .player-mmr {
+    font-size: 12px;
+    color: #ccc;
+  }
+  
+  .player-category {
+    font-size: 12px;
+    color: #aaa;
+  }
+  
+  .no-players {
+    padding: 16px;
+    text-align: center;
+    color: #777;
+    font-style: italic;
+  }

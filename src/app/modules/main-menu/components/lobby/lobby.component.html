@@ -149,118 +149,52 @@
       </button>
     </div>
 
-    <!-- Sección de Mi Equipo con drag and drop -->
-    <div class="team-section">
-      <h2 class="section-title dota-font">MI EQUIPO</h2>
+    <!-- Sección de Mi Equipo -->
+    <div class="team-section" *ngIf="showTeamSection">
+      <div class="team-header">
+        <h2 class="section-title dota-font">MI EQUIPO</h2>
+        
+        <div class="team-info" *ngIf="userTeam">
+          <h3>{{userTeam.name}}</h3>
+          <p>{{userTeam.description}}</p>
+          <div class="team-meta">
+            <span class="team-category">{{userTeam.category}}</span>
+            <span class="team-players-count">{{userTeam.players.length}}/5 jugadores</span>
+          </div>
+        </div>
+        
+        <button *ngIf="isTeamCaptain && !userTeam" 
+                class="dota-button create-team-button" 
+                (click)="openCreateTeamDialog()">
+          Crear Equipo
+        </button>
+      </div>
+
       <div class="team-roles-container" cdkDropListGroup>
-        <!-- Carry (Safe Lane) -->
-        <div class="team-role-card" 
-             cdkDropList
-             [cdkDropListData]="{role: 'Carry (Safe Lane)', player: tempRole === 'Carry (Safe Lane)' ? player : null}"
-             (cdkDropListDropped)="drop($event)"
-             [class.active-role]="tempRole === 'Carry (Safe Lane)'">
-          <h3 class="role-title">Carry (Safe Lane)</h3>
-          <div class="role-player" 
-               *ngIf="tempRole === 'Carry (Safe Lane)'"
-               cdkDrag
-               [cdkDragData]="{role: 'Carry (Safe Lane)', player: player}">
+        <!-- Repetir para cada rol -->
+        <div class="team-role-card" *ngFor="let role of roles">
+          <h3 class="role-title">{{role}}</h3>
+          
+          <!-- Jugador asignado a este rol -->
+          <div class="role-player" *ngFor="let player of teamPlayers | filterByRole:role">
             <img [src]="player.avatar" alt="Avatar" class="team-player-avatar">
             <div class="team-player-info">
               <div class="team-player-nick">{{player.nick}}</div>
               <div class="team-player-mmr">{{player.mmr}} <img [src]="player.medalImage" class="team-player-medal"></div>
+              <div class="team-player-actions" *ngIf="isTeamCaptain && player.uid !== currentUserUid">
+                <button class="dota-button small-button remove-button" (click)="removePlayerFromTeam(player)">
+                  Remover
+                </button>
+              </div>
             </div>
           </div>
-          <div class="empty-role" *ngIf="tempRole !== 'Carry (Safe Lane)'">
-            Vacante (Arrastra aquí)
-          </div>
-        </div>
-
-        <!-- Mid Lane -->
-        <div class="team-role-card" 
-             cdkDropList
-             [cdkDropListData]="{role: 'Mid Lane', player: tempRole === 'Mid Lane' ? player : null}"
-             (cdkDropListDropped)="drop($event)"
-             [class.active-role]="tempRole === 'Mid Lane'">
-          <h3 class="role-title">Mid Lane</h3>
-          <div class="role-player" 
-               *ngIf="tempRole === 'Mid Lane'"
-               cdkDrag
-               [cdkDragData]="{role: 'Mid Lane', player: player}">
-            <img [src]="player.avatar" alt="Avatar" class="team-player-avatar">
-            <div class="team-player-info">
-              <div class="team-player-nick">{{player.nick}}</div>
-              <div class="team-player-mmr">{{player.mmr}} <img [src]="player.medalImage" class="team-player-medal"></div>
-            </div>
-          </div>
-          <div class="empty-role" *ngIf="tempRole !== 'Mid Lane'">
-            Vacante (Arrastra aquí)
-          </div>
-        </div>
-
-        <!-- Offlane -->
-        <div class="team-role-card" 
-             cdkDropList
-             [cdkDropListData]="{role: 'Offlane', player: tempRole === 'Offlane' ? player : null}"
-             (cdkDropListDropped)="drop($event)"
-             [class.active-role]="tempRole === 'Offlane'">
-          <h3 class="role-title">Offlane</h3>
-          <div class="role-player" 
-               *ngIf="tempRole === 'Offlane'"
-               cdkDrag
-               [cdkDragData]="{role: 'Offlane', player: player}">
-            <img [src]="player.avatar" alt="Avatar" class="team-player-avatar">
-            <div class="team-player-info">
-              <div class="team-player-nick">{{player.nick}}</div>
-              <div class="team-player-mmr">{{player.mmr}} <img [src]="player.medalImage" class="team-player-medal"></div>
-            </div>
-          </div>
-          <div class="empty-role" *ngIf="tempRole !== 'Offlane'">
-            Vacante (Arrastra aquí)
-          </div>
-        </div>
-
-        <!-- Hard Support -->
-        <div class="team-role-card" 
-             cdkDropList
-             [cdkDropListData]="{role: 'Hard Support', player: tempRole === 'Hard Support' ? player : null}"
-             (cdkDropListDropped)="drop($event)"
-             [class.active-role]="tempRole === 'Hard Support'">
-          <h3 class="role-title">Hard Support</h3>
-          <div class="role-player" 
-               *ngIf="tempRole === 'Hard Support'"
-               cdkDrag
-               [cdkDragData]="{role: 'Hard Support', player: player}">
-            <img [src]="player.avatar" alt="Avatar" class="team-player-avatar">
-            <div class="team-player-info">
-              <div class="team-player-nick">{{player.nick}}</div>
-              <div class="team-player-mmr">{{player.mmr}} <img [src]="player.medalImage" class="team-player-medal"></div>
-            </div>
-          </div>
-          <div class="empty-role" *ngIf="tempRole !== 'Hard Support'">
-            Vacante (Arrastra aquí)
-          </div>
-        </div>
-
-        <!-- Soft Support -->
-        <div class="team-role-card" 
-             cdkDropList
-             [cdkDropListData]="{role: 'Soft Support', player: tempRole === 'Soft Support' ? player : null}"
-             (cdkDropListDropped)="drop($event)"
-             [class.active-role]="tempRole === 'Soft Support'">
-          <h3 class="role-title">Soft Support</h3>
-          <div class="role-player" 
-               *ngIf="tempRole === 'Soft Support'"
-               cdkDrag
-               [cdkDragData]="{role: 'Soft Support', player: player}">
-            <img [src]="player.avatar" alt="Avatar" class="team-player-avatar">
-            <div class="team-player-info">
-              <div class="team-player-nick">{{player.nick}}</div>
-              <div class="team-player-mmr">{{player.mmr}} <img [src]="player.medalImage" class="team-player-medal"></div>
-            </div>
-          </div>
-          <div class="empty-role" *ngIf="tempRole !== 'Soft Support'">
-            Vacante (Arrastra aquí)
-          </div>
+          
+          <!-- Espacio vacío para arrastrar jugadores (solo capitán) -->
+          <div class="empty-role" 
+     *ngIf="isTeamCaptain && (!teamPlayers || !(teamPlayers | filterByRole:role)?.length)"
+     (click)="openAddPlayerDialog(role)">
+  <button class="add-player-btn">+ Añadir Jugador</button>
+</div>
         </div>
       </div>
     </div>
@@ -290,6 +224,13 @@
                     <img [src]="player.medalImage" [alt]="player.medal" class="player-medal" title="{{player.medal}}">
                   </div>
                   <div class="player-role">Rating {{player.rating}}</div>
+                </div>
+                
+                <div class="player-actions" *ngIf="isTeamCaptain && userTeam && userTeam.players.length < 5">
+                  <button class="dota-button small-button add-button" 
+                          (click)="addPlayerToTeam(player); $event.stopPropagation()">
+                    Añadir al equipo
+                  </button>
                 </div>
               </div>
               

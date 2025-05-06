@@ -15,11 +15,14 @@ import {
   setDoc,
   query,
   where,
-  updateDoc
+  updateDoc,
+  arrayUnion,
+  arrayRemove
 } from '@angular/fire/firestore';
 import { Player } from '../models/jugador.model';
-import { catchError, from, map, Observable, of, tap, throwError } from 'rxjs';
+import { catchError, from, map, Observable, of, switchMap, tap, throwError } from 'rxjs';
 import { Match } from '../models/match.model';
+import { Team } from '../models/equipos.model';
 
 
 @Injectable({
@@ -27,9 +30,11 @@ import { Match } from '../models/match.model';
 })
 export class PlayerService {
   private playersCollection: CollectionReference<DocumentData>;
+  private teamsCollection: CollectionReference<DocumentData>;
 
   constructor(private firestore: Firestore) {
     this.playersCollection = collection(this.firestore, 'players');
+    this.teamsCollection = collection(this.firestore, 'teams');
   }
 
   /**
@@ -207,6 +212,312 @@ export class PlayerService {
       })
     );
   }
+
+  /**
+   * Crea un nuevo equipo
+   * @param team Datos del equipo
+   * @returns Observable con el ID del equipo creado
+   */
+  createTeam(team: Omit<Team, 'id'>): Observable<string> {
+    return from(addDoc(this.teamsCollection, team)).pipe(
+      map(ref => ref.id),
+      catchError((error: FirestoreError) => {
+        console.error('Error creating team:', error);
+        return throwError(() => new Error(this.getFirestoreErrorMessage(error)));
+      })
+    );
+  }
+
+  /**
+   * Actualiza un equipo
+   * @param teamId ID del equipo
+   * @param data Datos a actualizar
+   * @returns Observable vacío
+   */
+  updateTeam(teamId: string, data: Partial<Team>): Observable<void> {
+    const teamDocRef = doc(this.firestore, `teams/${teamId}`);
+    return from(updateDoc(teamDocRef, data)).pipe(
+      catchError((error: FirestoreError) => {
+        console.error('Error updating team:', error);
+        return throwError(() => new Error(this.getFirestoreErrorMessage(error)));
+      })
+    );
+  }
+
+  /**
+   * Obtiene un equipo por ID
+   * @param teamId ID del equipo
+   * @returns Observable con el equipo o null si no existe
+   */
+  getTeam(teamId: string): Observable<Team | null> {
+    const teamDocRef = doc(this.firestore, `teams/${teamId}`);
+    return from(getDoc(teamDocRef)).pipe(
+      map(snapshot => snapshot.exists() ? { id: snapshot.id, ...snapshot.data() } as Team : null),
+      catchError((error: FirestoreError) => {
+        console.error('Error getting team:', error);
+        return throwError(() => new Error(this.getFirestoreErrorMessage(error)));
+      })
+    );
+  }
+
+  /**
+   * Obtiene todos los equipos con actualizaciones en tiempo real
+   * @returns Observable con array de equipos
+   */
+  getTeams(): Observable<Team[]> {
+    return new Observable<Team[]>(observer => {
+      const unsubscribe = onSnapshot(
+        this.teamsCollection,
+        (snapshot) => {
+          const teams = snapshot.docs.map(doc => ({
+            id: doc.id,
+            ...doc.data()
+          } as Team));
+          observer.next(teams);
+        },
+        (error) => {
+          console.error('Error listening to teams:', error);
+          observer.error(error);
+        }
+      );
+
+      return () => unsubscribe();
+    });
+  }
+
+/**
+ * Añade un jugador a un equipo con su rol, avatar, mmr y nick
+ * @param teamId ID del equipo
+ * @param playerId ID del jugador
+ * @param role Rol del jugador
+ * @param avatar Avatar del jugador
+ * @param mmr MMR del jugador
+ * @param nick Nick del jugador
+ * @returns Observable vacío
+ */
+addPlayerToTeam(
+  teamId: string,
+  playerId: string,
+  role: string,
+  avatar: string,
+  mmr: number,
+  nick: string,
+  medalImage: string
+): Observable<void> {
+  const playerDocRef = doc(this.firestore, `players/${playerId}`);
+  return from(updateDoc(playerDocRef, { 
+    teamId,
+    availability: 'in_team'
+  })).pipe(
+    switchMap(() => {
+      const teamDocRef = doc(this.firestore, `teams/${teamId}`);
+      const playerData = {
+        uid: playerId,
+        role,
+        avatar,
+        mmr,
+        nick,
+        medalImage
+      };
+      return from(updateDoc(teamDocRef, {
+        players: arrayUnion(playerData)
+      }));
+    }),
+    catchError((error: FirestoreError) => {
+      console.error('Error adding player to team:', error);
+      return throwError(() => new Error(this.getFirestoreErrorMessage(error)));
+    })
+  );
+}
+
+  /**
+ * Elimina un jugador de un equipo
+ * @param teamId ID del equipo
+ * @param playerId ID del jugador
+ * @param role Rol del jugador
+ * @param avatar Avatar del jugador
+ * @param mmr MMR del jugador
+ * @returns Observable vacío
+ */
+/**
+ * Elimina un jugador de un equipo
+ * @param teamId ID del equipo
+ * @param playerId ID del jugador
+ * @param role Rol del jugador
+ * @param avatar Avatar del jugador
+ * @param mmr MMR del jugador
+ * @param nick Nick del jugador
+ * @param medalImage Imagen de medalla del jugador
+ * @returns Observable vacío
+ */
+removePlayerFromTeam(
+  teamId: string, 
+  playerId: string,
+  role: string,
+  avatar: string,
+  mmr: number,
+  nick: string,
+  medalImage: string
+): Observable<void> {
+  const playerDocRef = doc(this.firestore, `players/${playerId}`);
+  return from(updateDoc(playerDocRef, { 
+    teamId: null,
+    availability: 'available'
+  })).pipe(
+    switchMap(() => {
+      const teamDocRef = doc(this.firestore, `teams/${teamId}`);
+      const playerData = {
+        uid: playerId,
+        role,
+        avatar,
+        mmr,
+        nick,
+        medalImage
+      };
+      return from(updateDoc(teamDocRef, {
+        players: arrayRemove(playerData)
+      }));
+    }),
+    catchError((error: FirestoreError) => {
+      console.error('Error removing player from team:', error);
+      return throwError(() => new Error(this.getFirestoreErrorMessage(error)));
+    })
+  );
+}
+
+  /**
+   * Obtiene los jugadores disponibles (sin equipo)
+   * @returns Observable con array de jugadores disponibles
+   */
+  /**
+ * Obtiene los jugadores disponibles (sin equipo) con actualización en tiempo real
+ * @returns Observable con array de jugadores disponibles
+ */
+/**
+ * Obtiene los jugadores disponibles (sin equipo) con actualización en tiempo real
+ * @returns Observable<Player[]>
+ */
+getAvailablePlayers(): Observable<Player[]> {
+  const q = query(
+    this.playersCollection,
+    where('status', '==', 'Activo'),
+    where('availability', '==', 'available')
+  );
+
+  return new Observable<Player[]>(observer => {
+    const unsubscribe = onSnapshot(
+      q,
+      (snapshot: QuerySnapshot) => {
+        const players = snapshot.docs.map(doc => ({
+          uid: doc.id,
+          ...doc.data()
+        } as Player));
+        observer.next(players);
+      },
+      (error) => {
+        console.error('Error escuchando jugadores disponibles:', error);
+        observer.error(error);
+      }
+    );
+
+    return () => unsubscribe(); // Limpiar suscripción cuando se destruya
+  });
+}
+
+
+  /**
+   * Obtiene los jugadores de un equipo específico
+   * @param teamId ID del equipo
+   * @returns Observable con array de jugadores
+   */
+  /**
+ * Obtiene los jugadores de un equipo específico
+ * @param teamId ID del equipo
+ * @returns Observable<Player[]>
+ */
+getTeamPlayers(teamId: string): Observable<Player[]> {
+  const teamDocRef = doc(this.firestore, `teams/${teamId}`);
+  return from(getDoc(teamDocRef)).pipe(
+    switchMap(teamSnapshot => {
+      if (!teamSnapshot.exists()) {
+        return throwError(() => new Error('Equipo no encontrado'));
+      }
+
+      const teamData = { id: teamSnapshot.id, ...teamSnapshot.data() } as Team;
+
+      if (!teamData.players || teamData.players.length === 0) {
+        return of([]);
+      }
+
+      // Extraemos solo los UIDs para obtener los documentos de Firestore
+      const playerUids = teamData.players.map(p => p.uid);
+
+      const playerPromises = playerUids.map(uid =>
+        getDoc(doc(this.firestore, `players/${uid}`))
+      );
+
+      return from(Promise.all(playerPromises)).pipe(
+        map(snapshots =>
+          snapshots
+            .filter(snapshot => snapshot.exists())
+            .map(snapshot => ({
+              uid: snapshot.id,
+              ...snapshot.data()
+            } as Player))
+        )
+      );
+    }),
+    catchError((error: FirestoreError) => {
+      console.error('Error obteniendo jugadores del equipo:', error);
+      return throwError(() => new Error(this.getFirestoreErrorMessage(error)));
+    })
+  );
+}
+
+/**
+ * Obtiene y escucha en tiempo real los jugadores de un equipo
+ * @param teamId ID del equipo
+ * @returns Observable<Player[]>
+ */
+getTeamPlayersRealTime(teamId: string): Observable<Player[]> {
+  const teamDocRef = doc(this.firestore, `teams/${teamId}`);
+  return new Observable<Player[]>(observer => {
+    const unsubscribe = onSnapshot(
+      teamDocRef,
+      (snapshot) => {
+        if (!snapshot.exists()) {
+          observer.next([]);
+          return;
+        }
+        const teamData = snapshot.data() as Team;
+        const playersInTeam = teamData.players || [];
+
+        // Mapeamos directamente los TeamPlayer a Player para reusar el modelo
+        const players: Player[] = playersInTeam.map(p => ({
+          uid: p.uid,
+          avatar: p.avatar,
+          mmr: p.mmr,
+          medalImage: p.medalImage,
+          nick: p.nick,
+          role: p.role,
+          category: '', // Puedes dejarlo vacío si no se usa aquí
+          idDota: 0,
+          medal: '',
+          status: 'Activo',
+          rating: 0,
+          secondaryRole: '',
+          secondaryCategory: '',
+          availability: 'in_team'
+        }));
+        observer.next(players);
+      },
+      (error) => {
+        observer.error(error);
+      }
+    );
+    return () => unsubscribe();
+  });
+}
 
   /**
    * Translates Firestore error codes to user-friendly messages

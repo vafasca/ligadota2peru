@@ -634,6 +634,22 @@
   font-size: 12px;
 }
 
+.add-player-btn {
+  background: transparent;
+  border: 1px dashed #e4ae0d;
+  color: #e4ae0d;
+  padding: 8px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  width: 100%;
+  transition: all 0.3s;
+}
+
+.add-player-btn:hover {
+  background: rgba(228, 174, 13, 0.1);
+  border-style: solid;
+}
+
 /* RESPONSIVE */
 @media (max-width: 1024px) {
   .avatar-info-container {

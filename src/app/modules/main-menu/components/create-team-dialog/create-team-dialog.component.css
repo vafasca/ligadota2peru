@@ -1,0 +1,95 @@
+/* Estilos para la sección de equipo */
+.team-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #7a0707;
+  }
+  
+  .team-info h3 {
+    color: #e4ae0d;
+    margin-bottom: 5px;
+  }
+  
+  .team-info p {
+    color: #ccc;
+    margin-bottom: 10px;
+  }
+  
+  .team-meta {
+    display: flex;
+    gap: 15px;
+  }
+  
+  .team-category {
+    background: rgba(122, 7, 7, 0.3);
+    padding: 3px 10px;
+    border-radius: 12px;
+    color: #e4ae0d;
+  }
+  
+  .team-players-count {
+    color: #ccc;
+  }
+  
+  .create-team-button {
+    background: linear-gradient(135deg, #e4ae0d 0%, #7a0707 100%);
+  }
+  
+  .create-team-button:hover {
+    background: linear-gradient(135deg, #7a0707 0%, #e4ae0d 100%);
+  }
+  
+  .team-player-actions {
+    margin-top: 5px;
+  }
+  
+  .small-button {
+    padding: 5px 10px;
+    font-size: 12px;
+  }
+  
+  .add-button {
+    background: #00aa00;
+  }
+  
+  .add-button:hover {
+    background: #007700;
+  }
+  
+  .remove-button {
+    background: #aa0000;
+  }
+  
+  .remove-button:hover {
+    background: #770000;
+  }
+  
+  .player-actions {
+    margin-top: 5px;
+    display: flex;
+    justify-content: flex-end;
+  }
+
+  .full-width {
+    width: 100%;
+    margin-bottom: 15px;
+  }
+  
+  .info-box {
+    background: rgba(0, 0, 0, 0.1);
+    padding: 10px;
+    border-radius: 4px;
+    margin-top: 15px;
+  }
+  
+  .info-box p {
+    margin: 5px 0;
+    color: #666;
+  }
+  
+  .info-box strong {
+    color: #333;
+  }

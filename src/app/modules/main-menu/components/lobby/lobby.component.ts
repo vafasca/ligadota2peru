@@ -1,10 +1,14 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
-import { Subscription } from 'rxjs';
+import { map, Subscription } from 'rxjs';
 import { Player } from 'src/app/modules/admin/models/jugador.model';
 import { Auth, onAuthStateChanged, signOut } from '@angular/fire/auth';
 import { PlayerService } from 'src/app/modules/admin/services/player.service';
 import { CdkDragDrop } from '@angular/cdk/drag-drop';
+import { Team } from 'src/app/modules/admin/models/equipos.model';
+import { MatDialog } from '@angular/material/dialog';
+import { CreateTeamDialogComponent } from '../create-team-dialog/create-team-dialog.component';
+import { AddPlayerDialogComponent } from '../add-player-dialog/add-player-dialog.component';
 
 @Component({
   selector: 'app-lobby',
@@ -14,9 +18,11 @@ import { CdkDragDrop } from '@angular/cdk/drag-drop';
 export class LobbyComponent {
   private authSubscription: Subscription = new Subscription();
   private playersSub!: Subscription;
+  private teamsSub!: Subscription;
   currentUserUid: string | null = null;
   isLoading = true;
   errorMessage = '';
+  availablePlayersSub!: Subscription;
 
   player: Player = {
     uid: '',
@@ -33,6 +39,7 @@ export class LobbyComponent {
     secondaryRole: '',
     secondaryCategory: '',
     observations: '',
+    availability: 'available',
     socialMedia: {
       twitch: '',
       youtube: '',
@@ -45,6 +52,12 @@ export class LobbyComponent {
     },
     matches: []
   };
+
+  // Variables para equipos
+  userTeam: Team | null = null;
+  teamPlayers: Player[] = [];
+  isTeamCaptain = false;
+  showTeamSection = false;
 
   // Variable para almacenar el rol temporal
   tempRole: string = '';
@@ -59,13 +72,14 @@ export class LobbyComponent {
   constructor(
     private router: Router,
     private auth: Auth,
-    private playerService: PlayerService
+    private playerService: PlayerService,
+    private dialog: MatDialog
   ) {}
 
   ngOnInit(): void {
     this.setupAuthListener();
     // Al iniciar, cargamos el rol temporal si existe
-    this.loadTempRole();
+    //this.loadTempRole();
   }
 
   private loadTempRole(): void {
@@ -95,6 +109,8 @@ export class LobbyComponent {
       if (user) {
         this.loadPlayerData(user.uid);
         this.loadAvailablePlayers();
+        this.loadUserTeam(user.uid);
+        this.loadAvailablePlayers();
       } else {
         this.handleUnauthenticated();
       }
@@ -109,10 +125,7 @@ export class LobbyComponent {
       next: (playerData) => {
         if (playerData) {
           this.player = playerData;
-          // Si no hay rol temporal, usamos el de la BD
-          if (!this.tempRole) {
-            this.tempRole = this.player.role;
-          }
+          this.isTeamCaptain = playerData.isCaptain || false;
           this.isLoading = false;
         } else {
           this.errorMessage = 'Perfil no encontrado';
@@ -128,23 +141,209 @@ export class LobbyComponent {
     });
   }
 
-  private loadAvailablePlayers(): void {
-    this.playersSub = this.playerService.getPlayers().subscribe({
+  private loadUserTeam(playerId: string): void {
+    this.teamsSub = this.playerService.getTeams().pipe(
+      map(teams => 
+        teams.find(team => team.captainId === playerId || team.players.some(p => p.uid === playerId))
+      )
+    ).subscribe({
+      next: (userTeam) => {
+        this.userTeam = userTeam || null;
+        this.showTeamSection = !!this.userTeam || this.isTeamCaptain;
+  
+        if (this.userTeam) {
+          // Suscripción en tiempo real a los jugadores del equipo
+          this.loadTeamPlayersRealTime(this.userTeam.id);
+        } else {
+          this.teamPlayers = [];
+        }
+      },
+      error: (err) => {
+        console.error('[LOBBY] Error loading teams:', err);
+      }
+    });
+  }
+
+  private loadTeamPlayersRealTime(teamId: string): void {
+    if (this.playersSub) {
+      this.playersSub.unsubscribe();
+    }
+  
+    this.playersSub = this.playerService.getTeamPlayersRealTime(teamId).subscribe({
       next: (players) => {
-        this.availablePlayers = players.filter(p => 
-          p.status === 'Activo' && 
-          (p.uid !== this.currentUserUid || this.player.status === 'Activo')
+        this.teamPlayers = players;
+  
+        // Ordenar según rol
+        const roleOrder = ['Carry (Safe Lane)', 'Mid Lane', 'Offlane', 'Hard Support', 'Soft Support'];
+        this.teamPlayers.sort((a, b) =>
+          roleOrder.indexOf(a.role) - roleOrder.indexOf(b.role)
         );
-        
+      },
+      error: (err) => {
+        console.error('[LOBBY] Error listening to team players:', err);
+      }
+    });
+  }
+
+  private loadTeamPlayers(teamId: string): void {
+    this.playerService.getTeamPlayers(teamId).subscribe({
+      next: (players) => {
+        this.teamPlayers = players;
+        // Ordenar jugadores por rol
+        this.teamPlayers.sort((a, b) => 
+          this.roles.indexOf(a.role) - this.roles.indexOf(b.role)
+        );
+      },
+      error: (err) => {
+        console.error('[LOBBY] Error loading team players:', err);
+      }
+    });
+  }
+
+  private loadAvailablePlayers(): void {
+    if (this.availablePlayersSub) {
+      this.availablePlayersSub.unsubscribe();
+    }
+  
+    this.availablePlayersSub = this.playerService.getAvailablePlayers().subscribe({
+      next: (players) => {
+        this.availablePlayers = players.filter(p => p.uid !== this.currentUserUid);
+  
+        // Actualizar categorías si es necesario
         const allCategories = new Set(players.map(p => p.category).filter(c => c));
         this.categories = ['Tier1', 'Tier2', 'Tier3', 'Tier4', 'Tier5'];
         this.filteredCategories = this.categories;
-        this.isLoading = false;
       },
       error: (err) => {
         console.error('[LOBBY] Error loading players:', err);
         this.errorMessage = 'Error al cargar jugadores';
-        this.isLoading = false;
+      }
+    });
+  }
+
+  openCreateTeamDialog(): void {
+    const dialogRef = this.dialog.open(CreateTeamDialogComponent, {
+      width: '500px',
+      data: { 
+        captainId: this.player.uid,
+        captainName: this.player.nick,
+        category: this.player.category
+      }
+    });
+  
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.createTeam(result);
+      }
+    });
+  }
+
+  openAddPlayerDialog(role: string): void {
+    if (!this.userTeam || !this.isTeamCaptain) return;
+    
+    // Filtramos jugadores disponibles para este rol
+    const availablePlayersForRole = this.availablePlayers.filter(
+      player => player.role === role || player.secondaryRole === role
+    );
+  
+    const dialogRef = this.dialog.open(AddPlayerDialogComponent, {
+      width: '600px',
+      data: {
+        role,
+        players: availablePlayersForRole,
+        teamId: this.userTeam.id
+      }
+    });
+  
+    dialogRef.afterClosed().subscribe((selectedPlayerId: string | undefined) => {
+      if (selectedPlayerId) {
+        this.addPlayerToTeam(availablePlayersForRole.find(p => p.uid === selectedPlayerId)!);
+      }
+    });
+  }
+
+  createTeam(teamData: { name: string, description: string }): void {
+    if (!this.player.uid) return;
+
+    const newTeam: Omit<Team, 'id'> = {
+      name: teamData.name,
+      captainId: this.player.uid,
+      players: [{
+        uid: this.player.uid,
+        role: this.player.role,
+        avatar: this.player.avatar,
+        mmr: this.player.mmr,
+        nick: this.player.nick,
+        medalImage: this.player.medalImage
+      }],
+      category: this.player.category,
+      createdAt: new Date(),
+      description: teamData.description,
+      status: 'active'
+    };
+
+    this.playerService.createTeam(newTeam).subscribe({
+      next: (teamId) => {
+        // Actualizar el jugador para marcar que tiene equipo
+        this.playerService.updatePlayer(this.player.uid, { 
+          teamId,
+          availability: 'in_team'
+        }).subscribe(() => {
+          this.loadUserTeam(this.player.uid);
+        });
+      },
+      error: (err) => {
+        console.error('[LOBBY] Error creating team:', err);
+        this.errorMessage = 'Error al crear equipo';
+      }
+    });
+  }
+
+  addPlayerToTeam(player: Player): void {
+    if (!this.userTeam || !this.isTeamCaptain) return;
+    if (this.userTeam.players.length >= 5) {
+      this.errorMessage = 'El equipo ya tiene el máximo de 5 jugadores';
+      return;
+    }
+    this.playerService.addPlayerToTeam(
+      this.userTeam.id, 
+      player.uid, 
+      player.role, 
+      player.avatar, 
+      player.mmr,
+      player.nick,
+      player.medalImage
+    ).subscribe({
+      next: () => {
+        this.loadTeamPlayers(this.userTeam!.id);
+        this.loadAvailablePlayers();
+      },
+      error: (err) => {
+        console.error('[LOBBY] Error adding player to team:', err);
+        this.errorMessage = 'Error al añadir jugador al equipo';
+      }
+    });
+  }
+
+  removePlayerFromTeam(player: Player): void {
+    if (!this.userTeam || !this.isTeamCaptain) return;
+  
+    this.playerService.removePlayerFromTeam(
+      this.userTeam.id, 
+      player.uid,
+      player.role,
+      player.avatar,
+      player.mmr,
+      player.nick,
+      player.medalImage
+    ).subscribe({
+      next: () => {
+        this.loadTeamPlayers(this.userTeam!.id);
+        this.loadAvailablePlayers();
+      },
+      error: (err) => {
+        console.error('[LOBBY] Error removing player from team:', err);
+        this.errorMessage = 'Error al remover jugador del equipo';
       }
     });
   }
@@ -253,8 +452,8 @@ export class LobbyComponent {
 
   ngOnDestroy(): void {
     this.authSubscription.unsubscribe();
-    if (this.playersSub) {
-      this.playersSub.unsubscribe();
-    }
+    if (this.playersSub) this.playersSub.unsubscribe();
+    if (this.teamsSub) this.teamsSub.unsubscribe();
+    if (this.availablePlayersSub) this.availablePlayersSub.unsubscribe();
   }
 }

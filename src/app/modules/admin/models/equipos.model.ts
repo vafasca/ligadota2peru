@@ -1,8 +1,22 @@
-import { Player } from "./jugador.model";
+// team.model.ts
+
+export interface TeamPlayer {
+  uid: string;
+  role: string;
+  avatar: string;
+  mmr: number;
+  nick: string; // Nuevo campo
+  medalImage: string;
+}
 
 export interface Team {
-    id: number;
-    name: string;
-    members: Player[];
-    captain?: Player | null;
+  id: string;
+  name: string;
+  captainId: string; // UID del capitán
+  players: TeamPlayer[]; // Aquí ahora guardamos más info del jugador
+  category: string; // Tier del equipo
+  createdAt: Date;
+  logo?: string;
+  description?: string;
+  status: 'active' | 'inactive' | 'disbanded';
 }

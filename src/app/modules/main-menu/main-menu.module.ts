@@ -6,18 +6,36 @@ import { MainMenuComponent } from './main-menu.component';
 import { LobbyComponent } from './components/lobby/lobby.component';
 import { FormsModule } from '@angular/forms';
 import { DragDropModule } from '@angular/cdk/drag-drop';
+import { CreateTeamDialogComponent } from './components/create-team-dialog/create-team-dialog.component';
 
+import { MatDialogModule } from '@angular/material/dialog';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatButtonModule } from '@angular/material/button';
+import { ReactiveFormsModule } from '@angular/forms';
+import { FilterByRolePipePipe } from './pipes/filter-by-role-pipe.pipe';
+import { AddPlayerDialogComponent } from './components/add-player-dialog/add-player-dialog.component';
+import { MatListModule } from '@angular/material/list';
 
 @NgModule({
   declarations: [
     MainMenuComponent,
-    LobbyComponent
+    LobbyComponent,
+    CreateTeamDialogComponent,
+    FilterByRolePipePipe,
+    AddPlayerDialogComponent
   ],
   imports: [
     CommonModule,
     MainMenuRoutingModule,
     FormsModule,
-    DragDropModule
+    DragDropModule,
+    MatDialogModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatButtonModule,
+    ReactiveFormsModule,
+    MatListModule
   ]
 })
 export class MainMenuModule { }

@@ -93,6 +93,7 @@ export class PlayerRegistrationComponent {
         secondaryRole: form.value.secondaryRole || '',
         secondaryCategory: form.value.secondaryCategory || '',
         isCaptain: false,
+        availability: 'available',
         registrationDate: new Date(),
         socialMedia: {
           twitch: form.value.twitch || '',

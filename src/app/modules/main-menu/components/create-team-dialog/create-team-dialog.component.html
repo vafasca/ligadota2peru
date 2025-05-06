@@ -1,0 +1,36 @@
+<h2 mat-dialog-title>Crear nuevo equipo</h2>
+<mat-dialog-content>
+  <form [formGroup]="teamForm">
+    <mat-form-field appearance="fill" class="full-width">
+      <mat-label>Nombre del equipo</mat-label>
+      <input matInput formControlName="name" required>
+      <mat-error *ngIf="teamForm.get('name')?.hasError('required')">
+        El nombre es obligatorio
+      </mat-error>
+      <mat-error *ngIf="teamForm.get('name')?.hasError('maxlength')">
+        Máximo 30 caracteres
+      </mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="fill" class="full-width">
+      <mat-label>Descripción (opcional)</mat-label>
+      <textarea matInput formControlName="description" rows="3"></textarea>
+      <mat-error *ngIf="teamForm.get('description')?.hasError('maxlength')">
+        Máximo 200 caracteres
+      </mat-error>
+    </mat-form-field>
+
+    <div class="info-box">
+      <p><strong>Capitán:</strong> {{data.captainName}}</p>
+      <p><strong>Categoría:</strong> {{data.category}}</p>
+    </div>
+  </form>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-button (click)="onCancel()">Cancelar</button>
+  <button mat-raised-button color="primary" 
+          (click)="onSubmit()" 
+          [disabled]="!teamForm.valid">
+    Crear equipo
+  </button>
+</mat-dialog-actions>
