@@ -1,14 +1,14 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
-import { map, Subscription } from 'rxjs';
+import { map, Observable, Subscription, throwError } from 'rxjs';
 import { Player } from 'src/app/modules/admin/models/jugador.model';
 import { Auth, onAuthStateChanged, signOut } from '@angular/fire/auth';
 import { PlayerService } from 'src/app/modules/admin/services/player.service';
-import { CdkDragDrop } from '@angular/cdk/drag-drop';
 import { Team } from 'src/app/modules/admin/models/equipos.model';
 import { MatDialog } from '@angular/material/dialog';
 import { CreateTeamDialogComponent } from '../create-team-dialog/create-team-dialog.component';
 import { AddPlayerDialogComponent } from '../add-player-dialog/add-player-dialog.component';
+import { CdkDragDrop, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
 
 @Component({
   selector: 'app-lobby',
@@ -58,6 +58,7 @@ export class LobbyComponent {
   teamPlayers: Player[] = [];
   isTeamCaptain = false;
   showTeamSection = false;
+  
 
   // Variable para almacenar el rol temporal
   tempRole: string = '';
@@ -68,6 +69,7 @@ export class LobbyComponent {
   selectedCategory: string = 'all';
   selectedRole: string = 'all';
   filteredCategories: string[] = [];
+  
 
   constructor(
     private router: Router,
@@ -163,6 +165,48 @@ export class LobbyComponent {
       }
     });
   }
+
+  
+  onDrop(event: CdkDragDrop<Player[]>) {
+    console.log('Evento completo:', event);
+    console.log('Datos del contenedor anterior:', event.previousContainer.data);
+    console.log('Datos del contenedor actual:', event.container.data);
+    
+    if (event.previousContainer === event.container) {
+      moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
+    } else {
+      const player = event.item.data;
+      if (!player) return;
+      
+      const newRole = event.container.id; 
+      this.updatePlayerRole(player.uid, newRole).subscribe({
+        next: () => {
+          console.log(`Player role updated to ${newRole}`);
+        },
+        error: (err) => {
+          console.error('Error updating player role:', err);
+        }
+      });
+    }
+  }
+  
+  // Método auxiliar para verificar si hay jugadores en un rol
+  hasPlayerInRole(role: string): boolean {
+    return this.teamPlayers.some(p => p.role === role);
+  }
+
+  updatePlayerRole(playerUid: string, newRole: string): Observable<void> {
+    if (!this.userTeam) {
+      return throwError(() => new Error('Sin equipo'));
+    }
+    
+    return this.playerService.updatePlayerRole(
+      this.userTeam.id, 
+      playerUid, 
+      newRole
+    );
+  }
+
 
   private loadTeamPlayersRealTime(teamId: string): void {
     if (this.playersSub) {
@@ -348,16 +392,16 @@ export class LobbyComponent {
     });
   }
 
-  drop(event: CdkDragDrop<any>) {
-    if (event.previousContainer !== event.container) {
-      // Solo permitir mover al jugador a roles vacíos
-      if (!event.container.data.player) {
-        const newRole = event.container.data.role;
-        this.tempRole = newRole;
-        this.saveTempRole();
-      }
-    }
-  }
+  // drop(event: CdkDragDrop<any>) {
+  //   if (event.previousContainer !== event.container) {
+  //     // Solo permitir mover al jugador a roles vacíos
+  //     if (!event.container.data.player) {
+  //       const newRole = event.container.data.role;
+  //       this.tempRole = newRole;
+  //       this.saveTempRole();
+  //     }
+  //   }
+  // }
 
   private handleUnauthenticated(): void {
     this.errorMessage = 'Debes iniciar sesión';

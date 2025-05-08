@@ -172,11 +172,19 @@
 
       <div class="team-roles-container" cdkDropListGroup>
         <!-- Repetir para cada rol -->
-        <div class="team-role-card" *ngFor="let role of roles">
+        <div class="team-role-card" *ngFor="let role of roles" 
+        [cdkDropListDisabled]="!isTeamCaptain"
+        cdkDropList
+        [cdkDropListData]="teamPlayers | filterByRole:role"
+        [id]="role"
+        (cdkDropListDropped)="onDrop($event)">
           <h3 class="role-title">{{role}}</h3>
           
           <!-- Jugador asignado a este rol -->
-          <div class="role-player" *ngFor="let player of teamPlayers | filterByRole:role">
+          <div class="role-player" *ngFor="let player of teamPlayers | filterByRole:role"
+          cdkDrag
+          [cdkDragDisabled]="!isTeamCaptain"
+          [cdkDragData]="player">
             <img [src]="player.avatar" alt="Avatar" class="team-player-avatar">
             <div class="team-player-info">
               <div class="team-player-nick">{{player.nick}}</div>
@@ -190,11 +198,9 @@
           </div>
           
           <!-- Espacio vacío para arrastrar jugadores (solo capitán) -->
-          <div class="empty-role" 
-     *ngIf="isTeamCaptain && (!teamPlayers || !(teamPlayers | filterByRole:role)?.length)"
-     (click)="openAddPlayerDialog(role)">
-  <button class="add-player-btn">+ Añadir Jugador</button>
-</div>
+          <div class="empty-role" *ngIf="isTeamCaptain && !hasPlayerInRole(role)">
+            <button class="add-player-btn">+ Arrastrar aquí</button>
+          </div>
         </div>
       </div>
     </div>

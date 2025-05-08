@@ -424,6 +424,38 @@ getAvailablePlayers(): Observable<Player[]> {
   });
 }
 
+/**
+ * Actualiza el rol de un jugador en un equipo
+ * @param teamId ID del equipo
+ * @param playerId ID del jugador
+ * @param newRole Nuevo rol
+ */
+updatePlayerRole(teamId: string, playerId: string, newRole: string): Observable<void> {
+  const teamDocRef = doc(this.firestore, `teams/${teamId}`);
+  
+  return from(getDoc(teamDocRef)).pipe(
+    switchMap(teamSnapshot => {
+      if (!teamSnapshot.exists()) {
+        return throwError(() => new Error('Equipo no encontrado'));
+      }
+      
+      const teamData = teamSnapshot.data() as Team;
+      const players = teamData.players || [];
+      
+      // Actualiza el rol del jugador
+      const updatedPlayers = players.map(p => 
+        p.uid === playerId ? { ...p, role: newRole } : p
+      );
+      
+      return from(updateDoc(teamDocRef, { players: updatedPlayers }));
+    }),
+    catchError((error: FirestoreError) => {
+      console.error('Error actualizando rol:', error);
+      return throwError(() => new Error(this.getFirestoreErrorMessage(error)));
+    })
+  );
+}
+
 
   /**
    * Obtiene los jugadores de un equipo específico
