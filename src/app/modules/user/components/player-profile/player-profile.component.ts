@@ -97,7 +97,7 @@ export class PlayerProfileComponent {
       next: (playerData) => {
         if (playerData) {
           this.player = playerData;
-          console.log('Datos del jugador cargados:', this.player);
+          // console.log('Datos del jugador cargados:', this.player);
           this.loadPlayerMatches(uid);
         } else {
           this.errorMessage = 'Perfil no encontrado. Completa tu registro.';

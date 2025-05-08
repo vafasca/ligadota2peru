@@ -105,7 +105,7 @@ export class LobbyComponent {
     this.authSubscription = new Subscription();
     
     const unsubscribe = onAuthStateChanged(this.auth, (user) => {
-      console.log('[LOBBY] Auth state changed:', user ? 'Authenticated' : 'Not authenticated');
+      // console.log('[LOBBY] Auth state changed:', user ? 'Authenticated' : 'Not authenticated');
       this.currentUserUid = user?.uid || null;
       
       if (user) {
@@ -168,9 +168,9 @@ export class LobbyComponent {
 
   
   onDrop(event: CdkDragDrop<Player[]>) {
-    console.log('Evento completo:', event);
-    console.log('Datos del contenedor anterior:', event.previousContainer.data);
-    console.log('Datos del contenedor actual:', event.container.data);
+    // console.log('Evento completo:', event);
+    // console.log('Datos del contenedor anterior:', event.previousContainer.data);
+    // console.log('Datos del contenedor actual:', event.container.data);
     
     if (event.previousContainer === event.container) {
       moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
@@ -462,7 +462,7 @@ export class LobbyComponent {
   }
 
   enCurso(): void {
-    this.filteredCategories = this.categories;
+    console.log('Buscando Partidas en curso...');
   }
 
   buscarRivales(): void {
@@ -511,7 +511,7 @@ toggleCaptainStatus(): void {
       
       if (newCaptainStatus) {
         // Mensaje opcional cuando se convierte en capitán
-        console.log('Ahora eres capitán!');
+        alert('Ahora eres capitán!');
       } else {
         // Mensaje opcional cuando deja de ser capitán
         console.log('Ya no eres capitán');
@@ -613,6 +613,12 @@ private async leaveAsMember(): Promise<void> {
     teamId: null,
     availability: 'available'
   }).toPromise();
+}
+
+goToProfile(): void {
+    if (this.player?.uid) {
+      this.router.navigate(['/profile']);
+    }
 }
 
   ngOnDestroy(): void {

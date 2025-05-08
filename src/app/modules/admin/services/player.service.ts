@@ -82,7 +82,7 @@ updatePlayer(uid: string, data: Partial<Player>): Observable<void> {
     const playerDocRef = doc(this.firestore, `players/${uid}`);
     return from(getDoc(playerDocRef)).pipe(
       map(snapshot => {
-        console.log('Player snapshot:', snapshot.exists());
+        // console.log('Player snapshot:', snapshot.exists());
         return snapshot.exists() ? snapshot.data() as Player : null;
       }),
       catchError((error: FirestoreError) => {
@@ -185,15 +185,15 @@ updatePlayer(uid: string, data: Partial<Player>): Observable<void> {
    * @returns Observable with boolean indicating existence
    */
   checkPlayerExists(uid: string): Observable<boolean> {
-    console.log('Checking player exists for UID:', uid);
+    // console.log('Checking player exists for UID:', uid);
     const playerDocRef = doc(this.firestore, `players/${uid}`);
     return from(getDoc(playerDocRef)).pipe(
       map(snapshot => {
-        console.log('Player exists check result:', snapshot.exists());
+        // console.log('Player exists check result:', snapshot.exists());
         return snapshot.exists();
       }),
       catchError(error => {
-        console.error('Error checking player existence:', error);
+        // console.error('Error checking player existence:', error);
         return of(false);
       })
     );

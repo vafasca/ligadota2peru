@@ -1,6 +1,6 @@
 /* Estilos base */
 .register-container {
-    background: url('https://cdn.cloudflare.steamstatic.com/apps/dota2/images/dota_react//home/heroes_full.jpg') no-repeat center center fixed;
+    background: url('../../../../../assets/register_bg.jpg') no-repeat center center fixed;
     background-size: cover;
     min-height: 100vh;
     display: flex;

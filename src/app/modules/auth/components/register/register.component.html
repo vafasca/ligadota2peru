@@ -2,7 +2,7 @@
     <div class="register-overlay"></div>
     <div class="register-form">
       <div class="dota-logo-container">
-        <img src="https://cdn.cloudflare.steamstatic.com/apps/dota2/images/dota_react/global/dota2_logo_symbol.png" 
+        <img src="../../../../../assets/dota2_icon.png" 
              alt="Dota 2 Logo" class="dota-logo">
       </div>
       
@@ -19,7 +19,7 @@
                  (blur)="checkEmail(currentEmail)"
                  (input)="emailExists && resetEmailField()"
                  required email class="dota-input" 
-                 placeholder="radiant@dota2.com"
+                 placeholder="shazum@dota2.com"
                  [class.error-border]="emailExists">
           
           <div *ngIf="emailExists" class="email-exists-message">
@@ -90,7 +90,7 @@
       </form>
       
       <div class="dota-footer">
-        <p>© Dota 2 Battle Arena - Todos los derechos reservados</p>
+        <p>© Dota 2 Battle Arena - Todos los derechos reservados 2025</p>
       </div>
     </div>
   </div>

@@ -32,14 +32,14 @@ export class AuthService {
       this.currentUserSubject.next(user);
       
       if (user) {
-        console.log('[Auth] Usuario autenticado:', user.email);
+        // console.log('[Auth] Usuario autenticado:', user.email);
         if (!user.emailVerified && !this.isWaitingVerificationPage()) {
           this.router.navigate(['/verificacion'], {
             state: { email: user.email }
           });
         }
       } else {
-        console.log('[Auth] Usuario no autenticado');
+        // console.log('[Auth] Usuario no autenticado');
       }
     });
   }
@@ -121,7 +121,7 @@ export class AuthService {
         };
       }
       
-      console.log('[Auth] Sesión iniciada correctamente');
+      // console.log('[Auth] Sesión iniciada correctamente');
       return { 
         success: true,
         user
@@ -172,7 +172,7 @@ export class AuthService {
       await signOut(this.auth);
       
       const message = '¡Registro exitoso! Por favor verifica tu correo electrónico';
-      console.log('[Auth] ' + message);
+      // console.log('[Auth] ' + message);
       return { 
         success: true, 
         user: userCredential.user, 
@@ -193,7 +193,7 @@ export class AuthService {
       await signOut(this.auth);
       this.router.navigate(['/login']);
       const message = 'Sesión cerrada correctamente';
-      console.log('[Auth] ' + message);
+      // console.log('[Auth] ' + message);
       return { 
         success: true, 
         message 
@@ -222,7 +222,7 @@ export class AuthService {
     try {
       await sendEmailVerification(user);
       const message = 'Correo de verificación reenviado. Revisa tu bandeja de entrada.';
-      console.log('[Auth] ' + message);
+      // console.log('[Auth] ' + message);
       return { 
         success: true, 
         message 
