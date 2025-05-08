@@ -46,7 +46,7 @@ export class LoginComponent {
           this.showError(result.message || 'Error al iniciar sesión');
         }
       } catch (error) {
-        console.error('Error en login:', error);
+        // console.error('Error en login:', error);
         this.showError('Ocurrió un error inesperado. Inténtalo de nuevo.');
       } finally {
         this.isLoading = false;

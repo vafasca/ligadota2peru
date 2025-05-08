@@ -77,7 +77,7 @@ export class AuthService {
       const playerSnapshot = await getDoc(playerDocRef);
       return playerSnapshot.exists();
     } catch (error) {
-      console.error('[Auth] Error verificando perfil:', error);
+      // console.error('[Auth] Error verificando perfil:', error);
       return false;
     }
   }
@@ -112,7 +112,7 @@ export class AuthService {
       if (!user.emailVerified) {
         await signOut(this.auth);
         const message = 'Por favor verifica tu correo electrónico antes de iniciar sesión';
-        console.warn('[Auth] ' + message);
+        // console.warn('[Auth] ' + message);
         return { 
           success: false, 
           needsVerification: true, 
@@ -128,7 +128,7 @@ export class AuthService {
       };
     } catch (error) {
       const message = this.handleLoginError(error);
-      console.error('[Auth] Error en login:', error);
+      // console.error('[Auth] Error en login:', error);
       return { 
         success: false, 
         message 
@@ -160,7 +160,7 @@ export class AuthService {
       const methods = await fetchSignInMethodsForEmail(this.auth, email);
       if (methods.length > 0) {
         const message = 'Este correo ya está registrado';
-        console.warn('[Auth] ' + message);
+        // console.warn('[Auth] ' + message);
         return { 
           success: false, 
           message 
@@ -180,7 +180,7 @@ export class AuthService {
       };
     } catch (error) {
       const message = this.getAuthErrorMessage(error);
-      console.error('[Auth] Error en registro:', error);
+      // console.error('[Auth] Error en registro:', error);
       return { 
         success: false, 
         message 
@@ -200,7 +200,7 @@ export class AuthService {
       };
     } catch (error) {
       const message = this.getAuthErrorMessage(error);
-      console.error('[Auth] Error al cerrar sesión:', error);
+      // console.error('[Auth] Error al cerrar sesión:', error);
       return { 
         success: false, 
         message 
@@ -212,7 +212,7 @@ export class AuthService {
     const user = this.getCurrentUser();
     if (!user) {
       const message = 'No hay usuario autenticado';
-      console.warn('[Auth] ' + message);
+      // console.warn('[Auth] ' + message);
       return { 
         success: false, 
         message 
@@ -229,7 +229,7 @@ export class AuthService {
       };
     } catch (error) {
       const message = this.getAuthErrorMessage(error);
-      console.error('[Auth] Error al reenviar verificación:', error);
+      // console.error('[Auth] Error al reenviar verificación:', error);
       return { 
         success: false, 
         message 
@@ -253,7 +253,7 @@ export class AuthService {
       })),
       catchError(error => {
         const message = this.getAuthErrorMessage(error);
-        console.error('[Auth] Error al verificar email:', error);
+        // console.error('[Auth] Error al verificar email:', error);
         return of({ 
           exists: false, 
           message 

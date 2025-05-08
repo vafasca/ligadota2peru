@@ -1,30 +1,42 @@
 <div class="login-container">
+  <div class="dota-logo">
+    <img src="../../../../../assets/dota2_icon.png" alt="Logo Dota 2">
+  </div>
+
   <div class="login-form">
     <h2 class="dota-font">Iniciar Sesión</h2>
-    
+
     <form (ngSubmit)="onSubmit(loginForm)" #loginForm="ngForm">
+      <!-- Email -->
       <div class="form-group">
         <label for="email">Correo Electrónico</label>
         <input type="email" id="email" name="email" ngModel required email class="dota-input" placeholder="tu@email.com">
       </div>
 
-      <div class="form-group">
+      <!-- Password -->
+      <div class="form-group password-input-container">
         <label for="password">Contraseña</label>
-        <input type="password" id="password" name="password" ngModel required class="dota-input" placeholder="••••••••">
+        <input [type]="showPassword ? 'text' : 'password'" id="password" name="password" ngModel required class="dota-input" placeholder="••••••••">
+        <button type="button" class="toggle-password" (click)="togglePasswordVisibility()">
+          {{ showPassword ? '👁️' : '👁️‍🗨️' }}
+        </button>
       </div>
 
+      <!-- Submit -->
       <button type="submit" class="dota-button" [disabled]="isLoading">
         <span *ngIf="!isLoading">Ingresar</span>
         <span *ngIf="isLoading">Cargando...</span>
       </button>
 
+      <!-- Links -->
       <div class="login-links">
         <a (click)="navigateToRegister()" class="login-link">¿No tienes cuenta? Regístrate</a>
         <a (click)="resetPassword()" class="login-link">¿Olvidaste tu contraseña?</a>
       </div>
 
+      <!-- Error Message -->
       <div *ngIf="errorMessage" class="error-message">
-        {{ errorMessage }}
+        <i class="fas fa-exclamation-circle"></i> {{ errorMessage }}
       </div>
     </form>
   </div>

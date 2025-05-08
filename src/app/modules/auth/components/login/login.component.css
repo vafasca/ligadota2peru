@@ -1,95 +1,190 @@
+/* Fondo general con efecto de movimiento */
 .login-container {
-  background: url('/assets/backgrounddota2.jpg') no-repeat center center fixed;
+  background: url('../../../../../assets/backgrounddota2.jpg') no-repeat center center fixed;
   background-size: cover;
   min-height: 100vh;
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
-  padding: 20px;
+  padding: 40px 20px;
+  position: relative;
+  animation: bgAnimation 30s infinite linear;
 }
 
+/* Overlay oscuro para resaltar el formulario */
+.login-container::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0;
+  /* width: 100%; height: 100%; */
+  background: rgba(0, 0, 20, 0.75);
+  backdrop-filter: blur(3px);
+  z-index: 0;
+}
+
+/* Animación sutil del fondo */
+@keyframes bgAnimation {
+  0% { background-position: center center; }
+  50% { background-position: right bottom; }
+  100% { background-position: center center; }
+}
+
+/* Logo de Dota 2 centrado arriba */
+.dota-logo {
+  z-index: 2;
+  margin-bottom: 20px;
+  animation: glowLogo 2s ease-in-out infinite alternate;
+}
+
+.dota-logo img {
+  width: 130px;
+  height: auto;
+  filter: drop-shadow(0 0 6px rgba(228, 174, 13, 0.8));
+}
+
+/* Animación de brillo en el logo */
+@keyframes glowLogo {
+  from {
+    transform: scale(1);
+    filter: brightness(1);
+  }
+  to {
+    transform: scale(1.03);
+    filter: brightness(1.1);
+  }
+}
+
+/* Estilo del formulario */
 .login-form {
-  background: rgba(0, 0, 0, 0.7);
-  padding: 30px;
-  border-radius: 10px;
-  border: 2px solid #7a0707;
+  background: rgba(15, 15, 30, 0.9);
+  padding: 35px;
+  border-radius: 12px;
+  border: 2px solid #e4ae0d;
   width: 100%;
-  max-width: 400px;
-  box-shadow: 0 0 15px rgba(122, 7, 7, 0.5);
+  max-width: 420px;
+  box-shadow: 0 0 25px rgba(228, 174, 13, 0.6), inset 0 0 10px rgba(228, 174, 13, 0.3);
+  position: relative;
+  z-index: 1;
+  animation: fadeInUp 1s ease-in-out;
 }
 
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Título con fuente personalizada estilo Dota */
 .dota-font {
-  font-family: 'Radiance', sans-serif;
-  color: #e4ae0d;
+  font-family: 'Radiance', sans-serif, 'Arial';
+  color: #ffd700;
   text-align: center;
   text-transform: uppercase;
   letter-spacing: 2px;
-  margin-bottom: 25px;
-  text-shadow: 0 0 5px rgba(228, 174, 13, 0.7);
+  margin-bottom: 30px;
+  font-size: 2rem;
+  text-shadow: 0 0 8px rgba(255, 215, 0, 0.6);
 }
 
+/* Grupo de campos */
 .form-group {
-  margin-bottom: 20px;
+  margin-bottom: 25px;
+  position: relative;
 }
 
 .form-group label {
   display: block;
-  color: #e4ae0d;
+  color: #ffd700;
   margin-bottom: 8px;
   font-weight: bold;
+  font-size: 14px;
 }
 
+/* Inputs estilo Dota */
 .dota-input {
   width: 100%;
-  padding: 10px 15px;
-  background: rgba(0, 0, 0, 0.5);
-  border: 1px solid #7a0707;
+  padding: 12px 16px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid #e4ae0d;
   color: #fff;
-  border-radius: 4px;
-  font-size: 16px;
-  transition: all 0.3s;
+  border-radius: 6px;
+  font-size: 15px;
+  transition: all 0.3s ease;
+  box-sizing: border-box;
 }
 
 .dota-input:focus {
-  outline: 2px solid #e4ae0d;
-  border-color: transparent;
-  box-shadow: 0 0 8px rgba(228, 174, 13, 0.5);
+  outline: none;
+  border-color: #ffd700;
+  background: rgba(255, 255, 255, 0.1);
+  box-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
 }
 
-.dota-button {
-  background: #7a0707;
-  color: #fff;
-  padding: 12px;
+/* Botón para mostrar/ocultar contraseña */
+.password-input-container {
+  position: relative;
+}
+
+.toggle-password {
+  position: absolute;
+  right: 12px;
+  top: 38px;
+  background: transparent;
   border: none;
-  border-radius: 4px;
+  color: #ccc;
+  cursor: pointer;
+  font-size: 1.1em;
+  z-index: 10;
+  transition: color 0.3s;
+}
+
+.toggle-password:hover {
+  color: #ffd700;
+}
+
+/* Botón principal */
+.dota-button {
+  background: linear-gradient(145deg, #e4ae0d, #c99400);
+  color: #000;
+  padding: 14px;
+  border: none;
+  border-radius: 6px;
   cursor: pointer;
   font-weight: bold;
   text-transform: uppercase;
   width: 100%;
   font-size: 16px;
   letter-spacing: 1px;
-  transition: all 0.3s;
+  transition: all 0.3s ease;
   margin-top: 10px;
+  box-shadow: 0 4px 10px rgba(228, 174, 13, 0.4);
 }
 
 .dota-button:hover:not(:disabled) {
-  background: #e4ae0d;
+  background: linear-gradient(145deg, #ffd700, #e4ae0d);
   color: #000;
-  transform: scale(1.02);
-  box-shadow: 0 0 15px rgba(228, 174, 13, 0.7);
+  transform: scale(1.03);
+  box-shadow: 0 6px 15px rgba(255, 215, 0, 0.6);
 }
 
 .dota-button:disabled {
-  background: #444;
+  background: #555;
   cursor: not-allowed;
   opacity: 0.7;
 }
 
+/* Links inferiores */
 .login-links {
   margin-top: 20px;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 12px;
 }
 
 .login-link {
@@ -98,61 +193,51 @@
   text-decoration: none;
   font-size: 14px;
   cursor: pointer;
-  transition: color 0.3s;
+  transition: all 0.3s ease;
 }
 
 .login-link:hover {
-  color: #fff;
-  text-decoration: underline;
+  color: #ffd700;
+  text-shadow: 0 0 5px rgba(255, 215, 0, 0.5);
 }
 
-.password-input-container {
-  position: relative;
-}
-
-.toggle-password {
-  position: absolute;
-  right: 10px;
-  top: 50%;
-  transform: translateY(-50%);
-  background: none;
-  border: none;
-  color: #666;
-  cursor: pointer;
-}
-
+/* Mensaje de error */
 .error-message {
   color: #ff4444;
   background-color: rgba(255, 68, 68, 0.1);
-  padding: 12px;
-  border-radius: 4px;
+  padding: 14px;
+  border-radius: 6px;
   margin-top: 20px;
   border-left: 4px solid #ff4444;
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
+  animation: shake 0.4s ease-in-out;
+}
+
+@keyframes shake {
+  0% { transform: translateX(0); }
+  25% { transform: translateX(-5px); }
+  50% { transform: translateX(5px); }
+  75% { transform: translateX(-5px); }
+  100% { transform: translateX(0); }
 }
 
 .error-message i {
-  font-size: 1.2em;
+  font-size: 1.3em;
 }
 
-.snackbar-error {
-  background-color: #ff4444 !important;
-  color: white !important;
-}
-
-.snackbar-success {
-  background-color: #4CAF50 !important;
-  color: white !important;
-}
-
+/* Responsive */
 @media (max-width: 480px) {
   .login-form {
-    padding: 20px;
+    padding: 25px;
   }
-  
+
   .dota-font {
     font-size: 1.5rem;
+  }
+
+  .dota-logo img {
+    width: 100px;
   }
 }
