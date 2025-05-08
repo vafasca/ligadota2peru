@@ -62,15 +62,16 @@ export class PlayerService {
    * @param data Partial player data to update
    * @returns Observable with void when complete
    */
-  updatePlayer(uid: string, data: Partial<Player>): Observable<void> {
-    const playerDocRef = doc(this.firestore, `players/${uid}`);
-    return from(updateDoc(playerDocRef, data)).pipe(
-      catchError((error: FirestoreError) => {
-        console.error('Error updating player:', error);
-        return throwError(() => new Error(this.getFirestoreErrorMessage(error)));
-      })
-    );
-  }
+  // En tu PlayerService
+updatePlayer(uid: string, data: Partial<Player>): Observable<void> {
+  const playerDocRef = doc(this.firestore, `players/${uid}`);
+  return from(updateDoc(playerDocRef, data)).pipe(
+    catchError((error: FirestoreError) => {
+      console.error('Error updating player:', error);
+      return throwError(() => new Error(this.getFirestoreErrorMessage(error)));
+    })
+  );
+}
 
   /**
    * Gets a player by UID
@@ -549,6 +550,16 @@ getTeamPlayersRealTime(teamId: string): Observable<Player[]> {
     );
     return () => unsubscribe();
   });
+}
+
+deleteTeam(teamId: string): Observable<void> {
+  const teamDocRef = doc(this.firestore, `teams/${teamId}`);
+  return from(deleteDoc(teamDocRef)).pipe(
+    catchError((error: FirestoreError) => {
+      console.error('Error deleting team:', error);
+      return throwError(() => new Error(this.getFirestoreErrorMessage(error)));
+    })
+  );
 }
 
   /**

@@ -112,7 +112,7 @@
   transition: all 0.3s;
   font-size: 14px;
   letter-spacing: 1px;
-  min-width: 100px;
+  min-width: 50px;
   text-align: center;
 }
 
@@ -631,7 +631,7 @@
   color: #666;
   font-style: italic;
   padding: 10px;
-  font-size: 12px;
+  font-size: 18px;
 }
 
 .add-player-btn {
@@ -648,6 +648,359 @@
 .add-player-btn:hover {
   background: rgba(228, 174, 13, 0.1);
   border-style: solid;
+}
+
+/* Estilos para el contenedor de filtros */
+.filters-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  margin-bottom: 30px;
+  align-items: center;
+  background: rgba(0, 0, 0, 0.5);
+  padding: 15px;
+  border-radius: 8px;
+  border: 1px solid #7a0707;
+  position: relative;
+}
+
+/* Contenedor del botón de capitán */
+.captain-button-container {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  min-width: 200px;
+}
+
+/* Estilos para el botón de capitán */
+.captain-toggle-button {
+  background: linear-gradient(135deg, #f8d64e 0%, #e4ae0d 50%, #7a0707 100%);
+  color: #000;
+  border: 2px solid #f8d64e;
+  box-shadow: 0 0 10px rgba(248, 214, 78, 0.5);
+  padding: 10px 20px;
+  font-weight: bold;
+  text-transform: uppercase;
+  transition: all 0.3s;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  white-space: nowrap;
+}
+
+.captain-toggle-button:hover {
+  background: linear-gradient(135deg, #7a0707 0%, #e4ae0d 50%, #f8d64e 100%);
+  color: #fff;
+  transform: scale(1.05);
+  box-shadow: 0 0 15px rgba(248, 214, 78, 0.8);
+}
+
+.captain-toggle-button i {
+  font-size: 18px;
+}
+
+/* Contenedor para los botones de acción */
+.filter-actions {
+  display: flex;
+  gap: 10px;
+  margin-left: auto;
+}
+
+/* Estilos mejorados para team-info */
+.team-info {
+  background: linear-gradient(135deg, rgba(16, 26, 42, 0.9) 0%, rgba(11, 20, 34, 0.95) 100%);
+  border-radius: 10px;
+  border: 1px solid #3a506b;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+  overflow: hidden;
+  width: 100%;
+  margin-bottom: 20px;
+}
+
+.team-banner {
+  display: flex;
+  align-items: center;
+  padding: 15px;
+  background: linear-gradient(90deg, rgba(122, 7, 7, 0.3) 0%, rgba(24, 38, 60, 0.7) 100%);
+  border-bottom: 1px solid #3a506b;
+}
+
+.team-logo {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  transition: transform 0.3s ease;
+}
+
+/* Efecto hover para el logo */
+.team-logo-placeholder:hover {
+  border-color: #f8d64e;
+  box-shadow: 0 0 25px rgba(248, 214, 78, 0.5);
+}
+
+.team-logo-placeholder:hover .team-logo {
+  transform: scale(1.05);
+}
+
+/* Efecto de brillo dorado al pasar el mouse */
+.team-logo-placeholder::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border-radius: 50%;
+  background: radial-gradient(circle at center, 
+             rgba(248, 214, 78, 0) 0%, 
+             rgba(248, 214, 78, 0.1) 70%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.team-logo-placeholder:hover::after {
+  opacity: 1;
+}
+
+/* Estilo para cuando no hay logo */
+.team-logo-placeholder:has(img[src*="default-team-logo"]) {
+  background: linear-gradient(135deg, #7a0707 0%, #3a506b 100%);
+}
+
+.team-logo-placeholder:has(img[src*="default-team-logo"]) .team-logo {
+  width: 60%;
+  height: 60%;
+  opacity: 0.8;
+  filter: brightness(1.2);
+}
+
+.team-logo-placeholder {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.3);
+  border: 3px solid #e4ae0d;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 15px;
+  flex-shrink: 0;
+  overflow: hidden;
+  position: relative;
+  box-shadow: 0 0 15px rgba(228, 174, 13, 0.3);
+  transition: all 0.3s ease;
+}
+
+.team-logo-placeholder i {
+  font-size: 28px;
+  color: #e4ae0d;
+}
+
+.team-main-info {
+  flex-grow: 1;
+}
+
+.team-name {
+  color: #f8d64e;
+  font-size: 22px;
+  margin: 0 0 5px 0;
+  font-family: 'Radiance', sans-serif;
+  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
+  letter-spacing: 1px;
+}
+
+.team-meta {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.team-meta span {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 20px;
+  padding: 4px 10px;
+  border-radius: 12px;
+  background: rgba(0, 0, 0, 0.4);
+}
+
+.team-category {
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+.tier-tier1 { background: rgba(202, 50, 50, 0.3) !important; border: 1px solid #ca3232; }
+.tier-tier2 { background: rgba(228, 174, 13, 0.3) !important; border: 1px solid #e4ae0d; }
+.tier-tier3 { background: rgba(58, 80, 107, 0.3) !important; border: 1px solid #3a506b; }
+.tier-tier4 { background: rgba(75, 85, 99, 0.3) !important; border: 1px solid #4b5563; }
+.tier-tier5 { background: rgba(156, 163, 175, 0.3) !important; border: 1px solid #9ca3af; }
+
+.team-players-count {
+  color: #a0aec0;
+}
+
+.team-captain {
+  color: #f8d64e;
+}
+
+.team-description {
+  padding: 15px;
+  color: #cbd5e0;
+  font-size: 20px;
+  line-height: 1.5;
+  border-top: 1px dashed #3a506b;
+}
+
+.team-description p {
+  margin: 0;
+}
+
+.team-actions {
+  display: flex;
+  gap: 10px;
+  width: 100%;
+  margin-top: 10px;
+}
+
+.edit-team-button {
+  background: linear-gradient(135deg, #3a506b 0%, #2a4365 100%);
+  border: 1px solid #4299e1;
+}
+
+.edit-team-button:hover {
+  background: linear-gradient(135deg, #2a4365 0%, #3a506b 100%);
+}
+
+.disband-team-button {
+  background: linear-gradient(135deg, #7a0707 0%, #9b2c2c 100%);
+  border: 1px solid #f56565;
+}
+
+.disband-team-button:hover {
+  background: linear-gradient(135deg, #9b2c2c 0%, #7a0707 100%);
+}
+
+/* Efectos de hover para la tarjeta */
+.team-info:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 25px rgba(0, 0, 0, 0.5);
+  transition: all 0.3s ease;
+}
+
+/* Estilo base del botón */
+.add-button {
+  background: linear-gradient(135deg, rgba(122, 7, 7, 0.7) 0%, rgba(62, 4, 4, 0.9) 100%);
+  border: 1px solid #e4ae0d;
+  width: 20px;
+  height: 40px;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  transition: all 0.3s ease;
+  box-shadow: 0 0 8px rgba(228, 174, 13, 0.3);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Estilo de la imagen/icono */
+
+
+/* Efecto hover */
+.add-button:hover {
+  background: linear-gradient(135deg, rgba(228, 174, 13, 0.7) 0%, rgba(122, 7, 7, 0.9) 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 0 15px rgba(228, 174, 13, 0.6);
+}
+
+/* Efecto activo/presionado */
+.add-button:active {
+  transform: translateY(0);
+  box-shadow: 0 0 5px rgba(228, 174, 13, 0.3);
+}
+
+/* Efecto de brillo dorado (opcional) */
+.add-button::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(circle at center, 
+             rgba(228, 174, 13, 0) 0%, 
+             rgba(228, 174, 13, 0.1) 70%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.add-button:hover::after {
+  opacity: 1;
+}
+
+/* Tooltip moderno */
+.add-button::before {
+  content: "Añadir al equipo";
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(11, 20, 34, 0.95);
+  color: #e4ae0d;
+  padding: 6px 12px;
+  border-radius: 4px;
+  font-size: 12px;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s;
+  margin-bottom: 8px;
+  border: 1px solid #3a506b;
+  font-family: 'Radiance', sans-serif;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.add-button:hover::before {
+  opacity: 1;
+}
+
+.leave-team-button {
+  background: linear-gradient(135deg, #7a0707 0%, #5a0505 100%);
+  border: 1px solid #f56565;
+  color: white;
+  padding: 10px 20px;
+  font-weight: bold;
+  text-transform: uppercase;
+  transition: all 0.3s;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.leave-team-button:hover {
+  background: linear-gradient(135deg, #9b2c2c 0%, #7a0707 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 0 15px rgba(245, 101, 101, 0.5);
+}
+
+.leave-team-button:active {
+  transform: translateY(0);
+}
+
+.leave-team-button i {
+  font-size: 16px;
+}
+
+.info-note {
+  font-size: 18px;
+  color: #a0aec0;
+  margin-top: 5px;
+  font-style: italic;
 }
 
 /* RESPONSIVE */
@@ -670,6 +1023,20 @@
   
   .team-roles-container {
     grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  }
+
+  .filters-container {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .filter-group, .captain-button-container, .filter-actions {
+    width: 100%;
+  }
+  
+  .filter-actions {
+    margin-left: 0;
+    justify-content: flex-end;
   }
 }
 
@@ -751,6 +1118,37 @@
   
   .team-roles-container {
     grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  }
+
+  .captain-toggle-button {
+    width: 100%;
+    justify-content: center;
+  }
+  
+  .filter-actions {
+    flex-direction: column;
+  }
+  
+  .filter-button, .refresh-button {
+    width: 100%;
+  }
+
+  .team-banner {
+    flex-direction: column;
+    text-align: center;
+  }
+  
+  .team-logo-placeholder {
+    margin-right: 0;
+    margin-bottom: 15px;
+  }
+  
+  .team-meta {
+    justify-content: center;
+  }
+  
+  .team-actions {
+    flex-direction: column;
   }
 }
 

@@ -461,25 +461,27 @@ export class LobbyComponent {
     }
   }
 
-  applyFilters(): void {
+  enCurso(): void {
     this.filteredCategories = this.categories;
   }
 
-  refreshPlayers(): void {
-    this.loadAvailablePlayers();
+  buscarRivales(): void {
+    console.log('Buscando Rivales...');
   }
 
   getPlayersByCategory(category: string): Player[] {
     return this.availablePlayers.filter(player => 
       player.category === category && 
-      (this.selectedRole === 'all' || player.role === this.selectedRole)
+      (this.selectedRole === 'all' || player.role === this.selectedRole) &&
+      !player.isCaptain // Excluir jugadores que sean capitanes
     );
   }
 
   getPlayersByCategoryAndRole(category: string, role: string): Player[] {
     return this.availablePlayers.filter(player => 
       player.category === category && 
-      player.role === role
+      player.role === role &&
+      !player.isCaptain // Excluir jugadores que sean capitanes
     );
   }
 
@@ -493,6 +495,125 @@ export class LobbyComponent {
   viewProfile(player: Player): void {
     console.log('View profile:', player.uid);
   }
+
+  // En el componente LobbyComponent
+toggleCaptainStatus(): void {
+  if (!this.player.uid) return;
+  
+  const newCaptainStatus = !this.isTeamCaptain;
+  
+  this.playerService.updatePlayer(this.player.uid, { 
+    isCaptain: newCaptainStatus 
+  }).subscribe({
+    next: () => {
+      this.isTeamCaptain = newCaptainStatus;
+      this.showTeamSection = !!this.userTeam || this.isTeamCaptain;
+      
+      if (newCaptainStatus) {
+        // Mensaje opcional cuando se convierte en capitán
+        console.log('Ahora eres capitán!');
+      } else {
+        // Mensaje opcional cuando deja de ser capitán
+        console.log('Ya no eres capitán');
+      }
+    },
+    error: (err) => {
+      console.error('Error al actualizar estado de capitán:', err);
+    }
+  });
+}
+
+/* DISOLVER TEAM */
+async leaveTeam(): Promise<void> {
+  if (!this.userTeam || !this.currentUserUid) return;
+
+  const confirmation = confirm(
+    this.isTeamCaptain 
+      ? '¿Estás seguro de disolver el equipo? Esto eliminará el equipo completamente.'
+      : '¿Estás seguro de abandonar el equipo?'
+  );
+
+  if (!confirmation) return;
+
+  try {
+    if (this.isTeamCaptain) {
+      await this.dissolveTeam();
+    } else {
+      await this.leaveAsMember();
+    }
+    
+    // Actualizar estado local
+    this.userTeam = null;
+    this.teamPlayers = [];
+    this.isTeamCaptain = false;
+    this.showTeamSection = false;
+    
+    if (this.player) {
+      this.player.teamId = null;
+      this.player.availability = 'available';
+      this.player.isCaptain = false; // Asegurarse de actualizar también aquí
+    }
+    
+    // Recargar datos
+    this.loadAvailablePlayers();
+  } catch (error) {
+    console.error('Error al abandonar el equipo:', error);
+    alert('Ocurrió un error al procesar la solicitud');
+  }
+}
+
+private async dissolveTeam(): Promise<void> {
+  if (!this.userTeam || !this.currentUserUid) return;
+
+  // 1. Actualizar estado de todos los jugadores
+  const playerUpdates = this.teamPlayers.map(player => {
+    const updateData: Partial<Player> = {
+      teamId: null,
+      availability: 'available'
+    };
+    
+    // Si es el capitán, también actualizar isCaptain
+    if (player.uid === this.currentUserUid) {
+      updateData.isCaptain = false;
+    }
+    
+    return this.playerService.updatePlayer(player.uid, updateData).toPromise();
+  });
+
+  await Promise.all(playerUpdates);
+
+  // 2. Eliminar el equipo
+  await this.playerService.deleteTeam(this.userTeam.id).toPromise();
+  
+  // 3. Actualizar estado local del capitán
+  if (this.player) {
+    this.player.isCaptain = false;
+  }
+}
+
+private async leaveAsMember(): Promise<void> {
+  if (!this.userTeam || !this.currentUserUid) return;
+
+  // 1. Remover al jugador del equipo
+  const currentPlayer = this.teamPlayers.find(p => p.uid === this.currentUserUid);
+  if (!currentPlayer) return;
+
+  await this.playerService.removePlayerFromTeam(
+    this.userTeam.id,
+    currentPlayer.uid,
+    currentPlayer.role,
+    currentPlayer.avatar,
+    currentPlayer.mmr,
+    currentPlayer.nick,
+    currentPlayer.medalImage
+  ).toPromise();
+
+  // 2. Actualizar estado del jugador
+  await this.playerService.updatePlayer(this.currentUserUid, {
+    teamId: null,
+    availability: 'available'
+  }).toPromise();
+}
 
   ngOnDestroy(): void {
     this.authSubscription.unsubscribe();

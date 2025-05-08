@@ -139,13 +139,20 @@
           <option *ngFor="let role of roles" [value]="role">{{role}}</option>
         </select>
       </div>
+
+      <!-- Botón de capitán centrado -->
+  <div class="captain-button-container" *ngIf="!userTeam && player.availability === 'available'">
+    <button class="dota-button captain-toggle-button" (click)="toggleCaptainStatus()">
+      <i class="fas fa-crown"></i> {{isTeamCaptain ? 'Dejar de ser Capitán' : 'Volverse Capitán'}}
+    </button>
+  </div>
       
-      <button class="dota-button filter-button" (click)="applyFilters()">
-        Filtrar
+      <button class="dota-button filter-button" (click)="buscarRivales()">
+        Buscar Rivales
       </button>
       
-      <button class="dota-button refresh-button" (click)="refreshPlayers()">
-        <i class="fas fa-sync-alt"></i> Actualizar
+      <button class="dota-button refresh-button" (click)="enCurso()">
+        <i class="fas fa-sync-alt"></i> Partidas en Curso
       </button>
     </div>
 
@@ -155,12 +162,35 @@
         <h2 class="section-title dota-font">MI EQUIPO</h2>
         
         <div class="team-info" *ngIf="userTeam">
-          <h3>{{userTeam.name}}</h3>
-          <p>{{userTeam.description}}</p>
-          <div class="team-meta">
-            <span class="team-category">{{userTeam.category}}</span>
-            <span class="team-players-count">{{userTeam.players.length}}/5 jugadores</span>
+          <div class="team-banner">
+            <div class="team-logo-placeholder">
+              <img src="assets/medallas/profile_default.png" alt="Logo del equipo" class="team-logo">
+            </div>
+            <div class="team-main-info">
+              <h3 class="team-name">{{userTeam.name}}</h3>
+              <div class="team-meta">
+                <span class="team-category tier-{{userTeam.category.toLowerCase()}}">
+                  {{userTeam.category}}
+                </span>
+                <span class="team-players-count">
+                  <i class="fas fa-users"></i> {{userTeam.players.length}}/5
+                </span>
+                <span class="team-captain">
+                  <i class="fas fa-crown"></i> Capitán
+                </span>
+              </div>
+            </div>
           </div>
+          
+          <div class="team-description">
+            <p>{{userTeam.description || 'Sin descripción'}}</p>
+          </div>
+        </div>
+
+        <div class="team-actions" *ngIf="userTeam">
+          <button class="dota-button leave-team-button" (click)="leaveTeam()">
+            <i class="fas fa-door-open"></i> {{isTeamCaptain ? 'Disolver Equipo' : 'Abandonar Equipo'}}
+          </button>
         </div>
         
         <button *ngIf="isTeamCaptain && !userTeam" 
@@ -234,14 +264,18 @@
                 
                 <div class="player-actions" *ngIf="isTeamCaptain && userTeam && userTeam.players.length < 5">
                   <button class="dota-button small-button add-button" 
-                          (click)="addPlayerToTeam(player); $event.stopPropagation()">
-                    Añadir al equipo
+                          (click)="addPlayerToTeam(player); $event.stopPropagation()"
+                          title="Añadir al equipo">
+                    +
                   </button>
                 </div>
               </div>
               
               <div class="empty-role" *ngIf="getPlayersByCategoryAndRole(category, role).length === 0">
                 No hay jugadores disponibles
+                <div *ngIf="category === 'Tier1' || 'Tier2' || 'Tier3' || 'Tier4' || 'Tier5'" class="info-note">
+                  (Los capitanes de equipo no aparecen en esta lista)
+                </div>
               </div>
             </div>
           </div>
