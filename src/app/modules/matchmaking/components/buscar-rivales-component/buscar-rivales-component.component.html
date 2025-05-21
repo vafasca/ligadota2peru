@@ -1,0 +1,91 @@
+<div class="dota2-rivals-container">
+  <div class="background-image"></div>
+  <div class="overlay"></div>
+  <div class="dota2-header">
+    <div class="dota2-title-container">
+      <div class="navigation-buttons">
+        <button class="dota2-btn secondary" (click)="goToLobby()">
+          <i class="fas fa-arrow-left"></i> Ir al Lobby
+        </button>
+        <button class="dota2-btn secondary" (click)="goToLiveMatches()">
+          Partidas en curso <i class="fas fa-fire"></i>
+        </button>
+      </div>
+      <h1 class="dota2-title">BUSCAR RIVALES</h1>
+      <div class="dota2-title-decoration"></div>
+      <p class="dota2-subtitle">Desafía a oponentes dignos en la arena</p>
+    </div>
+  </div>
+
+  <div class="dota2-teams-grid" *ngIf="teams.length > 0; else noTeams">
+    <div class="dota2-team-card" *ngFor="let team of teams" [ngClass]="{'full-team': team.players.length >= 5}">
+      <div class="team-card-header">
+        <div class="team-badge">
+          <img src="../../../../../assets/add_icon.png" alt="Team Logo" class="team-logo">
+          <!-- <div class="team-rank">{{getTeamRank(team)}}</div> -->
+        </div>
+        <div class="team-info">
+          <h2 class="team-name">{{ team.name }}</h2>
+          <div class="team-meta">
+            <span class="team-category">{{ team.category }}</span>
+            <span class="team-slot">{{ team.players.length }}/5</span>
+          </div>
+          <div class="team-description">
+            {{ team.description || 'No description provided' }}
+          </div>
+        </div>
+      </div>
+
+      <div class="team-members">
+  <!-- Definimos los roles en orden -->
+  <ng-container *ngFor="let role of ['Hard Support', 'Offlane', 'Mid Lane', 'Carry (Safe Lane)', 'Soft Support']">
+    <!-- Buscamos al miembro que tenga ese rol -->
+    <ng-container *ngIf="getMemberByRole(team.players, role) as member">
+      <!-- Ficha de miembro existente -->
+      <div class="member-card">
+        <img [src]="member.avatar || 'assets/default-avatar.png'" alt="Avatar" class="member-avatar">
+
+        <!-- Mostrar corona si es capitán (primer jugador en el array) -->
+        <div class="captain-badge" *ngIf="member.isCaptain">👑</div>
+
+        <div class="member-info">
+          <h3 class="member-name">{{ member.nick }}</h3>
+          <div class="member-details">
+            <span class="member-role">{{ member.role }}</span>
+            <span class="member-mmr">{{ member.mmr }} MMR</span>
+          </div>
+        </div>
+
+        <div class="member-actions">
+          <button class="dota2-btn small">View</button>
+        </div>
+      </div>
+    </ng-container>
+
+    <!-- Slot vacío si no hay jugador para ese rol -->
+    <div *ngIf="!getMemberByRole(team.players, role)" class="slot-empty">
+      <div class="empty-slot-icon">👤</div>
+      <div class="empty-slot-text">
+        <strong>Slot Disponible</strong><br>
+        {{ role }}
+      </div>
+    </div>
+  </ng-container>
+      </div>
+
+      <div class="team-footer">
+        <button class="dota2-btn primary" *ngIf="team.players.length < 5">Challenge</button>
+        <button class="dota2-btn disabled" *ngIf="team.players.length >= 5">Team Full</button>
+      </div>
+    </div>
+  </div>
+
+  <ng-template #noTeams>
+    <div class="dota2-empty-state">
+      <img src="../../../../../assets/add_icon.png" alt="No teams" class="empty-icon">
+      <h3>El campo de batalla está tranquilo...</h3>
+      <p>Ningún equipo está buscando rivales actualmente</p>
+      <button class="dota2-btn primary">Crea tu propio equipo</button>
+    </div>
+  </ng-template>
+</div>

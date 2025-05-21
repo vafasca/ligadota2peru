@@ -1,0 +1,414 @@
+/* Main Container */
+/* Contenedor principal */
+.dota2-rivals-container {
+  position: relative; /* Importante para posicionar los elementos */
+  min-height: 100vh;
+  padding: 2rem;
+  font-family: 'Reaver', 'Radiance', sans-serif;
+  color: #e1e1e1;
+}
+
+/* Div para la imagen de fondo */
+.background-image {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: url('../../../../../assets/bg_teams.jpg'); /* Reemplaza con la ruta de tu imagen */
+  background-size: cover; /* Ajusta la imagen al tamaño del contenedor */
+  background-position: center; /* Centra la imagen */
+  z-index: -2; /* Coloca la imagen detrás de todo */
+}
+
+/* Superposición con gradiente */
+.overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(
+    ellipse at top,
+    rgba(10, 15, 26, 0.8) 0%, /* Gradiente semi-transparente */
+    rgba(5, 7, 13, 0.8) 100%
+  );
+  z-index: -1; /* Coloca la superposición encima de la imagen pero debajo del contenido */
+}
+
+/* Contenido principal */
+.content {
+  position: relative;
+  z-index: 1; /* Asegura que el contenido esté encima de la superposición */
+}
+
+/* Header Styles */
+.dota2-header {
+  margin-bottom: 3rem;
+  position: relative;
+}
+
+.dota2-title-container {
+  text-align: center;
+  position: relative;
+  padding-bottom: 1.5rem;
+}
+
+.dota2-title {
+  font-size: 2.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: #fff;
+  margin: 0;
+  letter-spacing: 2px;
+  text-shadow: 0 0 15px rgba(255, 215, 100, 0.5);
+  background: linear-gradient(to bottom, #f8e3a1, #d7a538);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  position: relative;
+  z-index: 2;
+}
+
+.dota2-title-decoration {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 200px;
+  height: 4px;
+  background: linear-gradient(to right, transparent, #d7a538, transparent);
+  z-index: 1;
+}
+
+.dota2-subtitle {
+  font-size: 1.1rem;
+  color: #8b8f94;
+  margin-top: 0.5rem;
+  font-style: italic;
+}
+
+/* Teams Grid */
+.dota2-teams-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: 2rem;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+/* Team Card */
+.dota2-team-card {
+  background: linear-gradient(145deg, #121a25, #0e131d);
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  border: 1px solid #2a3543;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.dota2-team-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+  border-color: #d7a538;
+}
+
+.dota2-team-card.full-team {
+  opacity: 0.8;
+}
+
+.dota2-team-card.full-team:hover {
+  border-color: #ff3d3d;
+}
+
+/* Team Header */
+.team-card-header {
+  display: flex;
+  padding: 1.5rem;
+  border-bottom: 1px solid #2a3543;
+  background: linear-gradient(to right, #121a25, #1a2435);
+}
+
+.team-badge {
+  position: relative;
+  margin-right: 1.5rem;
+}
+
+.team-logo {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  border: 3px solid #d7a538;
+  object-fit: cover;
+  background: #0e131d;
+}
+
+.team-rank {
+  position: absolute;
+  bottom: -5px;
+  right: -5px;
+  background: #d7a538;
+  color: #121a25;
+  width: 25px;
+  height: 25px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 0.9rem;
+  border: 2px solid #121a25;
+}
+
+.team-info {
+  flex: 1;
+}
+
+.team-name {
+  font-size: 1.4rem;
+  margin: 0 0 0.5rem 0;
+  color: #f8e3a1;
+  font-weight: 600;
+}
+
+.team-meta {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 0.8rem;
+  font-size: 0.9rem;
+}
+
+.team-category {
+  color: #d7a538;
+  font-weight: 500;
+}
+
+.team-slot {
+  color: #8b8f94;
+}
+
+.team-roles {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.team-roles span {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.7rem;
+  font-weight: bold;
+}
+
+.team-roles .filled {
+  background: #2a3543;
+  color: #d7a538;
+  border: 1px solid #d7a538;
+}
+
+.team-roles .empty {
+  background: #1a202c;
+  color: #4a5568;
+  border: 1px dashed #4a5568;
+}
+
+/* Members List */
+.team-members {
+  padding: 0 1.5rem;
+}
+
+.member-card {
+  display: flex;
+  align-items: center;
+  padding: 1rem 0;
+  border-bottom: 1px solid #2a3543;
+}
+
+.member-card:last-child {
+  border-bottom: none;
+}
+
+.member-avatar {
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+  border: 2px solid #2a3543;
+  margin-right: 1rem;
+}
+
+.member-info {
+  flex: 1;
+}
+
+.member-name {
+  font-size: 1rem;
+  margin: 0 0 0.2rem 0;
+  color: #fff;
+  font-weight: 500;
+}
+
+.member-details {
+  display: flex;
+  gap: 1rem;
+  font-size: 0.8rem;
+}
+
+.member-role {
+  color: #8b8f94;
+}
+
+.member-mmr {
+  color: #d7a538;
+  font-weight: 500;
+}
+
+.member-actions {
+  margin-left: 1rem;
+}
+
+/* Team Footer */
+.team-footer {
+  padding: 1.5rem;
+  background: linear-gradient(to right, #121a25, #1a2435);
+  border-top: 1px solid #2a3543;
+  text-align: center;
+}
+
+/* Buttons */
+.dota2-btn {
+  padding: 0.7rem 1.5rem;
+  border: none;
+  border-radius: 4px;
+  font-family: 'Reaver', 'Radiance', sans-serif;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.dota2-btn.primary {
+  background: linear-gradient(to right, #d7a538, #f8e3a1);
+  color: #121a25;
+  box-shadow: 0 0 10px rgba(215, 165, 56, 0.3);
+}
+
+.dota2-btn.primary:hover {
+  background: linear-gradient(to right, #f8e3a1, #d7a538);
+  box-shadow: 0 0 15px rgba(215, 165, 56, 0.5);
+}
+
+.dota2-btn.small {
+  padding: 0.4rem 0.8rem;
+  font-size: 0.8rem;
+}
+
+.dota2-btn.disabled {
+  background: #2a3543;
+  color: #4a5568;
+  cursor: not-allowed;
+}
+
+/* Empty State */
+.dota2-empty-state {
+  text-align: center;
+  padding: 4rem 2rem;
+  background: rgba(26, 32, 44, 0.5);
+  border: 2px dashed #2a3543;
+  border-radius: 8px;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.dota2-empty-state h3 {
+  color: #f8e3a1;
+  font-size: 1.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.dota2-empty-state p {
+  color: #8b8f94;
+  margin-bottom: 1.5rem;
+}
+
+.empty-icon {
+  width: 100px;
+  opacity: 0.7;
+  margin-bottom: 1.5rem;
+}
+
+.team-description {
+  font-size: 0.9rem;
+  color: #8b8f94;
+  margin-top: 0.5rem;
+  line-height: 1.4;
+  max-height: 60px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+}
+
+/* Animations */
+@keyframes glow {
+  0% { box-shadow: 0 0 5px rgba(215, 165, 56, 0.3); }
+  50% { box-shadow: 0 0 20px rgba(215, 165, 56, 0.6); }
+  100% { box-shadow: 0 0 5px rgba(215, 165, 56, 0.3); }
+}
+
+.dota2-team-card:hover .team-logo {
+  animation: glow 2s infinite;
+}
+
+.navigation-buttons {
+  display: flex;
+  justify-content: space-between;
+  max-width: 1400px;
+  margin: 0 auto 2rem auto;
+  padding: 0 1rem;
+  gap: 1rem;
+}
+
+.dota2-btn.secondary {
+  background: linear-gradient(to right, #2a3543, #3a475a);
+  color: #e1e1e1;
+  box-shadow: 0 0 8px rgba(58, 71, 90, 0.3);
+}
+
+.dota2-btn.secondary:hover {
+  background: linear-gradient(to right, #3a475a, #2a3543);
+  box-shadow: 0 0 12px rgba(58, 71, 90, 0.6);
+}
+
+.slot-empty {
+  display: flex;
+  align-items: center;
+  padding: 1rem 0;
+  border-bottom: 1px solid #2a3543;
+  color: #6b7280;
+  font-size: 0.9rem;
+}
+
+.empty-slot-icon {
+  width: 45px;
+  height: 45px;
+  background: #1a202c;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 1rem;
+  font-size: 18px;
+  opacity: 0.5;
+}
+
+.empty-slot-text {
+  line-height: 1.2;
+}

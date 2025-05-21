@@ -466,7 +466,7 @@ export class LobbyComponent {
   }
 
   buscarRivales(): void {
-    console.log('Buscando Rivales...');
+    this.router.navigate(['/matchmaking']);
   }
 
   getPlayersByCategory(category: string): Player[] {
@@ -511,7 +511,7 @@ toggleCaptainStatus(): void {
       
       if (newCaptainStatus) {
         // Mensaje opcional cuando se convierte en capitán
-        alert('Ahora eres capitán!');
+        // alert('Ahora eres capitán!');
       } else {
         // Mensaje opcional cuando deja de ser capitán
         console.log('Ya no eres capitán');
