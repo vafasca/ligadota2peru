@@ -15,6 +15,8 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import {MatButtonModule} from '@angular/material/button';
 import {MatSnackBarModule} from '@angular/material/snack-bar';
 
+import { RecaptchaV3Module, RECAPTCHA_V3_SITE_KEY } from 'ng-recaptcha';
+
 @NgModule({
   declarations: [
     AppComponent
@@ -24,6 +26,7 @@ import {MatSnackBarModule} from '@angular/material/snack-bar';
     AppRoutingModule,
     MatButtonModule,
     MatSnackBarModule,
+    RecaptchaV3Module,
 
     // Inicialización de Firebase
     provideFirebaseApp(() => initializeApp(environment.firebaseConfig)),
@@ -44,7 +47,7 @@ import {MatSnackBarModule} from '@angular/material/snack-bar';
 
     BrowserAnimationsModule, // para usar Firestore
   ],
-  providers: [],
+  providers: [{ provide: RECAPTCHA_V3_SITE_KEY, useValue: '6LeblEUrAAAAANF5xaGIbvFXJd7wcnOz0BJO7AwN' }],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
