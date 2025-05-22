@@ -2,7 +2,6 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
 const routes: Routes = [
-
   {
     path: 'completar_registro',
     loadChildren: () =>
@@ -21,12 +20,26 @@ const routes: Routes = [
       ),
   },
   {
-    path: '',
+    path: 'login',
     loadChildren: () =>
       import('./modules/auth/auth.module').then((m) => m.AuthModule),
   },
 
-  { path: 'matchmaking', loadChildren: () => import('./modules/matchmaking/matchmaking.module').then(m => m.MatchmakingModule) },
+  {
+    path: 'matchmaking',
+    loadChildren: () =>
+      import('./modules/matchmaking/matchmaking.module').then(
+        (m) => m.MatchmakingModule
+      ),
+  },
+
+  {
+    path: '',
+    loadChildren: () =>
+      import('./modules/homepage/homepage.module').then(
+        (m) => m.HomepageModule
+      ),
+  },
 ];
 
 @NgModule({

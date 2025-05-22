@@ -329,6 +329,9 @@
   display: flex;
   align-items: center;
   gap: 8px;
+  pointer-events: none;
+  cursor: not-allowed;
+  /*quitar cuando funcione boton*/
 }
 
 .refresh-button:hover {

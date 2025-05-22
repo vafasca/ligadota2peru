@@ -1,0 +1,25 @@
+.full-width {
+  width: 100%;
+}
+
+.error-message {
+  color: #f44336;
+  margin-top: 10px;
+  font-weight: bold;
+}
+
+.countdown {
+  color: #ff9800;
+  text-align: center;
+  margin-top: 15px;
+  font-size: 0.9rem;
+}
+
+button[color='primary'] {
+  background-color: #7a0707;
+  color: white;
+}
+
+button[color='primary']:hover {
+  background-color: #9b2c2c;
+}

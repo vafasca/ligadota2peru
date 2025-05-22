@@ -61,11 +61,11 @@ export class LoginComponent {
   }
 
   navigateToRegister(): void {
-    this.router.navigate(['/registro']);
+    this.router.navigate(['/login/registro']);
   }
 
   resetPassword(): void {
-    this.router.navigate(['/recuperar-contrasena']);
+    this.router.navigate(['/login/recuperar-contrasena']);
   }
 
   private showSuccess(message: string): void {

@@ -1,0 +1,30 @@
+<h2 mat-dialog-title>Ingresar Codigo</h2>
+<mat-dialog-content>
+  <form [formGroup]="accessForm">
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Código de acceso</mat-label>
+      <input matInput formControlName="accessCode" type="password" required
+             [disabled]="isLocked">
+      <mat-error *ngIf="accessForm.get('accessCode')?.hasError('required')">
+        El código es requerido
+      </mat-error>
+      <mat-error *ngIf="accessForm.get('accessCode')?.hasError('minlength')">
+        El código debe tener al menos 4 caracteres
+      </mat-error>
+    </mat-form-field>
+  </form>
+  <div *ngIf="errorMessage" class="error-message">
+    {{errorMessage}}
+  </div>
+  <div *ngIf="isLocked" class="countdown">
+    Tiempo restante: {{countdown}} segundos
+  </div>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-button mat-dialog-close [disabled]="isLocked">Cancelar</button>
+  <button mat-raised-button color="primary" 
+          [disabled]="accessForm.invalid || isLocked" 
+          (click)="verifyCode()">
+    Verificar
+  </button>
+</mat-dialog-actions>
