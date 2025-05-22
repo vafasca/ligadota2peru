@@ -15,7 +15,7 @@ export class AccessCodeService {
 
       if (codeSnap.exists()) {
         // Eliminar el código después de validarlo
-        await deleteDoc(codeRef);
+        // await deleteDoc(codeRef);
         return true;
       }
       return false;
