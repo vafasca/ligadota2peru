@@ -1,9 +1,8 @@
-import { Component, ElementRef, Inject, ViewChild } from '@angular/core';
+import { Component, Inject } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { environment } from 'src/environments/environment';
 import { AccessCodeService } from '../../services/access-code.service';
-import { ReCaptchaV3Service } from 'ng-recaptcha';
 
 @Component({
   selector: 'app-access-code-dialog',
@@ -11,9 +10,7 @@ import { ReCaptchaV3Service } from 'ng-recaptcha';
   styleUrls: ['./access-code-dialog.component.css']
 })
 export class AccessCodeDialogComponent {
-
-  @ViewChild('recaptchaBadge') recaptchaBadge!: ElementRef;
-  accessForm: FormGroup;
+accessForm: FormGroup;
   errorMessage: string = '';
   attempts: number = 0;
   maxAttempts: number = 3;
@@ -25,8 +22,7 @@ export class AccessCodeDialogComponent {
   constructor(
     private fb: FormBuilder,
     private accessCodeService: AccessCodeService,
-    public dialogRef: MatDialogRef<AccessCodeDialogComponent>,
-    private recaptchaV3Service: ReCaptchaV3Service
+    public dialogRef: MatDialogRef<AccessCodeDialogComponent>
   ) {
     this.accessForm = this.fb.group({
       accessCode: ['', [Validators.required, Validators.minLength(4)]]
