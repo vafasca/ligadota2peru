@@ -219,15 +219,15 @@ updatePlayer(uid: string, data: Partial<Player>): Observable<void> {
    * @param team Datos del equipo
    * @returns Observable con el ID del equipo creado
    */
-  createTeam(team: Omit<Team, 'id'>): Observable<string> {
-    return from(addDoc(this.teamsCollection, team)).pipe(
-      map(ref => ref.id),
-      catchError((error: FirestoreError) => {
-        console.error('Error creating team:', error);
-        return throwError(() => new Error(this.getFirestoreErrorMessage(error)));
-      })
-    );
-  }
+  // createTeam(team: Omit<Team, 'id'>): Observable<string> {
+  //   return from(addDoc(this.teamsCollection, team)).pipe(
+  //     map(ref => ref.id),
+  //     catchError((error: FirestoreError) => {
+  //       console.error('Error creating team:', error);
+  //       return throwError(() => new Error(this.getFirestoreErrorMessage(error)));
+  //     })
+  //   );
+  // }
 
   /**
    * Actualiza un equipo
@@ -235,56 +235,56 @@ updatePlayer(uid: string, data: Partial<Player>): Observable<void> {
    * @param data Datos a actualizar
    * @returns Observable vacío
    */
-  updateTeam(teamId: string, data: Partial<Team>): Observable<void> {
-    const teamDocRef = doc(this.firestore, `teams/${teamId}`);
-    return from(updateDoc(teamDocRef, data)).pipe(
-      catchError((error: FirestoreError) => {
-        console.error('Error updating team:', error);
-        return throwError(() => new Error(this.getFirestoreErrorMessage(error)));
-      })
-    );
-  }
+  // updateTeam(teamId: string, data: Partial<Team>): Observable<void> {
+  //   const teamDocRef = doc(this.firestore, `teams/${teamId}`);
+  //   return from(updateDoc(teamDocRef, data)).pipe(
+  //     catchError((error: FirestoreError) => {
+  //       console.error('Error updating team:', error);
+  //       return throwError(() => new Error(this.getFirestoreErrorMessage(error)));
+  //     })
+  //   );
+  // }
 
   /**
    * Obtiene un equipo por ID
    * @param teamId ID del equipo
    * @returns Observable con el equipo o null si no existe
    */
-  getTeam(teamId: string): Observable<Team | null> {
-    const teamDocRef = doc(this.firestore, `teams/${teamId}`);
-    return from(getDoc(teamDocRef)).pipe(
-      map(snapshot => snapshot.exists() ? { id: snapshot.id, ...snapshot.data() } as Team : null),
-      catchError((error: FirestoreError) => {
-        console.error('Error getting team:', error);
-        return throwError(() => new Error(this.getFirestoreErrorMessage(error)));
-      })
-    );
-  }
+  // getTeam(teamId: string): Observable<Team | null> {
+  //   const teamDocRef = doc(this.firestore, `teams/${teamId}`);
+  //   return from(getDoc(teamDocRef)).pipe(
+  //     map(snapshot => snapshot.exists() ? { id: snapshot.id, ...snapshot.data() } as Team : null),
+  //     catchError((error: FirestoreError) => {
+  //       console.error('Error getting team:', error);
+  //       return throwError(() => new Error(this.getFirestoreErrorMessage(error)));
+  //     })
+  //   );
+  // }
 
   /**
    * Obtiene todos los equipos con actualizaciones en tiempo real
    * @returns Observable con array de equipos
    */
-  getTeams(): Observable<Team[]> {
-    return new Observable<Team[]>(observer => {
-      const unsubscribe = onSnapshot(
-        this.teamsCollection,
-        (snapshot) => {
-          const teams = snapshot.docs.map(doc => ({
-            id: doc.id,
-            ...doc.data()
-          } as Team));
-          observer.next(teams);
-        },
-        (error) => {
-          console.error('Error listening to teams:', error);
-          observer.error(error);
-        }
-      );
+  // getTeams(): Observable<Team[]> {
+  //   return new Observable<Team[]>(observer => {
+  //     const unsubscribe = onSnapshot(
+  //       this.teamsCollection,
+  //       (snapshot) => {
+  //         const teams = snapshot.docs.map(doc => ({
+  //           id: doc.id,
+  //           ...doc.data()
+  //         } as Team));
+  //         observer.next(teams);
+  //       },
+  //       (error) => {
+  //         console.error('Error listening to teams:', error);
+  //         observer.error(error);
+  //       }
+  //     );
 
-      return () => unsubscribe();
-    });
-  }
+  //     return () => unsubscribe();
+  //   });
+  // }
 
 /**
  * Añade un jugador a un equipo con su rol, avatar, mmr y nick
@@ -331,15 +331,6 @@ addPlayerToTeam(
   );
 }
 
-  /**
- * Elimina un jugador de un equipo
- * @param teamId ID del equipo
- * @param playerId ID del jugador
- * @param role Rol del jugador
- * @param avatar Avatar del jugador
- * @param mmr MMR del jugador
- * @returns Observable vacío
- */
 /**
  * Elimina un jugador de un equipo
  * @param teamId ID del equipo
@@ -431,31 +422,31 @@ getAvailablePlayers(): Observable<Player[]> {
  * @param playerId ID del jugador
  * @param newRole Nuevo rol
  */
-updatePlayerRole(teamId: string, playerId: string, newRole: string): Observable<void> {
-  const teamDocRef = doc(this.firestore, `teams/${teamId}`);
+// updatePlayerRole(teamId: string, playerId: string, newRole: string): Observable<void> {
+//   const teamDocRef = doc(this.firestore, `teams/${teamId}`);
   
-  return from(getDoc(teamDocRef)).pipe(
-    switchMap(teamSnapshot => {
-      if (!teamSnapshot.exists()) {
-        return throwError(() => new Error('Equipo no encontrado'));
-      }
+//   return from(getDoc(teamDocRef)).pipe(
+//     switchMap(teamSnapshot => {
+//       if (!teamSnapshot.exists()) {
+//         return throwError(() => new Error('Equipo no encontrado'));
+//       }
       
-      const teamData = teamSnapshot.data() as Team;
-      const players = teamData.players || [];
+//       const teamData = teamSnapshot.data() as Team;
+//       const players = teamData.players || [];
       
-      // Actualiza el rol del jugador
-      const updatedPlayers = players.map(p => 
-        p.uid === playerId ? { ...p, role: newRole } : p
-      );
+//       // Actualiza el rol del jugador
+//       const updatedPlayers = players.map(p => 
+//         p.uid === playerId ? { ...p, role: newRole } : p
+//       );
       
-      return from(updateDoc(teamDocRef, { players: updatedPlayers }));
-    }),
-    catchError((error: FirestoreError) => {
-      console.error('Error actualizando rol:', error);
-      return throwError(() => new Error(this.getFirestoreErrorMessage(error)));
-    })
-  );
-}
+//       return from(updateDoc(teamDocRef, { players: updatedPlayers }));
+//     }),
+//     catchError((error: FirestoreError) => {
+//       console.error('Error actualizando rol:', error);
+//       return throwError(() => new Error(this.getFirestoreErrorMessage(error)));
+//     })
+//   );
+// }
 
 
   /**
@@ -507,60 +498,15 @@ getTeamPlayers(teamId: string): Observable<Player[]> {
   );
 }
 
-/**
- * Obtiene y escucha en tiempo real los jugadores de un equipo
- * @param teamId ID del equipo
- * @returns Observable<Player[]>
- */
-getTeamPlayersRealTime(teamId: string): Observable<Player[]> {
-  const teamDocRef = doc(this.firestore, `teams/${teamId}`);
-  return new Observable<Player[]>(observer => {
-    const unsubscribe = onSnapshot(
-      teamDocRef,
-      (snapshot) => {
-        if (!snapshot.exists()) {
-          observer.next([]);
-          return;
-        }
-        const teamData = snapshot.data() as Team;
-        const playersInTeam = teamData.players || [];
-
-        // Mapeamos directamente los TeamPlayer a Player para reusar el modelo
-        const players: Player[] = playersInTeam.map(p => ({
-          uid: p.uid,
-          avatar: p.avatar,
-          mmr: p.mmr,
-          medalImage: p.medalImage,
-          nick: p.nick,
-          role: p.role,
-          category: '', // Puedes dejarlo vacío si no se usa aquí
-          idDota: 0,
-          medal: '',
-          status: 'Activo',
-          rating: 0,
-          secondaryRole: '',
-          secondaryCategory: '',
-          availability: 'in_team'
-        }));
-        observer.next(players);
-      },
-      (error) => {
-        observer.error(error);
-      }
-    );
-    return () => unsubscribe();
-  });
-}
-
-deleteTeam(teamId: string): Observable<void> {
-  const teamDocRef = doc(this.firestore, `teams/${teamId}`);
-  return from(deleteDoc(teamDocRef)).pipe(
-    catchError((error: FirestoreError) => {
-      console.error('Error deleting team:', error);
-      return throwError(() => new Error(this.getFirestoreErrorMessage(error)));
-    })
-  );
-}
+// deleteTeam(teamId: string): Observable<void> {
+//   const teamDocRef = doc(this.firestore, `teams/${teamId}`);
+//   return from(deleteDoc(teamDocRef)).pipe(
+//     catchError((error: FirestoreError) => {
+//       console.error('Error deleting team:', error);
+//       return throwError(() => new Error(this.getFirestoreErrorMessage(error)));
+//     })
+//   );
+// }
 
   /**
    * Translates Firestore error codes to user-friendly messages

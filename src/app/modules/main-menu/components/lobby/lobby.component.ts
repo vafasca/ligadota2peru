@@ -9,6 +9,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { CreateTeamDialogComponent } from '../create-team-dialog/create-team-dialog.component';
 import { AddPlayerDialogComponent } from '../add-player-dialog/add-player-dialog.component';
 import { CdkDragDrop, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
+import { TeamService } from '../../services/team.service';
 
 @Component({
   selector: 'app-lobby',
@@ -61,7 +62,7 @@ export class LobbyComponent {
   
 
   // Variable para almacenar el rol temporal
-  tempRole: string = '';
+  //tempRole: string = '';
 
   availablePlayers: Player[] = [];
   categories: string[] = [];
@@ -75,7 +76,8 @@ export class LobbyComponent {
     private router: Router,
     private auth: Auth,
     private playerService: PlayerService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private teamService: TeamService
   ) {}
 
   ngOnInit(): void {
@@ -84,35 +86,33 @@ export class LobbyComponent {
     //this.loadTempRole();
   }
 
-  private loadTempRole(): void {
-    const savedRole = sessionStorage.getItem('tempRole');
-    if (savedRole) {
-      this.tempRole = savedRole;
-    } else {
-      this.tempRole = this.player.role;
-    }
-  }
+  // private loadTempRole(): void {
+  //   const savedRole = sessionStorage.getItem('tempRole');
+  //   if (savedRole) {
+  //     this.tempRole = savedRole;
+  //   } else {
+  //     this.tempRole = this.player.role;
+  //   }
+  // }
 
-  private saveTempRole(): void {
-    sessionStorage.setItem('tempRole', this.tempRole);
-  }
+  // private saveTempRole(): void {
+  //   sessionStorage.setItem('tempRole', this.tempRole);
+  // }
 
-  private clearTempRole(): void {
-    sessionStorage.removeItem('tempRole');
-  }
+  // private clearTempRole(): void {
+  //   sessionStorage.removeItem('tempRole');
+  // }
 
   private setupAuthListener(): void {
     this.authSubscription = new Subscription();
     
     const unsubscribe = onAuthStateChanged(this.auth, (user) => {
-      // console.log('[LOBBY] Auth state changed:', user ? 'Authenticated' : 'Not authenticated');
       this.currentUserUid = user?.uid || null;
       
       if (user) {
         this.loadPlayerData(user.uid);
         this.loadAvailablePlayers();
         this.loadUserTeam(user.uid);
-        this.loadAvailablePlayers();
       } else {
         this.handleUnauthenticated();
       }
@@ -144,17 +144,12 @@ export class LobbyComponent {
   }
 
   private loadUserTeam(playerId: string): void {
-    this.teamsSub = this.playerService.getTeams().pipe(
-      map(teams => 
-        teams.find(team => team.captainId === playerId || team.players.some(p => p.uid === playerId))
-      )
-    ).subscribe({
+    this.teamsSub = this.teamService.getUserTeam(playerId).subscribe({
       next: (userTeam) => {
         this.userTeam = userTeam || null;
         this.showTeamSection = !!this.userTeam || this.isTeamCaptain;
   
         if (this.userTeam) {
-          // Suscripción en tiempo real a los jugadores del equipo
           this.loadTeamPlayersRealTime(this.userTeam.id);
         } else {
           this.teamPlayers = [];
@@ -168,24 +163,16 @@ export class LobbyComponent {
 
   
   onDrop(event: CdkDragDrop<Player[]>) {
-    // console.log('Evento completo:', event);
-    // console.log('Datos del contenedor anterior:', event.previousContainer.data);
-    // console.log('Datos del contenedor actual:', event.container.data);
-    
     if (event.previousContainer === event.container) {
       moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
     } else {
       const player = event.item.data;
-      if (!player) return;
+      if (!player || !this.userTeam) return;
       
-      const newRole = event.container.id; 
-      this.updatePlayerRole(player.uid, newRole).subscribe({
-        next: () => {
-          console.log(`Player role updated to ${newRole}`);
-        },
-        error: (err) => {
-          console.error('Error updating player role:', err);
-        }
+      const newRole = event.container.id;
+      this.teamService.updatePlayerRole(this.userTeam.id, player.uid, newRole).subscribe({
+        next: () => console.log(`Player role updated to ${newRole}`),
+        error: (err) => console.error('Error updating player role:', err)
       });
     }
   }
@@ -200,7 +187,7 @@ export class LobbyComponent {
       return throwError(() => new Error('Sin equipo'));
     }
     
-    return this.playerService.updatePlayerRole(
+    return this.teamService.updatePlayerRole(
       this.userTeam.id, 
       playerUid, 
       newRole
@@ -209,25 +196,23 @@ export class LobbyComponent {
 
 
   private loadTeamPlayersRealTime(teamId: string): void {
-    if (this.playersSub) {
-      this.playersSub.unsubscribe();
-    }
-  
-    this.playersSub = this.playerService.getTeamPlayersRealTime(teamId).subscribe({
-      next: (players) => {
-        this.teamPlayers = players;
-  
-        // Ordenar según rol
-        const roleOrder = ['Carry (Safe Lane)', 'Mid Lane', 'Offlane', 'Hard Support', 'Soft Support'];
-        this.teamPlayers.sort((a, b) =>
-          roleOrder.indexOf(a.role) - roleOrder.indexOf(b.role)
-        );
-      },
-      error: (err) => {
-        console.error('[LOBBY] Error listening to team players:', err);
-      }
-    });
+  if (this.playersSub) {
+    this.playersSub.unsubscribe();
   }
+  this.playersSub = this.teamService.getTeamPlayersRealTime(teamId).subscribe({
+    next: (players) => {
+      this.teamPlayers = players;
+      // Ordenar según rol
+      const roleOrder = ['Carry (Safe Lane)', 'Mid Lane', 'Offlane', 'Hard Support', 'Soft Support'];
+      this.teamPlayers.sort((a, b) =>
+        roleOrder.indexOf(a.role) - roleOrder.indexOf(b.role)
+      );
+    },
+    error: (err) => {
+      console.error('[LOBBY] Error listening to team players:', err);
+    }
+  });
+}
 
   private loadTeamPlayers(teamId: string): void {
     this.playerService.getTeamPlayers(teamId).subscribe({
@@ -326,9 +311,8 @@ export class LobbyComponent {
       status: 'active'
     };
 
-    this.playerService.createTeam(newTeam).subscribe({
+    this.teamService.createTeam(newTeam).subscribe({
       next: (teamId) => {
-        // Actualizar el jugador para marcar que tiene equipo
         this.playerService.updatePlayer(this.player.uid, { 
           teamId,
           availability: 'in_team'
@@ -359,7 +343,7 @@ export class LobbyComponent {
       player.medalImage
     ).subscribe({
       next: () => {
-        this.loadTeamPlayers(this.userTeam!.id);
+        this.loadTeamPlayersRealTime(this.userTeam!.id);
         this.loadAvailablePlayers();
       },
       error: (err) => {
@@ -382,7 +366,7 @@ export class LobbyComponent {
       player.medalImage
     ).subscribe({
       next: () => {
-        this.loadTeamPlayers(this.userTeam!.id);
+        this.loadTeamPlayersRealTime(this.userTeam!.id);
         this.loadAvailablePlayers();
       },
       error: (err) => {
@@ -436,7 +420,7 @@ export class LobbyComponent {
   async logout(): Promise<void> {
     try {
       // Limpiar el rol temporal al cerrar sesión
-      this.clearTempRole();
+      // this.clearTempRole();
       
       if (this.player.uid) {
         await new Promise<void>((resolve, reject) => {
@@ -583,7 +567,7 @@ private async dissolveTeam(): Promise<void> {
   await Promise.all(playerUpdates);
 
   // 2. Eliminar el equipo
-  await this.playerService.deleteTeam(this.userTeam.id).toPromise();
+  await this.teamService.deleteTeam(this.userTeam.id).toPromise();
   
   // 3. Actualizar estado local del capitán
   if (this.player) {

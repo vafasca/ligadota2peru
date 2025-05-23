@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { Team } from 'src/app/modules/admin/models/equipos.model';
 import { PlayerService } from 'src/app/modules/admin/services/player.service';
+import { TeamService } from 'src/app/modules/main-menu/services/team.service';
 
 @Component({
   selector: 'app-buscar-rivales-component',
@@ -22,7 +23,7 @@ rolesOrder = [
   { key: 'Soft Support', label: 'Soft Support' }
 ];
 
-  constructor(private playerService: PlayerService, private router: Router) {}
+  constructor(private playerService: PlayerService, private router: Router, private teamService: TeamService) {}
 
 
   ngOnInit(): void {
@@ -36,7 +37,7 @@ rolesOrder = [
   }
 
   loadTeamsRealTime(): void {
-    this.teamSubscription = this.playerService.getTeams().subscribe({
+    this.teamSubscription = this.teamService.getTeams().subscribe({
       next: (teams) => {
         this.teams = teams;
       },
