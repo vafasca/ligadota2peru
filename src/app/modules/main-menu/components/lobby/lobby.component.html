@@ -120,7 +120,18 @@
   <!-- Contenido principal del lobby -->
   <div class="lobby-content">
     <h1 class="lobby-title dota-font">LOBBY DE JUGADORES</h1>
-    <div class="lobby-subtitle">Jugadores disponibles</div>
+    <div class="lobby-subtitle">
+      <!-- Alternativa más destacada -->
+      <div class="online-players-badge">
+        <div class="online-icon">
+          <i class="fas fa-users"></i>
+        </div>
+        <div class="online-count">
+          <span class="count">{{ availablePlayers.length }}</span>
+          <span class="label">JUGADORES EN LÍNEA</span>
+        </div>
+      </div>
+    </div>
     
     <!-- Filtros de búsqueda -->
     <div class="filters-container">
