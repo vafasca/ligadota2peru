@@ -34,7 +34,7 @@ export class AuthService {
       if (user) {
         // console.log('[Auth] Usuario autenticado:', user.email);
         if (!user.emailVerified && !this.isWaitingVerificationPage()) {
-          this.router.navigate(['/verificacion'], {
+          this.router.navigate(['/login/verificacion'], {
             state: { email: user.email }
           });
         }

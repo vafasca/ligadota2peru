@@ -10,6 +10,8 @@ import { AccessCodeDialogComponent } from '../access-code-dialog/access-code-dia
 })
 export class HomeComponent {
 
+selectedTier: any;
+
 featuredStreamer = {
     name: 'Vanngg',
     avatar: '../../../../../assets/streamers/vann_grid.webp',
@@ -91,17 +93,25 @@ featuredStreamer = {
     private dialog: MatDialog
   ) {}
 
-  navigateToLogin(): void {
-    const dialogRef = this.dialog.open(AccessCodeDialogComponent, {
-      width: '350px',
-    });
+  ngOnInit() {
+    this.selectedTier = this.tiers[0];
+  }
 
-    dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-        // Código correcto, redirigir al lobby
-        this.router.navigate(['/login']);
-      }
-    });
+  selectTier(tier: any) {
+  this.selectedTier = tier;
+}
+
+  navigateToLogin(): void {
+    // const dialogRef = this.dialog.open(AccessCodeDialogComponent, {
+    //   width: '350px',
+    // });
+
+    // dialogRef.afterClosed().subscribe(result => {
+    //   if (result) {
+    //     this.router.navigate(['/login']);
+    //   }
+    // });
+    this.router.navigate(['/login']);
   }
 
 

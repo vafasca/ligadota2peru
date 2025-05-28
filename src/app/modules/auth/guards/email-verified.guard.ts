@@ -19,7 +19,7 @@ export const emailVerifiedGuard: CanActivateFn = (route, state) => {
     map(() => {
       return user.emailVerified 
         ? true 
-        : router.createUrlTree(['/verificacion'], {
+        : router.createUrlTree(['/login/verificacion'], {
             queryParams: { email: user.email }
           });
     }),

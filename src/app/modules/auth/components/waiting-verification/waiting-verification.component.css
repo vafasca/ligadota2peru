@@ -1,0 +1,146 @@
+/* waiting-verification.component.css */
+.verify-container {
+  position: relative;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #0e0e0e, #1c1c1c);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  padding: 20px;
+  overflow: hidden;
+}
+
+.verify-overlay::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background-image: url('https://cdn.cloudflare.steamstatic.com/apps/dota2/images/dota2background1.jpg');
+  background-size: cover;
+  background-position: center;
+  opacity: 0.1;
+  z-index: 0;
+}
+
+.verify-box {
+  position: relative;
+  background: rgba(0, 0, 0, 0.85);
+  border: 2px solid #41e9c5;
+  border-radius: 12px;
+  padding: 40px;
+  max-width: 500px;
+  width: 100%;
+  box-shadow: 0 0 20px #ff1e1e;
+  z-index: 1;
+  text-align: center;
+  animation: pulse 2s infinite alternate;
+}
+
+@keyframes pulse {
+  from {
+    box-shadow: 0 0 10px #ecb620;
+  }
+  to {
+    box-shadow: 0 0 30px #eb9028, 0 0 40px #ff1e1e;
+  }
+}
+
+.verify-box h2 {
+  font-family: 'DotGothic16', sans-serif;
+  margin-bottom: 15px;
+  font-size: 28px;
+  color: #ff1e1e;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+}
+
+.epic-text {
+  font-size: 18px;
+  color: #ffcc00 !important;
+  font-style: italic;
+  margin: 20px 0 !important;
+}
+
+.animation-container {
+  margin: 20px 0;
+}
+
+.trophy-icon {
+  font-size: 60px;
+  color: #ffcc00;
+  animation: bounce 1.5s infinite;
+}
+
+@keyframes bounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-20px);
+  }
+}
+
+.countdown {
+  margin: 25px 0;
+  font-size: 16px;
+}
+
+.countdown strong {
+  color: #ff1e1e;
+  font-size: 20px;
+}
+
+.actions {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  justify-content: center;
+  margin: 25px 0;
+}
+
+.battle-button {
+  background-color: #ff1e1e;
+  border: none;
+  color: white;
+  padding: 12px 30px;
+  font-size: 18px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  font-weight: bold;
+}
+
+.credentials-button {
+  background-color: #1eb6ff;
+  border: none;
+  color: white;
+  padding: 12px 30px;
+  font-size: 18px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  font-weight: bold;
+}
+
+.battle-button:hover, .credentials-button:hover {
+  transform: scale(1.05);
+  opacity: 0.9;
+}
+
+.help-text {
+  margin-top: 20px;
+  font-size: 14px;
+  color: #aaa;
+  font-style: italic;
+}

@@ -144,7 +144,7 @@
     transform: translateY(-50%);
     background: transparent;
     border: none;
-    color: #aaa;
+    color: #ffffff;
     cursor: pointer;
     padding: 5px;
     font-size: 1rem;
@@ -152,7 +152,7 @@
   }
   
   .toggle-password:hover {
-    color: #e4ae0d;
+    color: #ffffff;
   }
   
   .toggle-password:focus {
@@ -352,7 +352,23 @@
     padding-top: 1.5rem;
     letter-spacing: 1px;
   }
-  
+
+  .access-code-info {
+  color: #e4ae0d;
+  text-align: center;
+  margin-top: 1rem;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  opacity: 0.8;
+}
+
+.access-code-info i {
+  font-size: 1rem;
+}
+
   /* Animaciones */
   @keyframes shake {
     0%, 100% { transform: translateX(0); }

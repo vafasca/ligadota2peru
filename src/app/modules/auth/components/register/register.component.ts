@@ -1,8 +1,10 @@
 import { Component } from '@angular/core';
 import { Auth, createUserWithEmailAndPassword, signOut, sendEmailVerification, fetchSignInMethodsForEmail } from '@angular/fire/auth';
 import { NgForm } from '@angular/forms';
+import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
+import { AccessCodeDialogComponent } from 'src/app/modules/homepage/components/access-code-dialog/access-code-dialog.component';
 
 // Lista mejorada de dominios de correo válidos
 const VALID_EMAIL_DOMAINS = [
@@ -29,7 +31,8 @@ export class RegisterComponent {
   constructor(
     private auth: Auth,
     private router: Router,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private dialog: MatDialog
   ) {}
 
   async checkEmail(email: string) {
@@ -138,30 +141,56 @@ export class RegisterComponent {
       return;
     }
 
+    // Abrir diálogo de código de acceso antes de proceder con el registro
+    const dialogRef = this.dialog.open(AccessCodeDialogComponent, {
+      width: '350px',
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        // Si el código es correcto, proceder con el registro
+        this.proceedWithRegistration(email, password);
+      } else {
+        // Si el código es incorrecto o se cancela, limpiar el formulario
+        this.resetForm(form);
+      }
+    });
+  }
+
+  private async proceedWithRegistration(email: string, password: string) {
     this.isLoading = true;
-    
+
     try {
       const userCredential = await createUserWithEmailAndPassword(this.auth, email, password);
-      
+
       // Enviar correo de verificación
       await sendEmailVerification(userCredential.user);
-      
+
       // Cerrar sesión automáticamente para forzar verificación
       await signOut(this.auth);
-      
+
       this.showSuccess('¡Registro exitoso! Hemos enviado un correo de verificación');
-      
+
       // Redirigir a página de espera de verificación
-      this.router.navigate(['/verificacion'], { 
-        state: { 
+      this.router.navigate(['/login/verificacion'], {
+        state: {
           email: email,
           justRegistered: true
-        } 
+        }
       });
     } catch (error) {
       this.isLoading = false;
       this.handleError(error);
     }
+  }
+
+  private resetForm(form: NgForm) {
+    form.resetForm();
+    this.currentEmail = '';
+    this.password = '';
+    this.confirmPassword = '';
+    this.passwordStrength = 'weak';
+    this.errorMessage = '';
   }
 
   private handleError(error: any) {

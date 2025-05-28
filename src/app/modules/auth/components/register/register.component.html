@@ -23,7 +23,7 @@
                  [class.error-border]="emailExists">
           
           <div *ngIf="emailExists" class="email-exists-message">
-            <span><i class="fas fa-exclamation-triangle"></i> Héroe ya registrado</span>
+            <span><i class="fas fa-exclamation-triangle"></i> Correo electronico invalido</span>
             <button type="button" class="clear-email-btn" (click)="resetEmailField()">
               <i class="fas fa-times"></i> Cambiar
             </button>
@@ -74,6 +74,10 @@
             <i class="fas fa-spinner fa-spin"></i> CARGANDO...
           </span>
         </button>
+
+        <div class="access-code-info">
+          <i class="fas fa-key"></i> Se requerirá un código de acceso para completar el registro
+        </div>
   
         <div class="register-links">
           <a routerLink="/login" class="register-link">

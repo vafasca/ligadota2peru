@@ -38,7 +38,7 @@ export class LoginComponent {
           this.showSuccess('Inicio de sesión exitoso');
           this.router.navigate(['/completar_registro']);
         } else if (result.needsVerification) {
-          this.router.navigate(['/verificacion'], { 
+          this.router.navigate(['/login/verificacion'], { 
             state: { email: email } 
           });
           this.showError(result.message || 'Por favor verifica tu correo electrónico');

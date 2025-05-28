@@ -1,22 +1,31 @@
 <div class="verify-container">
     <div class="verify-overlay"></div>
     <div class="verify-box">
-      <h2>Verificación de Correo Requerida</h2>
-      <p>Hemos enviado un enlace de verificación a <strong>{{email}}</strong></p>
-      <p>Por favor revisa tu bandeja de entrada y haz clic en el enlace para activar tu cuenta.</p>
+      <h2>¡BIENVENIDO, GLADIADOR!</h2>
+      <div class="animation-container">
+        <i class="fas fa-shield-alt trophy-icon"></i>
+      </div>
+      <p>Estás a un paso de unirte a <strong>LOS TORNEOS DEL HAMBRE</strong></p>
+      <p class="epic-text">La arena de Dota 2 te espera, solo debes aceptar la invitacion</p>
+      
+      <div class="countdown">
+        <p>La batalla comenzará en <strong>{{countdown}}</strong> segundos...</p>
+      </div>
       
       <div class="actions">
-        <button (click)="resendVerification()" class="dota-button">
-          <i class="fas fa-paper-plane"></i> Reenviar correo
-        </button>
-        <button (click)="checkVerification()" class="dota-button">
-          <i class="fas fa-sync-alt"></i> Ya verifiqué mi correo
+        <p class="help-text">
+        <i class="fas fa-info-circle"></i> ¿No recibiste el correo? Revisa tu carpeta de spam o 
+        <a href="mailto:soporte@torneosdelhambre.com?subject=Problema con verificación de correo">contáctanos</a>.
+      </p>
+        
+        <!-- Botón para ir directamente al login -->
+        <button (click)="goToLoginNow()" class="dota-button battle-button">
+          <i class="fas fa-bolt"></i> Ir al login ahora
         </button>
       </div>
       
       <p class="help-text">
-        <i class="fas fa-info-circle"></i> ¿No recibiste el correo? Revisa tu carpeta de spam o 
-        <a href="mailto:soporte@dota2battle.com?subject=Problema con verificación de correo">contáctanos</a>.
+        <i class="fas fa-exclamation-triangle"></i> ¿Listo para demostrar tu valor?
       </p>
     </div>
-  </div>
+</div>

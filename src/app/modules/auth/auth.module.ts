@@ -8,6 +8,7 @@ import { FormsModule } from '@angular/forms';
 import { RegisterComponent } from './components/register/register.component';
 import { ForgotPasswordComponent } from './components/forgot-password/forgot-password.component';
 import { WaitingVerificationComponent } from './components/waiting-verification/waiting-verification.component';
+import { MatDialogModule } from '@angular/material/dialog';
 
 
 @NgModule({
@@ -22,6 +23,7 @@ import { WaitingVerificationComponent } from './components/waiting-verification/
     CommonModule,
     AuthRoutingModule,
     FormsModule,
+    MatDialogModule
   ]
 })
 export class AuthModule { }

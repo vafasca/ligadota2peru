@@ -33,35 +33,56 @@
           </div>
         </div>
       </div>
-        <div class="kick-embed-container">
-  <iframe 
-    src="https://kick.com/vanngg?hideChat=true" 
-    class="kick-iframe"
-    allowfullscreen
-    frameborder="0"
-    scrolling="no">
-  </iframe>
-</div>
+      <div class="kick-embed-container">
+        <iframe 
+          src="https://kick.com/vanngg?hideChat=true" 
+          class="kick-iframe"
+          allowfullscreen
+          frameborder="0"
+          scrolling="no">
+        </iframe>
+      </div>
     </div>
   </section>
 
+  <!-- Sección de ranking -->
   <section class="ranking-section">
     <h2 class="section-title dota-font">RANKING DE JUGADORES</h2>
-    <div class="ranking-container">
-      <div class="ranking-category" *ngFor="let tier of tiers">
-        <h3 class="ranking-title">{{tier.name}}</h3>
-        <div class="ranking-players">
-          <div class="player-rank" *ngFor="let player of tier.players; let i = index">
-            <span class="rank-position">{{i + 1}}</span>
-            <img [src]="player.avatar" alt="Avatar" class="player-avatar">
-            <div class="player-info">
-              <span class="player-name">{{player.nick}}</span>
-              <span class="player-points">{{player.points}} pts</span>
+    <div class="tabs-container">
+      <div class="tabs">
+        <button *ngFor="let tier of tiers" 
+                [class.active]="selectedTier === tier"
+                (click)="selectTier(tier)"
+                class="dota-button tier-tab">
+          {{tier.name}}
+        </button>
+      </div>
+      
+      <div class="ranking-content">
+        <div class="ranking-header">
+          <div class="header-item rank">#</div>
+          <div class="header-item player">JUGADOR</div>
+          <div class="header-item mmr">MMR</div>
+          <div class="header-item wins">VICTORIAS</div>
+          <div class="header-item rating">RATING</div>
+        </div>
+        
+        <div class="ranking-list">
+          <div *ngFor="let player of selectedTier.players; let i = index" class="ranking-item">
+            <div class="rank">{{i + 1}}</div>
+            <div class="player">
+              <img [src]="player.avatar" alt="Avatar" class="player-avatar">
+              <div class="player-info">
+                <div class="player-name">{{player.nick}}</div>
+                <div class="player-role">{{player.role || 'Sin rol'}}</div>
+              </div>
             </div>
-            <span class="player-mmr">{{player.mmr}} MMR</span>
-          </div>
-          <div class="no-players" *ngIf="tier.players.length === 0">
-            No hay jugadores en esta categoría
+            <div class="mmr">
+              {{player.mmr}}
+              <img [src]="player.medalImage || '../../../../../assets/default_medal.png'" [alt]="player.medal || 'Medalla'" class="medal-icon">
+            </div>
+            <div class="wins">{{player.wins || 0}}</div>
+            <div class="rating">{{player.points}}</div>
           </div>
         </div>
       </div>
