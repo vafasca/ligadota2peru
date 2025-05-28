@@ -77,6 +77,10 @@ export class LoginComponent {
     });
   }
 
+  goTohome(): void {
+    this.router.navigate(['/']);
+  }
+
   private showError(message: string): void {
     this.errorMessage = message;
     this.snackBar.open(message, 'Cerrar', {

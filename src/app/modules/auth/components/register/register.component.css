@@ -57,7 +57,9 @@
     height: 80px;
     margin-bottom: 1rem;
     filter: drop-shadow(0 0 10px rgba(228, 174, 13, 0.9));
+    cursor: pointer;
   }
+
   
   .dota-font {
     font-family: 'Radiance-Semibold', 'Arial Narrow', sans-serif;

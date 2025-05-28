@@ -158,31 +158,32 @@ export class RegisterComponent {
   }
 
   private async proceedWithRegistration(email: string, password: string) {
-    this.isLoading = true;
+  this.isLoading = true;
 
-    try {
-      const userCredential = await createUserWithEmailAndPassword(this.auth, email, password);
+  try {
+    const userCredential = await createUserWithEmailAndPassword(this.auth, email, password);
+    await sendEmailVerification(userCredential.user);
+    await signOut(this.auth);
 
-      // Enviar correo de verificación
-      await sendEmailVerification(userCredential.user);
+    this.showSuccess('¡Registro exitoso! Hemos enviado un correo de verificación');
 
-      // Cerrar sesión automáticamente para forzar verificación
-      await signOut(this.auth);
+    // Redirigir con el estado que el guard verificará
+    this.router.navigate(['/login/verificacion'], {
+      state: {
+        email: email,
+        fromRegistration: true,  // <-- Esto es lo que el guard verificará
+        registrationComplete: true  // <-- Para el fallback con sessionStorage
+      }
+    });
 
-      this.showSuccess('¡Registro exitoso! Hemos enviado un correo de verificación');
-
-      // Redirigir a página de espera de verificación
-      this.router.navigate(['/login/verificacion'], {
-        state: {
-          email: email,
-          justRegistered: true
-        }
-      });
-    } catch (error) {
-      this.isLoading = false;
-      this.handleError(error);
-    }
+    // Opcional: También puedes usar sessionStorage como respaldo
+    sessionStorage.setItem('registrationComplete', 'true');
+    
+  } catch (error) {
+    this.isLoading = false;
+    this.handleError(error);
   }
+}
 
   private resetForm(form: NgForm) {
     form.resetForm();
@@ -215,6 +216,10 @@ export class RegisterComponent {
       default:
         this.errorMessage = 'Ocurrió un error inesperado. Por favor, inténtalo de nuevo.';
     }
+  }
+
+  goTohome(): void {
+    this.router.navigate(['/']);
   }
 
   private showSuccess(message: string) {

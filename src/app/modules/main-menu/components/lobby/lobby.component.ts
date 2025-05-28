@@ -439,7 +439,7 @@ export class LobbyComponent {
       }
       
       await signOut(this.auth);
-      this.router.navigate(['/login']);
+      this.router.navigate(['/']);
     } catch (error) {
       console.error('[LOBBY] Logout error:', error);
     }
@@ -450,7 +450,8 @@ export class LobbyComponent {
   }
 
   buscarRivales(): void {
-    this.router.navigate(['/matchmaking']);
+    //this.router.navigate(['/matchmaking']);
+    window.open('/matchmaking', '_blank');
   }
 
   getPlayersByCategory(category: string): Player[] {

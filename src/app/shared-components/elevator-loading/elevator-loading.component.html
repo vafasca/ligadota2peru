@@ -1,0 +1,13 @@
+<div class="loading-container">
+  <div class="background-overlay"></div>
+  <div class="content">
+    <img src=".././../../assets/dota2_icon.png" alt="Dota 2" class="logo">
+    <div class="progress-container">
+      <div class="progress-bar">
+        <div class="progress-fill"></div>
+      </div>
+      <div class="progress-text" *ngIf="!isCompleted">Cargando...</div>
+      <div class="progress-text completed" *ngIf="isCompleted">¡Listo!</div>
+    </div>
+  </div>
+</div>

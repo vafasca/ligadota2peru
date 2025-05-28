@@ -43,6 +43,12 @@
   filter: drop-shadow(0 0 6px rgba(228, 174, 13, 0.8));
 }
 
+.dota-logo img:hover {
+  transform: scale(1.05);
+  filter: brightness(1.2) drop-shadow(0 0 8px rgba(228, 174, 13, 1));
+  cursor: pointer;
+}
+
 /* Animación de brillo en el logo */
 @keyframes glowLogo {
   from {

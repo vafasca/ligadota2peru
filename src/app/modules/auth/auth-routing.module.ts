@@ -6,6 +6,7 @@ import { RegisterComponent } from './components/register/register.component';
 import { ForgotPasswordComponent } from './components/forgot-password/forgot-password.component';
 import { WaitingVerificationComponent } from './components/waiting-verification/waiting-verification.component';
 import { authGuard } from './guards/auth.guard';
+import { registrationGuard } from './guards/registration.guard';
 
 const routes: Routes = [{ path: 'login', component: LoginComponent },
   { path: 'registro', component: RegisterComponent },
@@ -13,7 +14,8 @@ const routes: Routes = [{ path: 'login', component: LoginComponent },
   { path: '', component: LoginComponent },
   {
     path: 'verificacion',
-    component: WaitingVerificationComponent
+    component: WaitingVerificationComponent,
+    canActivate: [registrationGuard]
   },
   { path: '', redirectTo: 'login', pathMatch: 'full' },
 ];

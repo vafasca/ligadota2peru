@@ -17,10 +17,11 @@ featuredStreamer = {
     avatar: '../../../../../assets/streamers/vann_grid.webp',
     description: 'Ex Jugador Profesional. Especialista en carries y estrategias agresivas, pero una lesión en el dedo meñique cambió mi destino y ahora de día soy COMANCHE😁y de noche RATAMANCHE 🐀',
     socialLinks: [
-      { name: 'Twitch', url: '#', icon: 'fab fa-twitch' },
-      { name: 'YouTube', url: '#', icon: 'fab fa-youtube' },
-      { name: 'Twitter', url: '#', icon: 'fab fa-twitter' },
-      { name: 'Instagram', url: '#', icon: 'fab fa-instagram' }
+      { name: 'Twitch', url: 'https://kick.com/vanngg', icon: 'fa-brands fa-kickstarter' },
+      { name: 'YouTube', url: 'https://www.youtube.com/@VanN.Catedra', icon: 'fab fa-youtube' },
+      { name: 'Twitter', url: 'https://x.com/vanN_Gosu', icon: 'fab fa-twitter' },
+      { name: 'Instagram', url: 'https://www.instagram.com/vann.dota/', icon: 'fab fa-instagram' },
+      { name: 'tiktok', url: 'https://www.tiktok.com/@vann.gosu', icon: 'fab fa-tiktok' }
     ]
   };
 
@@ -32,7 +33,7 @@ featuredStreamer = {
     { name: 'Smashdota', avatar: '../../../../../assets/streamers/smash_streamer.png', viewers: 11.1, wins: 9 },
     { name: 'Leostyledota', avatar: '../../../../../assets/streamers/leostyle_streamer.png', viewers: 8.7, wins: 7 },
     { name: 'vanngg', avatar: '../../../../../assets/streamers/vann_streamer.png', viewers: 8.7, wins: 7 },
-    { name: 'matthewdota', avatar: '../../../../../assets/streamers/matthew_streamer.png', viewers: 8.7, wins: 7 }
+    { name: 'kotaromnzdota', avatar: '../../../../../assets/streamers/kotaro_streamer.png', viewers: 8.7, wins: 7 }
   ];
 
   tiers = [

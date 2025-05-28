@@ -1,0 +1,250 @@
+:host {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  z-index: 9999;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  pointer-events: none;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.4s ease-out, visibility 0.4s linear;
+  
+  &.visible {
+    opacity: 1;
+    visibility: visible;
+    
+    .progress-fill {
+      width: 100%;
+      transition: width 2.5s cubic-bezier(0.785, 0.135, 0.15, 0.86);
+    }
+    
+    .logo {
+      animation: 
+        pulse 0.8s ease-in-out infinite alternate,
+        float 3s ease-in-out infinite;
+    }
+  }
+
+  &.completed {
+    .progress-fill {
+      animation: progress-complete 0.5s forwards;
+    }
+    
+    .progress-text.completed {
+      display: block;
+      animation: text-appear 0.5s forwards;
+    }
+    
+    .progress-text:not(.completed) {
+      display: none;
+    }
+  }
+}
+
+.loading-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: url('../../../assets/bg_loading.jpg') no-repeat center center fixed;
+  background-size: cover;
+}
+
+.background-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.85);
+  z-index: 1;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: 
+      linear-gradient(135deg, rgba(122, 7, 7, 0.15) 0%, transparent 100%),
+      repeating-linear-gradient(
+        45deg,
+        rgba(228, 174, 13, 0.08) 0px,
+        rgba(228, 174, 13, 0.08) 1px,
+        transparent 1px,
+        transparent 10px
+      );
+  }
+}
+
+.content {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  max-width: 500px;
+  padding: 20px;
+}
+
+.logo {
+  width: 280px;
+  margin-bottom: 35px;
+  filter: 
+    drop-shadow(0 0 15px rgba(228, 174, 13, 0.8))
+    brightness(1.1);
+  transform-origin: center;
+}
+
+.progress-container {
+  width: 100%;
+  max-width: 320px;
+  margin: 0 auto;
+}
+
+.progress-bar {
+  width: 100%;
+  height: 8px;
+  background: rgba(20, 20, 25, 0.9);
+  border-radius: 4px;
+  overflow: hidden;
+  margin-bottom: 10px;
+  box-shadow: 
+    inset 0 0 10px rgba(0, 0, 0, 0.5),
+    0 0 10px rgba(122, 7, 7, 0.5);
+  position: relative;
+  border: 1px solid #333;
+}
+
+.progress-fill {
+  height: 100%;
+  width: 0;
+  background: linear-gradient(90deg, 
+    #7a0707 0%, 
+    #9a0a0a 30%, 
+    #e4ae0d 70%, 
+    #7a0707 100%);
+  box-shadow: 
+    0 0 15px rgba(228, 174, 13, 0.7),
+    inset 0 0 5px rgba(255, 255, 255, 0.2);
+  position: relative;
+  overflow: hidden;
+  
+  &::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(
+      90deg,
+      rgba(255, 255, 255, 0) 0%,
+      rgba(255, 255, 255, 0.3) 50%,
+      rgba(255, 255, 255, 0) 100%
+    );
+    animation: progress-shine 2.5s infinite;
+  }
+}
+
+.progress-text {
+  text-align: center;
+  color: #e4ae0d;
+  font-family: 'Radiance-Semibold', 'Arial Narrow', sans-serif;
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  text-shadow: 0 0 5px rgba(122, 7, 7, 0.8);
+  
+  &.completed {
+    color: #e4ae0d;
+    display: none;
+    font-weight: bold;
+    text-shadow: 0 0 10px rgba(228, 174, 13, 0.9);
+  }
+}
+
+/* Animaciones */
+@keyframes pulse {
+  0% {
+    filter: 
+      drop-shadow(0 0 10px rgba(228, 174, 13, 0.7))
+      brightness(1.05);
+    transform: scale(1);
+  }
+  100% {
+    filter: 
+      drop-shadow(0 0 20px rgba(228, 174, 13, 0.9))
+      brightness(1.15);
+    transform: scale(1.03);
+  }
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes progress-complete {
+  0% {
+    box-shadow: 0 0 15px rgba(228, 174, 13, 0.7);
+  }
+  100% {
+    box-shadow: 0 0 25px rgba(228, 174, 13, 0.9);
+  }
+}
+
+@keyframes text-appear {
+  0% {
+    opacity: 0;
+    transform: translateY(5px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes progress-shine {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .logo {
+    width: 240px;
+    margin-bottom: 25px;
+  }
+  
+  .progress-container {
+    max-width: 280px;
+  }
+}
+
+@media (max-width: 480px) {
+  .logo {
+    width: 200px;
+    margin-bottom: 20px;
+  }
+  
+  .progress-text {
+    font-size: 12px;
+  }
+}

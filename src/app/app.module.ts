@@ -14,10 +14,12 @@ import { environment } from '../environments/environment';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import {MatButtonModule} from '@angular/material/button';
 import {MatSnackBarModule} from '@angular/material/snack-bar';
+import { ElevatorLoadingComponent } from './shared-components/elevator-loading/elevator-loading.component';
 
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
+    ElevatorLoadingComponent
   ],
   imports: [
     BrowserModule,
