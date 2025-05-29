@@ -377,16 +377,37 @@ removePlayerFromTeam(
   );
 }
 
-  /**
-   * Obtiene los jugadores disponibles (sin equipo)
-   * @returns Observable con array de jugadores disponibles
-   */
-  /**
- * Obtiene los jugadores disponibles (sin equipo) con actualización en tiempo real
- * @returns Observable con array de jugadores disponibles
- */
 /**
- * Obtiene los jugadores disponibles (sin equipo) con actualización en tiempo real
+ * Obtiene todos los jugadores activos (status: 'Activo')
+ * @returns Observable<Player[]>
+ */
+getActivePlayers(): Observable<Player[]> {
+  const q = query(
+    this.playersCollection,
+    where('status', '==', 'Activo')
+  );
+
+  return new Observable<Player[]>(observer => {
+    const unsubscribe = onSnapshot(
+      q,
+      (snapshot: QuerySnapshot) => {
+        const players = snapshot.docs.map(doc => ({
+          uid: doc.id,
+          ...doc.data()
+        } as Player));
+        observer.next(players);
+      },
+      (error) => {
+        console.error('Error escuchando jugadores activos:', error);
+        observer.error(error);
+      }
+    );
+    return () => unsubscribe();
+  });
+}
+
+/**
+ * Obtiene los jugadores disponibles (status: 'Activo' y availability: 'available')
  * @returns Observable<Player[]>
  */
 getAvailablePlayers(): Observable<Player[]> {
@@ -411,8 +432,7 @@ getAvailablePlayers(): Observable<Player[]> {
         observer.error(error);
       }
     );
-
-    return () => unsubscribe(); // Limpiar suscripción cuando se destruya
+    return () => unsubscribe();
   });
 }
 

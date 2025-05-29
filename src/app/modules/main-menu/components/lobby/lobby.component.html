@@ -198,7 +198,7 @@
           <i class="fas fa-users"></i>
         </div>
         <div class="online-count">
-          <span class="count">{{ availablePlayers.length }}</span>
+          <span class="count">{{ allActivePlayers.length }}</span>
           <span class="label">JUGADORES EN LÍNEA</span>
         </div>
       </div>
@@ -293,16 +293,21 @@
               </div>
               <!-- Mostrar ID de Dota 2 en lugar de los roles -->
               <!-- Modifica el HTML para mostrar feedback -->
-<div class="team-player-dotaid" 
-     (click)="copyDotaId(player.idDota)"
-     [class.copied]="lastCopiedId === player.idDota"
-     title="Click para copiar ID">
-     
-  <i class="fab fa-steam"></i>
-  <span class="id-text">
-    {{lastCopiedId === player.idDota ? '¡Copiado!' : 'ID: ' + (player.idDota || 'N/A')}}
-  </span>
-</div>
+              <div
+                class="team-player-dotaid"
+                (click)="copyDotaId(player.idDota)"
+                [class.copied]="lastCopiedId === player.idDota"
+                title="Click para copiar ID"
+              >
+                <i class="fab fa-steam"></i>
+                <span class="id-text">
+                  {{
+                    lastCopiedId === player.idDota
+                      ? "¡Copiado!"
+                      : "ID: " + (player.idDota || "N/A")
+                  }}
+                </span>
+              </div>
               <div
                 class="team-player-actions"
                 *ngIf="isTeamCaptain && player.uid !== currentUserUid"
@@ -330,7 +335,7 @@
       </div>
     </div>
 
-        <!-- Filtros de búsqueda -->
+    <!-- Filtros de búsqueda -->
     <div class="filters-container">
       <!-- Nuevo selector para cambiar entre rol principal/secundario -->
       <div class="filter-group">
@@ -376,9 +381,9 @@
     >
       <h2 class="category-title dota-font">
         {{ category }}
-        <span class="player-count"
-          >({{ getPlayersByCategory(category).length }} jugadores)</span
-        >
+        <span class="player-count">
+          ({{ getPlayersByCategory(category).length }} jugadores)
+        </span>
       </h2>
 
       <div class="role-columns-container">

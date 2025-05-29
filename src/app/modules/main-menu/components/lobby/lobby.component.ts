@@ -67,6 +67,7 @@ export class LobbyComponent {
   // Variable para almacenar el rol temporal
   //tempRole: string = '';
 
+  allActivePlayers: Player[] = [];
   availablePlayers: Player[] = [];
   categories: string[] = [];
   roles: string[] = ['Carry (Safe Lane)', 'Mid Lane', 'Offlane', 'Hard Support', 'Soft Support'];
@@ -233,25 +234,40 @@ export class LobbyComponent {
   }
 
   private loadAvailablePlayers(): void {
-    if (this.availablePlayersSub) {
-      this.availablePlayersSub.unsubscribe();
-    }
-  
-    this.availablePlayersSub = this.playerService.getAvailablePlayers().subscribe({
-      next: (players) => {
-        this.availablePlayers = players.filter(p => p.uid !== this.currentUserUid);
-  
-        // Actualizar categorías si es necesario
-        const allCategories = new Set(players.map(p => p.category).filter(c => c));
-        this.categories = ['Tier1', 'Tier2', 'Tier3', 'Tier4', 'Tier5'];
-        this.filteredCategories = this.categories;
-      },
-      error: (err) => {
-        console.error('[LOBBY] Error loading players:', err);
-        this.errorMessage = 'Error al cargar jugadores';
-      }
-    });
+  if (this.availablePlayersSub) {
+    this.availablePlayersSub.unsubscribe();
   }
+  
+  // Suscribirse a jugadores activos (para el contador total)
+  const activePlayersSub = this.playerService.getActivePlayers().subscribe({
+    next: (players) => {
+      this.allActivePlayers = players;
+    },
+    error: (err) => {
+      console.error('[LOBBY] Error loading active players:', err);
+    }
+  });
+
+  // Suscribirse a jugadores disponibles (para la lista de disponibles)
+  const availablePlayersSub = this.playerService.getAvailablePlayers().subscribe({
+    next: (players) => {
+      this.availablePlayers = players.filter(p => p.uid !== this.currentUserUid);
+      
+      // Actualizar categorías si es necesario
+      const allCategories = new Set(players.map(p => p.category).filter(c => c));
+      this.categories = ['Tier1', 'Tier2', 'Tier3', 'Tier4', 'Tier5'];
+      this.filteredCategories = this.categories;
+    },
+    error: (err) => {
+      console.error('[LOBBY] Error loading available players:', err);
+      this.errorMessage = 'Error al cargar jugadores';
+    }
+  });
+
+  this.availablePlayersSub = new Subscription();
+  this.availablePlayersSub.add(activePlayersSub);
+  this.availablePlayersSub.add(availablePlayersSub);
+}
 
   openCreateTeamDialog(): void {
     const dialogRef = this.dialog.open(CreateTeamDialogComponent, {
@@ -462,37 +478,51 @@ export class LobbyComponent {
     window.open('/matchmaking', '_blank');
   }
 
-  getPlayersByCategory(category: string): Player[] {
-  return this.availablePlayers.filter(player => {
-    const playerCategory = this.selectedRoleType === 'primary' ?
-      player.category : player.secondaryCategory;
-    const playerRole = this.selectedRoleType === 'primary' ?
-      player.role : player.secondaryRole;
+  // En tu LobbyComponent
 
-    return (this.selectedCategory === 'all' || playerCategory === category) &&
-           (this.selectedRole === 'all' || playerRole === this.selectedRole) &&
-           !player.isCaptain;
+getPlayersByCategory(category: string): Player[] {
+  return this.availablePlayers.filter(player => {
+    // Determinar qué campos usar según la selección
+    const usePrimary = this.selectedRoleType === 'primary';
+    
+    const playerCategory = usePrimary ? player.category : player.secondaryCategory;
+    const isNotCaptain = !player.isCaptain;
+    
+    return playerCategory === category && isNotCaptain;
   });
 }
 
-  getPlayersByCategoryAndRole(category: string, role: string): Player[] {
+getPlayersByCategoryAndRole(category: string, role: string): Player[] {
   return this.availablePlayers.filter(player => {
-    const playerCategory = this.selectedRoleType === 'primary' ?
-      player.category : player.secondaryCategory;
-    const playerRole = this.selectedRoleType === 'primary' ?
-      player.role : player.secondaryRole;
-
-    return playerCategory === category &&
-           playerRole === role &&
-           !player.isCaptain;
+    const usePrimary = this.selectedRoleType === 'primary';
+    
+    const playerCategory = usePrimary ? player.category : player.secondaryCategory;
+    const playerRole = usePrimary ? player.role : player.secondaryRole;
+    const isNotCaptain = !player.isCaptain;
+    
+    return playerCategory === category && 
+           playerRole === role && 
+           isNotCaptain;
   });
-  }
+}
 
   // Método para aplicar los filtros
   applyFilters(): void {
-    // Forzar la actualización de la vista
-    this.filteredCategories = [...this.categories];
-  }
+  // Forzar la actualización
+  this.filteredCategories = [...this.categories];
+  
+  // Debug (puedes remover esto después)
+  console.log('Filtros aplicados:', {
+    roleType: this.selectedRoleType,
+    players: this.availablePlayers.map(p => ({
+      nick: p.nick,
+      category: p.category,
+      secondaryCategory: p.secondaryCategory,
+      role: p.role,
+      secondaryRole: p.secondaryRole
+    }))
+  });
+}
 
   getPlayerStatusClass(player: Player): string {
     const status = player.status?.toLowerCase();
