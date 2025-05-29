@@ -1080,6 +1080,106 @@
   font-style: italic;
 }
 
+/* Estilos para los badges de roles */
+.player-roles {
+  display: flex;
+  gap: 5px;
+  margin-top: 5px;
+}
+
+.team-player-roles {
+  display: flex;
+  gap: 5px;
+  margin-top: 5px;
+}
+
+.role-badge {
+  font-size: 11px;
+  padding: 2px 6px;
+  border-radius: 10px;
+  background: rgba(0, 0, 0, 0.3);
+}
+
+/* .primary-role {
+  border: 1px solid #e4ae0d;
+  color: #e4ae0d;
+}
+
+.secondary-role {
+  border: 1px solid #7a0707;
+  color: #fff;
+}
+
+.role-badge.primary {
+  border: 1px solid #e4ae0d;
+  color: #e4ae0d;
+}
+
+.role-badge.secondary {
+  border: 1px solid #7a0707;
+  color: #fff;
+} */
+
+.team-player-dotaid {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 8px;
+  border-radius: 4px;
+  background: rgba(0, 0, 0, 0.2);
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 12px;
+  color: #a0aec0;
+}
+
+.team-player-dotaid:hover {
+  background: rgba(0, 173, 238, 0.1);
+}
+
+.team-player-dotaid.copied {
+  color: #00ff00;
+  background: rgba(0, 255, 0, 0.1);
+}
+
+.team-player-dotaid i {
+  color: #00adee;
+}
+
+.copy-hint {
+  font-size: 10px;
+  opacity: 0;
+  transition: opacity 0.2s;
+  color: #e4ae0d;
+}
+
+.team-player-dotaid:hover .copy-hint {
+  opacity: 1;
+}
+
+.id-text {
+  font-family: 'Courier New', monospace;
+  font-weight: bold;
+}
+
+/* Opcional: Si quieres resaltar el ID */
+.team-player-dotaid span {
+  background: rgba(0, 0, 0, 0.3);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-family: monospace;
+}
+
+/* Estilo para el nuevo selector */
+#roleTypeFilter {
+  background: rgba(0, 0, 0, 0.7);
+  border: 1px solid #e4ae0d;
+  color: #fff;
+  padding: 8px 15px;
+  border-radius: 4px;
+  min-width: 180px; /* Un poco más ancho para el texto */
+}
+
 /* RESPONSIVE */
 @media (max-width: 1024px) {
   .avatar-info-container {

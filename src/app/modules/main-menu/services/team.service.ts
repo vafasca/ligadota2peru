@@ -125,44 +125,54 @@ getUserTeam(userId: string): Observable<Team | null> {
  * @returns Observable<Player[]>
  */
  getTeamPlayersRealTime(teamId: string): Observable<Player[]> {
-   const teamDocRef = doc(this.firestore, `teams/${teamId}`);
-   return new Observable<Player[]>(observer => {
-     const unsubscribe = onSnapshot(
-       teamDocRef,
-       (snapshot) => {
-         if (!snapshot.exists()) {
-           observer.next([]);
-           return;
-         }
-         const teamData = snapshot.data() as Team;
-         const playersInTeam = teamData.players || [];
+  const teamDocRef = doc(this.firestore, `teams/${teamId}`);
+  return new Observable<Player[]>(observer => {
+    const unsubscribe = onSnapshot(
+      teamDocRef,
+      (snapshot) => {
+        if (!snapshot.exists()) {
+          observer.next([]);
+          return;
+        }
+        const teamData = snapshot.data() as Team;
+        const playersInTeam = teamData.players || [];
 
-         // Mapeamos directamente los TeamPlayer a Player para reusar el modelo
-         const players: Player[] = playersInTeam.map(p => ({
-           uid: p.uid,
-           avatar: p.avatar,
-           mmr: p.mmr,
-           medalImage: p.medalImage,
-           nick: p.nick,
-           role: p.role,
-           category: '', // Puedes dejarlo vacío si no se usa aquí
-           idDota: 0,
-           medal: '',
-           status: 'Activo',
-           rating: 0,
-           secondaryRole: '',
-           secondaryCategory: '',
-           availability: 'in_team'
-         }));
-         observer.next(players);
-       },
-       (error) => {
-         observer.error(error);
-       }
-     );
-     return () => unsubscribe();
-   });
- }
+        // Obtener los datos completos de cada jugador desde la colección players
+        const playerPromises = playersInTeam.map(p => 
+          getDoc(doc(this.firestore, `players/${p.uid}`))
+        );
+
+        Promise.all(playerPromises).then(playerDocs => {
+          const players: Player[] = playerDocs.map((doc, index) => {
+            const playerData = doc.exists() ? doc.data() as Player : null;
+            return {
+              uid: playersInTeam[index].uid,
+              avatar: playersInTeam[index].avatar,
+              mmr: playersInTeam[index].mmr,
+              medalImage: playersInTeam[index].medalImage,
+              nick: playersInTeam[index].nick,
+              role: playersInTeam[index].role,
+              idDota: playerData?.idDota || 0, // Usar 0 como valor por defecto
+              category: playerData?.category || '',
+              medal: playerData?.medal || '',
+              status: playerData?.status || 'Activo',
+              rating: playerData?.rating || 0,
+              secondaryRole: playerData?.secondaryRole || '',
+              secondaryCategory: playerData?.secondaryCategory || '',
+              availability: 'in_team',
+              // ... otros campos necesarios
+            } as Player;
+          });
+          observer.next(players);
+        });
+      },
+      (error) => {
+        observer.error(error);
+      }
+    );
+    return () => unsubscribe();
+  });
+}
 
   private handleError(error: any): Observable<never> {
     console.error('Error in TeamService:', error);

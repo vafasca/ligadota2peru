@@ -24,6 +24,9 @@ export class LobbyComponent {
   isLoading = true;
   errorMessage = '';
   availablePlayersSub!: Subscription;
+  selectedRoleType: 'primary' | 'secondary' = 'primary';
+  isCopied = false;
+  lastCopiedId: number | null = null;
 
   player: Player = {
     uid: '',
@@ -328,30 +331,35 @@ export class LobbyComponent {
   }
 
   addPlayerToTeam(player: Player): void {
-    if (!this.userTeam || !this.isTeamCaptain) return;
-    if (this.userTeam.players.length >= 5) {
-      this.errorMessage = 'El equipo ya tiene el máximo de 5 jugadores';
-      return;
-    }
-    this.playerService.addPlayerToTeam(
-      this.userTeam.id, 
-      player.uid, 
-      player.role, 
-      player.avatar, 
-      player.mmr,
-      player.nick,
-      player.medalImage
-    ).subscribe({
-      next: () => {
-        this.loadTeamPlayersRealTime(this.userTeam!.id);
-        this.loadAvailablePlayers();
-      },
-      error: (err) => {
-        console.error('[LOBBY] Error adding player to team:', err);
-        this.errorMessage = 'Error al añadir jugador al equipo';
-      }
-    });
+  if (!this.userTeam || !this.isTeamCaptain) return;
+  if (this.userTeam.players.length >= 5) {
+    this.errorMessage = 'El equipo ya tiene el máximo de 5 jugadores';
+    return;
   }
+
+  // Determinar el rol a usar según la vista actual
+  const roleToUse = this.selectedRoleType === 'secondary' ?
+    player.secondaryRole : player.role;
+
+  this.playerService.addPlayerToTeam(
+    this.userTeam.id,
+    player.uid,
+    roleToUse,  // Usamos el rol correcto según la vista
+    player.avatar,
+    player.mmr,
+    player.nick,
+    player.medalImage
+  ).subscribe({
+    next: () => {
+      this.loadTeamPlayersRealTime(this.userTeam!.id);
+      this.loadAvailablePlayers();
+    },
+    error: (err) => {
+      console.error('[LOBBY] Error adding player to team:', err);
+      this.errorMessage = 'Error al añadir jugador al equipo';
+    }
+  });
+}
 
   removePlayerFromTeam(player: Player): void {
     if (!this.userTeam || !this.isTeamCaptain) return;
@@ -455,19 +463,35 @@ export class LobbyComponent {
   }
 
   getPlayersByCategory(category: string): Player[] {
-    return this.availablePlayers.filter(player => 
-      player.category === category && 
-      (this.selectedRole === 'all' || player.role === this.selectedRole) &&
-      !player.isCaptain // Excluir jugadores que sean capitanes
-    );
-  }
+  return this.availablePlayers.filter(player => {
+    const playerCategory = this.selectedRoleType === 'primary' ?
+      player.category : player.secondaryCategory;
+    const playerRole = this.selectedRoleType === 'primary' ?
+      player.role : player.secondaryRole;
+
+    return (this.selectedCategory === 'all' || playerCategory === category) &&
+           (this.selectedRole === 'all' || playerRole === this.selectedRole) &&
+           !player.isCaptain;
+  });
+}
 
   getPlayersByCategoryAndRole(category: string, role: string): Player[] {
-    return this.availablePlayers.filter(player => 
-      player.category === category && 
-      player.role === role &&
-      !player.isCaptain // Excluir jugadores que sean capitanes
-    );
+  return this.availablePlayers.filter(player => {
+    const playerCategory = this.selectedRoleType === 'primary' ?
+      player.category : player.secondaryCategory;
+    const playerRole = this.selectedRoleType === 'primary' ?
+      player.role : player.secondaryRole;
+
+    return playerCategory === category &&
+           playerRole === role &&
+           !player.isCaptain;
+  });
+  }
+
+  // Método para aplicar los filtros
+  applyFilters(): void {
+    // Forzar la actualización de la vista
+    this.filteredCategories = [...this.categories];
   }
 
   getPlayerStatusClass(player: Player): string {
@@ -598,6 +622,27 @@ private async leaveAsMember(): Promise<void> {
     teamId: null,
     availability: 'available'
   }).toPromise();
+}
+
+copyDotaId(idDota: number): void {
+  if (!idDota) return;
+  
+  // Convertir a string para el portapapeles
+  const idText = idDota.toString();
+  
+  navigator.clipboard.writeText(idText).then(() => {
+    this.lastCopiedId = idDota;
+    setTimeout(() => this.lastCopiedId = null, 1500);
+  }).catch(err => {
+    console.error('Error al copiar:', err);
+    // Opcional: Mostrar mensaje de error al usuario
+  });
+}
+
+// Método opcional para mostrar feedback visual
+showCopyFeedback(): void {
+  // Implementa tu lógica para mostrar un mensaje temporal
+  // Puedes usar un toast, snackbar, o cambiar el texto momentáneamente
 }
 
 goToProfile(): void {

@@ -6,6 +6,7 @@ export interface TeamPlayer {
   avatar: string;
   mmr: number;
   nick: string; // Nuevo campo
+  idDota?: number; // ID de Dota 2
   medalImage: string;
 }
 
