@@ -48,48 +48,63 @@
   box-shadow: 0 0 15px rgba(228, 174, 13, 0.8);
 }
 
-/* CABECERA DEL PERFIL */
+/* CABECERA DEL PERFIL - VERSIÓN ACTUALIZADA */
 .profile-header {
-  background: rgba(0, 0, 0, 0.7);
-  padding: 25px;
-  border-radius: 10px;
-  border: 2px solid #7a0707;
   display: flex;
   justify-content: space-between;
-  align-items: flex-start;
+  align-items: center;
+  background: rgba(0, 0, 0, 0.7);
+  padding: 20px;
+  border-radius: 10px;
+  border: 2px solid #7a0707;
   margin-bottom: 20px;
   box-shadow: 0 0 15px rgba(122, 7, 7, 0.5);
+  flex-wrap: wrap;
+  gap: 15px;
 }
 
-.avatar-info-container {
+.profile-section {
+  flex: 1;
+  min-width: 250px;
+  padding: 10px;
   display: flex;
   align-items: center;
-  flex: 1;
-  max-width: calc(100% - 350px);
+}
+
+.profile-data {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  min-width: 300px;
 }
 
 .avatar-container {
   position: relative;
-  margin-right: 30px;
   flex-shrink: 0;
 }
 
 .profile-avatar {
-  width: 150px;
-  height: 150px;
+  width: 100px;
+  height: 100px;
   border-radius: 50%;
   border: 3px solid #e4ae0d;
   object-fit: cover;
-  box-shadow: 0 0 10px rgba(228, 174, 13, 0.5);
+  box-shadow: 0 0 15px rgba(228, 174, 13, 0.5);
+  transition: all 0.3s ease;
   background-color: rgba(0, 0, 0, 0.5);
+}
+
+.profile-avatar:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 25px rgba(228, 174, 13, 0.8);
 }
 
 .status-indicator {
   position: absolute;
-  bottom: 10px;
-  right: 10px;
-  width: 20px;
-  height: 20px;
+  bottom: 5px;
+  right: 5px;
+  width: 16px;
+  height: 16px;
   border-radius: 50%;
   border: 2px solid #000;
 }
@@ -122,10 +137,81 @@
   margin-bottom: 10px;
 }
 
-.player-id {
-  font-size: 16px;
-  color: #ccc;
-  margin-bottom: 15px;
+.player-meta {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin: 8px 0;
+}
+
+.player-id, .player-mmr {
+  font-size: 14px;
+  color: #cbd5e0;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.medal-icon {
+  width: 20px;
+  height: 20px;
+}
+
+.player-category {
+  padding: 3px 10px;
+  border-radius: 10px;
+  font-size: 12px;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+.player-roles {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.role-badge {
+  padding: 5px 10px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.primary-role {
+  background: rgba(228, 174, 13, 0.2);
+  border: 1px solid #e4ae0d;
+  color: #e4ae0d;
+}
+
+.secondary-role {
+  background: rgba(122, 7, 7, 0.2);
+  border: 1px solid #7a0707;
+  color: #fff;
+}
+
+/* BOTONES MÁS COMPACTOS */
+.profile-actions {
+  justify-content: center;
+  min-width: 200px;
+}
+
+.action-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+}
+
+.action-buttons-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.button-row {
+  display: flex;
+  gap: 8px;
 }
 
 .dota-button {
@@ -144,108 +230,111 @@
   text-align: center;
 }
 
-.dota-button:hover {
-  background: #e4ae0d;
-  color: #000;
-  transform: scale(1.05);
-  box-shadow: 0 0 15px rgba(228, 174, 13, 0.7);
+.dota-button-middle {
+  padding: 8px 12px;
+  border-radius: 4px;
+  font-weight: bold;
+  text-transform: uppercase;
+  font-size: 12px;
+  letter-spacing: 1px;
+  transition: all 0.3s;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  justify-content: center;
+  border: none;
+  cursor: pointer;
+  min-width: 100px; /* Ancho más compacto */
+  max-width: 120px;
+  flex: 1;
+}
+
+.dota-button-middle:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  filter: brightness(1.1);
+}
+
+.dota-button-middle:active {
+  transform: translateY(0);
 }
 
 .status-toggle {
   background: linear-gradient(135deg, #00aa00 0%, #007700 100%);
   color: #fff;
-  border: 2px solid #00ff00;
-  box-shadow: 0 0 10px rgba(0, 255, 0, 0.3);
+  border: 1px solid #00ff00;
 }
 
-.status-toggle:hover {
-  background: linear-gradient(135deg, #007700 0%, #00aa00 100%);
-  box-shadow: 0 0 15px rgba(0, 255, 0, 0.5);
+.edit-profile-button {
+  background: linear-gradient(135deg, #3a506b 0%, #2a4365 100%);
+  color: #fff;
+  border: 1px solid #4299e1;
 }
 
-.status-control {
-  display: flex;
-  gap: 10px;
-  margin-top: 10px;
-}
-
-.status-toggle, .logout-button {
-  flex: 1;
-  min-width: 120px;
+.admin-button {
+  background: linear-gradient(135deg, #ca3232 0%, #9b2c2c 100%);
+  color: #fff;
+  border: 1px solid #f56565;
 }
 
 .logout-button {
-  background: #333;
+  background: linear-gradient(135deg, #333 0%, #222 100%);
+  color: #fff;
 }
 
-.logout-button:hover {
-  background: #555;
+.dota-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  filter: brightness(1.1);
 }
 
-.social-icon-disabled {
-  display: inline-block;
-  cursor: not-allowed;
-  position: relative;
+.dota-button:active {
+  transform: translateY(0);
 }
 
-.social-icon-disabled img {
-  width: 42px;
-  height: 42px;
-  border-radius: 50%;
-  padding: 5px;
-  border: 2px solid #666;
-  box-shadow: none;
-  filter: grayscale(100%) brightness(0.7);
-  opacity: 0.7;
-}
-
-.social-icon-disabled::after {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  border-radius: 50%;
-  background: rgba(0, 0, 0, 0.3);
-}
-
+/* REDES SOCIALES */
 .social-media-container {
-  margin-left: 30px;
-  padding-left: 30px;
-  border-left: 1px solid #7a0707;
-  min-width: 300px;
+  justify-content: flex-end;
+  min-width: 250px;
 }
 
 .social-media-grid {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 10px;
 }
 
 .social-media-row {
   display: flex;
-  gap: 15px;
+  gap: 10px;
+  justify-content: flex-end;
 }
 
-.social-media-row a {
+.social-media-row a, .social-icon-disabled {
+  display: inline-block;
   transition: all 0.3s ease;
 }
 
 .social-media-row img {
-  width: 42px;
-  height: 42px;
+  width: 36px;
+  height: 36px;
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.9);
   padding: 5px;
   border: 2px solid #e4ae0d;
-  box-shadow: 0 0 8px rgba(228, 174, 13, 0.6);
+  box-shadow: 0 0 8px rgba(228, 174, 13, 0.5);
+  background: rgba(255, 255, 255, 0.9);
   transition: all 0.3s ease;
 }
 
 .social-media-row a:hover img {
   transform: scale(1.15);
-  box-shadow: 0 0 15px rgba(228, 174, 13, 0.9);
+  box-shadow: 0 0 15px rgba(228, 174, 13, 0.8);
+}
+
+.social-icon-disabled img {
+  filter: grayscale(100%) brightness(0.7);
+  opacity: 0.7;
+  border-color: #666;
 }
 
 /* CONTENIDO PRINCIPAL DEL LOBBY */
@@ -377,7 +466,6 @@
   gap: 8px;
   pointer-events: none;
   cursor: not-allowed;
-  /*quitar cuando funcione boton*/
 }
 
 .refresh-button:hover {
@@ -983,9 +1071,6 @@
   overflow: hidden;
 }
 
-/* Estilo de la imagen/icono */
-
-
 /* Efecto hover */
 .add-button:hover {
   background: linear-gradient(135deg, rgba(228, 174, 13, 0.7) 0%, rgba(122, 7, 7, 0.9) 100%);
@@ -1100,26 +1185,6 @@
   background: rgba(0, 0, 0, 0.3);
 }
 
-/* .primary-role {
-  border: 1px solid #e4ae0d;
-  color: #e4ae0d;
-}
-
-.secondary-role {
-  border: 1px solid #7a0707;
-  color: #fff;
-}
-
-.role-badge.primary {
-  border: 1px solid #e4ae0d;
-  color: #e4ae0d;
-}
-
-.role-badge.secondary {
-  border: 1px solid #7a0707;
-  color: #fff;
-} */
-
 .team-player-dotaid {
   display: inline-flex;
   align-items: center;
@@ -1170,173 +1235,153 @@
   font-family: monospace;
 }
 
-/* Estilo para el nuevo selector */
-#roleTypeFilter {
-  background: rgba(0, 0, 0, 0.7);
-  border: 1px solid #e4ae0d;
-  color: #fff;
-  padding: 8px 15px;
-  border-radius: 4px;
-  min-width: 180px; /* Un poco más ancho para el texto */
-}
-
 /* RESPONSIVE */
-@media (max-width: 1024px) {
-  .avatar-info-container {
-    max-width: calc(100% - 250px);
+@media (max-width: 1200px) {
+  .profile-header {
+    flex-direction: column;
+    gap: 20px;
+  }
+  
+  .profile-section {
+    min-width: 100%;
+    justify-content: center;
+    padding: 15px;
+  }
+  
+  .social-media-row {
+    justify-content: center !important;
   }
   
   .social-media-container {
-    min-width: 250px;
+    order: 2;
   }
   
-  .role-column-wrapper {
-    min-width: 250px;
+  .profile-actions {
+    order: 3;
+    margin-top: 0;
   }
   
-  .role-title {
-    font-size: 12px;
+  .action-buttons-grid {
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
   }
   
-  .team-roles-container {
-    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  .button-row {
+    flex-direction: row;
+    flex-wrap: wrap;
   }
+  
+  .dota-button-middle {
+    min-width: 160px;
+    max-width: 160px;
+  }
+}
 
+@media (max-width: 992px) {
   .filters-container {
     flex-direction: column;
     align-items: stretch;
   }
   
-  .filter-group, .captain-button-container, .filter-actions {
+  .filter-group {
     width: 100%;
+    justify-content: space-between;
   }
   
   .filter-actions {
     margin-left: 0;
-    justify-content: flex-end;
-  }
-}
-
-@media (max-width: 850px) {
-  .profile-header {
-    flex-direction: column;
-    align-items: center;
-  }
-  
-  .avatar-info-container {
-    max-width: 100%;
-    flex-direction: column;
-    text-align: center;
-    margin-bottom: 20px;
-    align-items: center;
+    justify-content: center;
     width: 100%;
+    margin-top: 15px;
   }
   
-  .avatar-container {
-    margin-right: 0;
+  .captain-button-container {
+    order: -1;
     margin-bottom: 15px;
-    display: flex;
-    justify-content: center;
-  }
-  
-  .player-info {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    width: 100%;
-  }
-  
-  .status-control {
-    display: flex;
-    justify-content: center;
-    flex-wrap: wrap;
-    gap: 10px;
-    width: 100%;
-  }
-  
-  .status-toggle, .logout-button {
-    flex: 1 0 120px;
-  }
-  
-  .social-media-container {
-    margin-left: 0;
-    padding-left: 0;
-    border-left: none;
-    margin-top: 20px;
-    padding-top: 20px;
-    border-top: 1px solid #7a0707;
-    width: 100%;
-    min-width: auto;
-    display: flex;
-    justify-content: center;
-  }
-  
-  .social-media-grid {
-    align-items: center;
-  }
-  
-  .social-media-row {
-    justify-content: center;
-    flex-wrap: wrap;
-  }
-  
-  .filters-container {
-    flex-direction: column;
-  }
-  
-  .filter-group {
-    width: 100%;
-  }
-  
-  .filter-button, .refresh-button {
-    width: 100%;
-    margin-top: 10px;
   }
   
   .team-roles-container {
-    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-  }
-
-  .captain-toggle-button {
-    width: 100%;
-    justify-content: center;
-  }
-  
-  .filter-actions {
-    flex-direction: column;
-  }
-  
-  .filter-button, .refresh-button {
-    width: 100%;
-  }
-
-  .team-banner {
-    flex-direction: column;
-    text-align: center;
-  }
-  
-  .team-logo-placeholder {
-    margin-right: 0;
-    margin-bottom: 15px;
-  }
-  
-  .team-meta {
-    justify-content: center;
-  }
-  
-  .team-actions {
-    flex-direction: column;
+    grid-template-columns: repeat(2, 1fr);
   }
 }
 
-@media (max-width: 600px) {
+@media (max-width: 768px) {
+  .profile-data {
+    flex-direction: column;
+    text-align: center;
+    min-width: 100%;
+  }
+  
+  .player-meta {
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  
+  .player-roles {
+    justify-content: center;
+  }
+  
+  .profile-avatar {
+    width: 90px;
+    height: 90px;
+  }
+  
+  .lobby-title {
+    font-size: 28px;
+  }
+  
+  .lobby-subtitle {
+    font-size: 16px;
+  }
+  
+  .category-title {
+    font-size: 22px;
+  }
+  
+  .section-title {
+    font-size: 24px;
+  }
+  
+  .role-columns-container {
+    flex-direction: column;
+  }
+  
   .role-column-wrapper {
     min-width: 100%;
   }
   
-  .player-card {
-    flex-direction: row;
-    align-items: center;
+  .role-column {
+    height: auto;
+    max-height: 300px;
+  }
+}
+
+@media (max-width: 576px) {
+  .lobby-container {
+    padding: 10px;
+  }
+  
+  .profile-avatar {
+    width: 80px;
+    height: 80px;
+  }
+  
+  .status-indicator {
+    width: 14px;
+    height: 14px;
+  }
+  
+  .social-media-row img {
+    width: 30px;
+    height: 30px;
+  }
+  
+  .dota-button-middle {
+    min-width: 140px;
+    max-width: 140px;
+    padding: 8px 10px;
+    font-size: 11px;
   }
   
   .team-roles-container {
@@ -1344,37 +1389,85 @@
   }
   
   .team-role-card {
-    min-height: 100px;
+    min-height: 120px;
   }
   
   .team-player-avatar {
     width: 50px;
     height: 50px;
   }
+  
+  .player-card {
+    padding: 10px;
+  }
+  
+  .player-avatar {
+    width: 45px;
+    height: 45px;
+  }
+  
+  .player-nick {
+    font-size: 15px;
+  }
+  
+  .player-mmr {
+    font-size: 12px;
+  }
+  
+  .player-role {
+    font-size: 12px;
+  }
+  
+  .role-title {
+    font-size: 14px;
+  }
+  
+  .team-player-nick {
+    font-size: 15px;
+  }
+  
+  .team-player-mmr {
+    font-size: 13px;
+  }
+  
+  .online-players-badge {
+    padding: 5px 10px 5px 5px;
+  }
+  
+  .online-icon {
+    width: 35px;
+    height: 35px;
+    font-size: 16px;
+  }
+  
+  .online-count .count {
+    font-size: 18px;
+  }
+  
+  .online-count .label {
+    font-size: 9px;
+  }
 }
 
-@media (max-width: 480px) {
+@media (max-width: 400px) {
   .profile-avatar {
-    width: 120px;
-    height: 120px;
+    width: 70px;
+    height: 70px;
+  }
+  
+  .dota-button-middle {
+    min-width: 120px;
+    max-width: 120px;
+    font-size: 10px;
   }
   
   .social-media-row img {
-    width: 36px;
-    height: 36px;
-  }
-  
-  .dota-button {
-    padding: 8px 15px;
-    font-size: 12px;
+    width: 28px;
+    height: 28px;
   }
   
   .lobby-title {
     font-size: 24px;
-  }
-  
-  .lobby-subtitle {
-    font-size: 16px;
   }
   
   .category-title {
@@ -1394,11 +1487,11 @@
   }
   
   .player-role {
-    font-size: 12px;
+    font-size: 11px;
   }
   
   .role-title {
-    font-size: 11px;
+    font-size: 13px;
   }
   
   .team-player-nick {
@@ -1406,6 +1499,11 @@
   }
   
   .team-player-mmr {
+    font-size: 12px;
+  }
+  
+  .dota-button {
+    padding: 8px 12px;
     font-size: 12px;
   }
 }

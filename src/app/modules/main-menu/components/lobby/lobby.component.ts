@@ -332,7 +332,7 @@ export class LobbyComponent {
 
     this.teamService.createTeam(newTeam).subscribe({
       next: (teamId) => {
-        this.playerService.updatePlayer(this.player.uid, { 
+        this.playerService.updatePlayer(this.player.uid, {
           teamId,
           availability: 'in_team'
         }).subscribe(() => {
@@ -379,9 +379,9 @@ export class LobbyComponent {
 
   removePlayerFromTeam(player: Player): void {
     if (!this.userTeam || !this.isTeamCaptain) return;
-  
+
     this.playerService.removePlayerFromTeam(
-      this.userTeam.id, 
+      this.userTeam.id,
       player.uid,
       player.role,
       player.avatar,
@@ -419,7 +419,7 @@ export class LobbyComponent {
 
   toggleStatus(): void {
     if (!this.player.uid) return;
-    
+
     const newStatus = this.player.status === 'Activo' ? 'Inactivo' : 'Activo';
     const updateSub = this.playerService.updatePlayer(this.player.uid, { status: newStatus }).subscribe({
       next: () => {
@@ -436,16 +436,16 @@ export class LobbyComponent {
 
   getStatusClass(): string {
     const status = this.player.status.toLowerCase();
-    return status === 'activo' ? 'status-activo' : 
-           status === 'inactivo' ? 'status-inactivo' : 
-           status === 'suspendido' ? 'status-suspendido' : '';
+    return status === 'activo' ? 'status-activo' :
+          status === 'inactivo' ? 'status-inactivo' :
+          status === 'suspendido' ? 'status-suspendido' : '';
   }
 
   async logout(): Promise<void> {
     try {
       // Limpiar el rol temporal al cerrar sesión
       // this.clearTempRole();
-      
+
       if (this.player.uid) {
         await new Promise<void>((resolve, reject) => {
           const updateSub = this.playerService.updatePlayer(this.player.uid, { status: 'Inactivo' })
@@ -461,7 +461,7 @@ export class LobbyComponent {
             });
         });
       }
-      
+
       await signOut(this.auth);
       this.router.navigate(['/']);
     } catch (error) {
@@ -473,9 +473,14 @@ export class LobbyComponent {
     console.log('Buscando Partidas en curso...');
   }
 
-  buscarRivales(): void {
-    //this.router.navigate(['/matchmaking']);
+  buscarRivales(event: MouseEvent): void {
+      if (event.ctrlKey || event.button === 1) {
+    // Ctrl + Click o Click central (rueda del mouse)
     window.open('/matchmaking', '_blank');
+  } else {
+    // Click normal, usa el router
+    this.router.navigate(['/matchmaking']);
+  }
   }
 
   // En tu LobbyComponent
@@ -484,10 +489,10 @@ getPlayersByCategory(category: string): Player[] {
   return this.availablePlayers.filter(player => {
     // Determinar qué campos usar según la selección
     const usePrimary = this.selectedRoleType === 'primary';
-    
+
     const playerCategory = usePrimary ? player.category : player.secondaryCategory;
     const isNotCaptain = !player.isCaptain;
-    
+
     return playerCategory === category && isNotCaptain;
   });
 }
@@ -495,14 +500,14 @@ getPlayersByCategory(category: string): Player[] {
 getPlayersByCategoryAndRole(category: string, role: string): Player[] {
   return this.availablePlayers.filter(player => {
     const usePrimary = this.selectedRoleType === 'primary';
-    
+
     const playerCategory = usePrimary ? player.category : player.secondaryCategory;
     const playerRole = usePrimary ? player.role : player.secondaryRole;
     const isNotCaptain = !player.isCaptain;
-    
-    return playerCategory === category && 
-           playerRole === role && 
-           isNotCaptain;
+
+    return playerCategory === category &&
+          playerRole === role &&
+          isNotCaptain;
   });
 }
 
@@ -512,16 +517,16 @@ getPlayersByCategoryAndRole(category: string, role: string): Player[] {
   this.filteredCategories = [...this.categories];
   
   // Debug (puedes remover esto después)
-  console.log('Filtros aplicados:', {
-    roleType: this.selectedRoleType,
-    players: this.availablePlayers.map(p => ({
-      nick: p.nick,
-      category: p.category,
-      secondaryCategory: p.secondaryCategory,
-      role: p.role,
-      secondaryRole: p.secondaryRole
-    }))
-  });
+  // console.log('Filtros aplicados:', {
+  //   roleType: this.selectedRoleType,
+  //   players: this.availablePlayers.map(p => ({
+  //     nick: p.nick,
+  //     category: p.category,
+  //     secondaryCategory: p.secondaryCategory,
+  //     role: p.role,
+  //     secondaryRole: p.secondaryRole
+  //   }))
+  // });
 }
 
   getPlayerStatusClass(player: Player): string {
@@ -534,6 +539,10 @@ getPlayersByCategoryAndRole(category: string, role: string): Player[] {
   viewProfile(player: Player): void {
     console.log('View profile:', player.uid);
   }
+
+  goToEditProfile(): void {}
+
+  goToAdmin(): void {}
 
   // En el componente LobbyComponent
 toggleCaptainStatus(): void {

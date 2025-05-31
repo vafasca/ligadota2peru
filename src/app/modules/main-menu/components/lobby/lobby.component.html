@@ -1,7 +1,8 @@
 <div class="lobby-container">
   <!-- Cabecera del perfil -->
   <div class="profile-header">
-    <div class="avatar-info-container">
+    <!-- Parte 1: Datos del perfil -->
+    <div class="profile-section profile-data">
       <div class="avatar-container">
         <img
           [src]="player.avatar"
@@ -13,174 +14,136 @@
       </div>
       <div class="player-info">
         <h1 class="dota-font">{{ player.nick }}</h1>
-        <div class="player-id">ID Dota 2: {{ player.idDota }}</div>
-        <div class="status-control">
-          <button class="dota-button status-toggle" (click)="toggleStatus()">
-            {{ player.status }}
-          </button>
-          <button class="dota-button logout-button" (click)="logout()">
-            Salir
-          </button>
+        <div class="player-meta">
+          <span class="player-id">ID Dota 2: {{ player.idDota }}</span>
+          <span class="player-mmr">
+            <img [src]="player.medalImage" class="medal-icon">
+            {{ player.mmr }} MMR
+          </span>
+          <!-- <span class="player-category tier-{{player.category.toLowerCase()}}">
+            {{ player.category }}
+          </span> -->
+        </div>
+        <div class="player-roles">
+          <span class="role-badge primary-role">{{ player.role }}</span>
+          <span class="role-badge secondary-role">{{ player.secondaryRole }}</span>
         </div>
       </div>
     </div>
 
-    <div class="social-media-container">
+    <!-- Parte 2: Botones de acción -->
+    <div class="profile-actions">
+  <div class="action-buttons-grid">
+    <div class="button-row">
+      <button class="dota-button-middle status-toggle" (click)="toggleStatus()">
+        <i class="fas fa-circle"></i> {{ player.status }}
+      </button>
+      <button class="dota-button-middle edit-profile-button" (click)="goToEditProfile()">
+        <i class="fas fa-user-edit"></i> Editar
+      </button>
+    </div>
+    <div class="button-row">
+      <button class="dota-button-middle admin-button" (click)="goToAdmin()">
+        <i class="fas fa-shield-alt"></i> Admin
+      </button>
+      <button class="dota-button-middle logout-button" (click)="logout()">
+        <i class="fas fa-sign-out-alt"></i> Salir
+      </button>
+    </div>
+  </div>
+</div>
+
+    <!-- Parte 3: Redes sociales -->
+    <div class="profile-section social-media-container">
       <div class="social-media-grid">
         <div class="social-media-row">
           <ng-container *ngIf="player.socialMedia?.twitch; else noTwitch">
-            <a
-              [href]="player.socialMedia?.twitch"
-              target="_blank"
-              title="Twitch"
-            >
-              <img
-                src="https://cdn-icons-png.flaticon.com/512/5968/5968819.png"
-                alt="Twitch"
-              />
+            <a [href]="player.socialMedia?.twitch" target="_blank" title="Twitch">
+              <img src="https://cdn-icons-png.flaticon.com/512/5968/5968819.png" alt="Twitch"/>
             </a>
           </ng-container>
           <ng-template #noTwitch>
             <div class="social-icon-disabled" title="Twitch no disponible">
-              <img
-                src="https://cdn-icons-png.flaticon.com/512/5968/5968819.png"
-                alt="Twitch"
-              />
+              <img src="https://cdn-icons-png.flaticon.com/512/5968/5968819.png" alt="Twitch"/>
             </div>
           </ng-template>
 
           <ng-container *ngIf="player.socialMedia?.youtube; else noYoutube">
-            <a
-              [href]="player.socialMedia?.youtube"
-              target="_blank"
-              title="YouTube"
-            >
-              <img
-                src="https://cdn-icons-png.flaticon.com/128/174/174883.png"
-                alt="YouTube"
-              />
+            <a [href]="player.socialMedia?.youtube" target="_blank" title="YouTube">
+              <img src="https://cdn-icons-png.flaticon.com/128/174/174883.png" alt="YouTube"/>
             </a>
           </ng-container>
           <ng-template #noYoutube>
             <div class="social-icon-disabled" title="YouTube no disponible">
-              <img
-                src="https://cdn-icons-png.flaticon.com/128/174/174883.png"
-                alt="YouTube"
-              />
+              <img src="https://cdn-icons-png.flaticon.com/128/174/174883.png" alt="YouTube"/>
             </div>
           </ng-template>
 
           <ng-container *ngIf="player.socialMedia?.kick; else noKick">
             <a [href]="player.socialMedia?.kick" target="_blank" title="Kick">
-              <img src="https://kick.com/favicon.ico" alt="Kick" />
+              <img src="https://kick.com/favicon.ico" alt="Kick"/>
             </a>
           </ng-container>
           <ng-template #noKick>
             <div class="social-icon-disabled" title="Kick no disponible">
-              <img src="https://kick.com/favicon.ico" alt="Kick" />
+              <img src="https://kick.com/favicon.ico" alt="Kick"/>
             </div>
           </ng-template>
 
           <ng-container *ngIf="player.socialMedia?.twitter; else noTwitter">
             <a [href]="player.socialMedia?.twitter" target="_blank" title="X">
-              <img
-                src="https://cdn-icons-png.flaticon.com/128/5968/5968830.png"
-                alt="X"
-              />
+              <img src="https://cdn-icons-png.flaticon.com/128/5968/5968830.png" alt="X"/>
             </a>
           </ng-container>
           <ng-template #noTwitter>
             <div class="social-icon-disabled" title="X no disponible">
-              <img
-                src="https://cdn-icons-png.flaticon.com/128/5968/5968830.png"
-                alt="X"
-              />
+              <img src="https://cdn-icons-png.flaticon.com/128/5968/5968830.png" alt="X"/>
             </div>
           </ng-template>
         </div>
 
         <div class="social-media-row">
           <ng-container *ngIf="player.socialMedia?.discord; else noDiscord">
-            <a
-              [href]="player.socialMedia?.discord"
-              target="_blank"
-              title="Discord"
-            >
-              <img
-                src="https://cdn-icons-png.flaticon.com/512/5968/5968756.png"
-                alt="Discord"
-              />
+            <a [href]="player.socialMedia?.discord" target="_blank" title="Discord">
+              <img src="https://cdn-icons-png.flaticon.com/512/5968/5968756.png" alt="Discord"/>
             </a>
           </ng-container>
           <ng-template #noDiscord>
             <div class="social-icon-disabled" title="Discord no disponible">
-              <img
-                src="https://cdn-icons-png.flaticon.com/512/5968/5968756.png"
-                alt="Discord"
-              />
+              <img src="https://cdn-icons-png.flaticon.com/512/5968/5968756.png" alt="Discord"/>
             </div>
           </ng-template>
 
           <ng-container *ngIf="player.socialMedia?.instagram; else noInstagram">
-            <a
-              [href]="player.socialMedia?.instagram"
-              target="_blank"
-              title="Instagram"
-            >
-              <img
-                src="https://cdn-icons-png.flaticon.com/512/2111/2111463.png"
-                alt="Instagram"
-              />
+            <a [href]="player.socialMedia?.instagram" target="_blank" title="Instagram">
+              <img src="https://cdn-icons-png.flaticon.com/512/2111/2111463.png" alt="Instagram"/>
             </a>
           </ng-container>
           <ng-template #noInstagram>
             <div class="social-icon-disabled" title="Instagram no disponible">
-              <img
-                src="https://cdn-icons-png.flaticon.com/512/2111/2111463.png"
-                alt="Instagram"
-              />
+              <img src="https://cdn-icons-png.flaticon.com/512/2111/2111463.png" alt="Instagram"/>
             </div>
           </ng-template>
 
           <ng-container *ngIf="player.socialMedia?.facebook; else noFacebook">
-            <a
-              [href]="player.socialMedia?.facebook"
-              target="_blank"
-              title="Facebook"
-            >
-              <img
-                src="https://cdn-icons-png.flaticon.com/512/5968/5968764.png"
-                alt="Facebook"
-              />
+            <a [href]="player.socialMedia?.facebook" target="_blank" title="Facebook">
+              <img src="https://cdn-icons-png.flaticon.com/512/5968/5968764.png" alt="Facebook"/>
             </a>
           </ng-container>
           <ng-template #noFacebook>
             <div class="social-icon-disabled" title="Facebook no disponible">
-              <img
-                src="https://cdn-icons-png.flaticon.com/512/5968/5968764.png"
-                alt="Facebook"
-              />
+              <img src="https://cdn-icons-png.flaticon.com/512/5968/5968764.png" alt="Facebook"/>
             </div>
           </ng-template>
 
           <ng-container *ngIf="player.socialMedia?.tiktok; else noTiktok">
-            <a
-              [href]="player.socialMedia?.tiktok"
-              target="_blank"
-              title="TikTok"
-            >
-              <img
-                src="https://cdn-icons-png.flaticon.com/512/3046/3046126.png"
-                alt="TikTok"
-              />
+            <a [href]="player.socialMedia?.tiktok" target="_blank" title="TikTok">
+              <img src="https://cdn-icons-png.flaticon.com/512/3046/3046126.png" alt="TikTok"/>
             </a>
           </ng-container>
           <ng-template #noTiktok>
             <div class="social-icon-disabled" title="TikTok no disponible">
-              <img
-                src="https://cdn-icons-png.flaticon.com/512/3046/3046126.png"
-                alt="TikTok"
-              />
+              <img src="https://cdn-icons-png.flaticon.com/512/3046/3046126.png" alt="TikTok"/>
             </div>
           </ng-template>
         </div>
@@ -365,7 +328,7 @@
         </button>
       </div>
 
-      <button class="dota-button filter-button" (click)="buscarRivales()">
+      <button class="dota-button filter-button" (click)="buscarRivales($event)">
         Buscar Rivales
       </button>
 
