@@ -1,7 +1,7 @@
 import { Component, ElementRef, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
-import { Player, PlayerRole } from 'src/app/modules/admin/models/jugador.model';
+import { Player, PlayerDivision, PlayerRole } from 'src/app/modules/admin/models/jugador.model';
 import { Match } from 'src/app/modules/admin/models/match.model';
 import { PlayerService } from 'src/app/modules/admin/services/player.service';
 import { AuthService } from 'src/app/modules/auth/services/auth.service';
@@ -32,6 +32,7 @@ export class PlayerProfileComponent {
     secondaryCategory: '',
     observations: '',
     rolUser: PlayerRole.Player,//cambiar
+    playerDivision: PlayerDivision.PorDefinir,
     socialMedia: {
       twitch: '',
       youtube: '',

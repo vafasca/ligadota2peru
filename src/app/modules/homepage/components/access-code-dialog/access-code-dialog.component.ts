@@ -37,7 +37,6 @@ async verifyCode() {
   const enteredCode = this.accessForm.value.accessCode;
   
   try {
-    // Verifica el código y determina el rol
     let userRole: PlayerRole;
     
     if (enteredCode.startsWith('adm') && enteredCode.length === 9) {
@@ -53,8 +52,12 @@ async verifyCode() {
     const isValid = await this.accessCodeService.validateAndDeleteCode(enteredCode);
     
     if (isValid) {
-      // Devuelve tanto el estado de éxito como el rol del usuario
-      this.dialogRef.close({ success: true, role: userRole });
+      // Devuelve el estado de éxito, el rol y el código de acceso
+      this.dialogRef.close({
+        success: true,
+        role: userRole,
+        accessCode: enteredCode // Añade el código de acceso al resultado
+      });
     } else {
       this.handleInvalidCode();
     }

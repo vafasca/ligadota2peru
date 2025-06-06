@@ -6,22 +6,28 @@ import { deleteDoc, doc, Firestore, getDoc } from '@angular/fire/firestore';
 })
 export class AccessCodeService {
 
+  private readonly codeCollections = ['accessCodeAdm', 'accessCodeDiv1', 'accessCodeDiv2', 'accessCodeSubAdm', 'accessCodePlayer'];
+
   constructor(private firestore: Firestore) { }
 
-  async validateAndDeleteCode(code: string): Promise<boolean> {
+  async validateAndDeleteCode(code: string): Promise<{ found: boolean; collection?: string }> {
     try {
-      const codeRef = doc(this.firestore, `accessCodes/${code}`);
-      const codeSnap = await getDoc(codeRef);
+      // Verificar en cada colección
+      for (const collection of this.codeCollections) {
+        const codeRef = doc(this.firestore, `${collection}/${code}`);
+        const codeSnap = await getDoc(codeRef);
 
-      if (codeSnap.exists()) {
-        // Eliminar el código después de validarlo
-        // await deleteDoc(codeRef);
-        return true;
+        if (codeSnap.exists()) {
+          // eliminar el código después de validarlo
+          // await deleteDoc(codeRef);
+          return { found: true, collection };
+        }
       }
-      return false;
+      // Si no se encontró en ninguna colección
+      return { found: false };
     } catch (error) {
       console.error('Error validating code:', error);
-      return false;
+      return { found: false };
     }
   }
 }

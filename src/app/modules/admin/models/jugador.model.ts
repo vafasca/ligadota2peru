@@ -19,8 +19,9 @@ export interface Player {
   isCaptain?: boolean;
   teamId?: string | null;
   registrationDate?: Date;
-  availability?: PlayerAvailability; // Nuevo campo
+  availability?: PlayerAvailability;
   rolUser: PlayerRole;
+  playerDivision: PlayerDivision;
   socialMedia?: {
     twitch?: string;
     youtube?: string;
@@ -44,4 +45,10 @@ export enum PlayerRole {
   Player = 'player',
   SubAdmin = 'subadmin',
   Admin = 'admin'
+}
+
+export enum PlayerDivision {
+  Division1 = 'division1',
+  Division2 = 'division2',
+  PorDefinir = 'por_definir'
 }

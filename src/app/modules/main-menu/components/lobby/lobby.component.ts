@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { map, Observable, Subscription, throwError } from 'rxjs';
-import { Player, PlayerAvailability, PlayerRole } from 'src/app/modules/admin/models/jugador.model';
+import { Player, PlayerAvailability, PlayerDivision, PlayerRole } from 'src/app/modules/admin/models/jugador.model';
 import { Auth, onAuthStateChanged, signOut } from '@angular/fire/auth';
 import { PlayerService } from 'src/app/modules/admin/services/player.service';
 import { Team } from 'src/app/modules/admin/models/equipos.model';
@@ -45,6 +45,7 @@ export class LobbyComponent {
     observations: '',
     availability: PlayerAvailability.Available,
     rolUser: PlayerRole.Player, //cambiar
+    playerDivision: PlayerDivision.PorDefinir, // Valor por defecto
     socialMedia: {
       twitch: '',
       youtube: '',

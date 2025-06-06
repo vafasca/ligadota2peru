@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { NgForm } from '@angular/forms';
-import { Player, PlayerAvailability, PlayerRole } from '../models/jugador.model';
+import { Player, PlayerAvailability, PlayerDivision, PlayerRole } from '../models/jugador.model';
 import { PlayerService } from '../services/player.service';
 import { finalize, Subscription } from 'rxjs';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -101,6 +101,7 @@ export class PlayerRegistrationComponent {
         isCaptain: false,
         availability: PlayerAvailability.Available,
         rolUser: this.userRole,//modify
+        playerDivision: PlayerDivision.PorDefinir,
         registrationDate: new Date(),
         socialMedia: {
           twitch: form.value.twitch || '',

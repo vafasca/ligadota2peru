@@ -127,51 +127,48 @@ export class RegisterComponent {
   }
 
   async onSubmit(form: NgForm) {
-    if (form.invalid || this.emailExists || this.passwordStrength === 'weak') {
-      this.errorMessage = 'Por favor completa correctamente todos los campos';
-      return;
-    }
+  if (form.invalid || this.emailExists || this.passwordStrength === 'weak') {
+    this.errorMessage = 'Por favor completa correctamente todos los campos';
+    return;
+  }
 
-    const { email, password, confirmPassword } = form.value;
-      
-    if (password !== confirmPassword) {
-      this.errorMessage = 'Las contraseñas no coinciden';
-      return;
-    }
+  const { email, password, confirmPassword } = form.value;
+    
+  if (password !== confirmPassword) {
+    this.errorMessage = 'Las contraseñas no coinciden';
+    return;
+  }
 
-    if (!this.isValidEmail(email)) {
-      this.errorMessage = 'Por favor ingresa un correo electrónico válido';
-      return;
-    }
+  if (!this.isValidEmail(email)) {
+    this.errorMessage = 'Por favor ingresa un correo electrónico válido';
+    return;
+  }
 
-    // Abrir diálogo de código de acceso antes de proceder con el registro
-    const dialogRef = this.dialog.open(AccessCodeDialogComponent, {
-      width: '350px',
-    });
+  const dialogRef = this.dialog.open(AccessCodeDialogComponent, {
+    width: '350px',
+  });
 
-    dialogRef.afterClosed().subscribe(result => {
+  dialogRef.afterClosed().subscribe(result => {
     if (result && result.success) {
-      // Pasa el rol al método de registro
-      this.proceedWithRegistration(email, password, result.role);
+      this.proceedWithRegistration(email, password, result.role, result.accessCode);
     } else {
       this.resetForm(form);
     }
   });
-  }
+}
 
-  private async proceedWithRegistration(email: string, password: string, role: PlayerRole) {
+  private async proceedWithRegistration(email: string, password: string, role: PlayerRole, accessCode: string) {
   this.isLoading = true;
 
   try {
     const userCredential = await createUserWithEmailAndPassword(this.auth, email, password);
     
-    // Guarda el rol en Firestore o Realtime Database
-    await this.saveUserRole(userCredential.user.uid, role);
+    // Guarda el rol y el código de acceso en Firestore
+    await this.saveUserRole(userCredential.user.uid, role, accessCode);
     
     await sendEmailVerification(userCredential.user);
     await signOut(this.auth);
 
-    // Almacena el rol en sessionStorage para usarlo después
     sessionStorage.setItem('userRole', role);
     
     this.showSuccess('¡Registro exitoso! Hemos enviado un correo de verificación');
@@ -181,7 +178,7 @@ export class RegisterComponent {
         email: email,
         fromRegistration: true,
         registrationComplete: true,
-        userRole: role // Pasamos el rol a la siguiente pantalla
+        userRole: role
       }
     });
     
@@ -191,11 +188,13 @@ export class RegisterComponent {
   }
 }
 
-private async saveUserRole(uid: string, role: PlayerRole) {
-  // Implementa la lógica para guardar el rol en tu base de datos
-  // Ejemplo con Firestore:
-  const userRef = doc(this.firestore, `users/${uid}`);//cambiar por log de registro
-  await setDoc(userRef, { rolUser: role }, { merge: true });
+private async saveUserRole(uid: string, role: PlayerRole, accessCode: string) {
+  const userRef = doc(this.firestore, `usersLogRegistration/${uid}`);
+  await setDoc(userRef, {
+    rolUser: role,
+    accessCodeUsed: accessCode,
+    registrationDate: new Date().toISOString()
+  }, { merge: true });
 }
 
   private resetForm(form: NgForm) {
