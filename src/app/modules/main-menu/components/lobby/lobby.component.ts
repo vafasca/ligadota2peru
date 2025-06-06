@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { map, Observable, Subscription, throwError } from 'rxjs';
-import { Player } from 'src/app/modules/admin/models/jugador.model';
+import { Player, PlayerAvailability, PlayerRole } from 'src/app/modules/admin/models/jugador.model';
 import { Auth, onAuthStateChanged, signOut } from '@angular/fire/auth';
 import { PlayerService } from 'src/app/modules/admin/services/player.service';
 import { Team } from 'src/app/modules/admin/models/equipos.model';
@@ -43,7 +43,8 @@ export class LobbyComponent {
     secondaryRole: '',
     secondaryCategory: '',
     observations: '',
-    availability: 'available',
+    availability: PlayerAvailability.Available,
+    rolUser: PlayerRole.Player, //cambiar
     socialMedia: {
       twitch: '',
       youtube: '',
@@ -334,7 +335,7 @@ export class LobbyComponent {
       next: (teamId) => {
         this.playerService.updatePlayer(this.player.uid, {
           teamId,
-          availability: 'in_team'
+          availability: PlayerAvailability.InTeam
         }).subscribe(() => {
           this.loadUserTeam(this.player.uid);
         });
@@ -598,7 +599,7 @@ async leaveTeam(): Promise<void> {
     
     if (this.player) {
       this.player.teamId = null;
-      this.player.availability = 'available';
+      this.player.availability = PlayerAvailability.Available;
       this.player.isCaptain = false; // Asegurarse de actualizar también aquí
     }
     
@@ -617,7 +618,7 @@ private async dissolveTeam(): Promise<void> {
   const playerUpdates = this.teamPlayers.map(player => {
     const updateData: Partial<Player> = {
       teamId: null,
-      availability: 'available'
+      availability: PlayerAvailability.Available
     };
     
     // Si es el capitán, también actualizar isCaptain
@@ -659,7 +660,7 @@ private async leaveAsMember(): Promise<void> {
   // 2. Actualizar estado del jugador
   await this.playerService.updatePlayer(this.currentUserUid, {
     teamId: null,
-    availability: 'available'
+    availability: PlayerAvailability.Available,
   }).toPromise();
 }
 

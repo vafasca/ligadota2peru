@@ -19,7 +19,8 @@ export interface Player {
   isCaptain?: boolean;
   teamId?: string | null;
   registrationDate?: Date;
-  availability?: 'available' | 'in_team' | 'unavailable'; // Nuevo campo
+  availability?: PlayerAvailability; // Nuevo campo
+  rolUser: PlayerRole;
   socialMedia?: {
     twitch?: string;
     youtube?: string;
@@ -31,4 +32,16 @@ export interface Player {
     tiktok?: string;
   };
   matches?: Match[];
+}
+
+export enum PlayerAvailability {
+  Available = 'available',
+  InTeam = 'in_team',
+  Unavailable = 'unavailable'
+}
+
+export enum PlayerRole {
+  Player = 'player',
+  SubAdmin = 'subadmin',
+  Admin = 'admin'
 }

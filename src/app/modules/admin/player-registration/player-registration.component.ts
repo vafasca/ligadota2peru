@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { NgForm } from '@angular/forms';
-import { Player } from '../models/jugador.model';
+import { Player, PlayerAvailability, PlayerRole } from '../models/jugador.model';
 import { PlayerService } from '../services/player.service';
 import { finalize, Subscription } from 'rxjs';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -18,6 +18,7 @@ export class PlayerRegistrationComponent {
   selectedAvatar: string | ArrayBuffer = 'assets/medallas/profile_default.png';
   players: Player[] = [];
   currentUserUid: string | null = null;
+  userRole: PlayerRole = PlayerRole.Player; // Valor por defecto
 
   constructor(
     private playerSvc: PlayerService,
@@ -28,6 +29,11 @@ export class PlayerRegistrationComponent {
 
   ngOnInit(): void {
     this.setupAuthListener();
+    // Recupera el rol de sessionStorage o del estado de navegación
+  const navigation = this.router.getCurrentNavigation();
+  this.userRole = navigation?.extras?.state?.['userRole'] ||
+                 sessionStorage.getItem('userRole') as PlayerRole ||
+                 PlayerRole.Player;
   }
 
   private setupAuthListener(): void {
@@ -93,7 +99,8 @@ export class PlayerRegistrationComponent {
         secondaryRole: form.value.secondaryRole || '',
         secondaryCategory: form.value.secondaryCategory || '',
         isCaptain: false,
-        availability: 'available',
+        availability: PlayerAvailability.Available,
+        rolUser: this.userRole,//modify
         registrationDate: new Date(),
         socialMedia: {
           twitch: form.value.twitch || '',

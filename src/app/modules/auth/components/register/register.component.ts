@@ -4,7 +4,9 @@ import { NgForm } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
+import { PlayerRole } from 'src/app/modules/admin/models/jugador.model';
 import { AccessCodeDialogComponent } from 'src/app/modules/homepage/components/access-code-dialog/access-code-dialog.component';
+import { Firestore, doc, setDoc } from '@angular/fire/firestore';
 
 // Lista mejorada de dominios de correo válidos
 const VALID_EMAIL_DOMAINS = [
@@ -32,7 +34,8 @@ export class RegisterComponent {
     private auth: Auth,
     private router: Router,
     private snackBar: MatSnackBar,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private firestore: Firestore
   ) {}
 
   async checkEmail(email: string) {
@@ -147,42 +150,52 @@ export class RegisterComponent {
     });
 
     dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-        // Si el código es correcto, proceder con el registro
-        this.proceedWithRegistration(email, password);
-      } else {
-        // Si el código es incorrecto o se cancela, limpiar el formulario
-        this.resetForm(form);
-      }
-    });
+    if (result && result.success) {
+      // Pasa el rol al método de registro
+      this.proceedWithRegistration(email, password, result.role);
+    } else {
+      this.resetForm(form);
+    }
+  });
   }
 
-  private async proceedWithRegistration(email: string, password: string) {
+  private async proceedWithRegistration(email: string, password: string, role: PlayerRole) {
   this.isLoading = true;
 
   try {
     const userCredential = await createUserWithEmailAndPassword(this.auth, email, password);
+    
+    // Guarda el rol en Firestore o Realtime Database
+    await this.saveUserRole(userCredential.user.uid, role);
+    
     await sendEmailVerification(userCredential.user);
     await signOut(this.auth);
 
+    // Almacena el rol en sessionStorage para usarlo después
+    sessionStorage.setItem('userRole', role);
+    
     this.showSuccess('¡Registro exitoso! Hemos enviado un correo de verificación');
-
-    // Redirigir con el estado que el guard verificará
+    
     this.router.navigate(['/login/verificacion'], {
       state: {
         email: email,
-        fromRegistration: true,  // <-- Esto es lo que el guard verificará
-        registrationComplete: true  // <-- Para el fallback con sessionStorage
+        fromRegistration: true,
+        registrationComplete: true,
+        userRole: role // Pasamos el rol a la siguiente pantalla
       }
     });
-
-    // Opcional: También puedes usar sessionStorage como respaldo
-    sessionStorage.setItem('registrationComplete', 'true');
     
   } catch (error) {
     this.isLoading = false;
     this.handleError(error);
   }
+}
+
+private async saveUserRole(uid: string, role: PlayerRole) {
+  // Implementa la lógica para guardar el rol en tu base de datos
+  // Ejemplo con Firestore:
+  const userRef = doc(this.firestore, `users/${uid}`);//cambiar por log de registro
+  await setDoc(userRef, { rolUser: role }, { merge: true });
 }
 
   private resetForm(form: NgForm) {

@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { environment } from 'src/environments/environment';
 import { AccessCodeService } from '../../services/access-code.service';
+import { PlayerRole } from 'src/app/modules/admin/models/jugador.model';
 
 @Component({
   selector: 'app-access-code-dialog',
@@ -29,23 +30,38 @@ accessForm: FormGroup;
     });
   }
 
-  async verifyCode() {
-    if (this.isLocked) return;
+  // access-code-dialog.component.ts
+async verifyCode() {
+  if (this.isLocked) return;
 
-    const enteredCode = this.accessForm.value.accessCode;
+  const enteredCode = this.accessForm.value.accessCode;
+  
+  try {
+    // Verifica el código y determina el rol
+    let userRole: PlayerRole;
     
-    try {
-      const isValid = await this.accessCodeService.validateAndDeleteCode(enteredCode);
-      
-      if (isValid) {
-        this.dialogRef.close(true);
-      } else {
-        this.handleInvalidCode();
-      }
-    } catch (error) {
+    if (enteredCode.startsWith('adm') && enteredCode.length === 9) {
+      userRole = PlayerRole.Admin;
+    } else if (enteredCode.startsWith('subadm') && enteredCode.length === 9) {
+      userRole = PlayerRole.SubAdmin;
+    } else if (enteredCode.startsWith('player') && enteredCode.length === 9) {
+      userRole = PlayerRole.Player;
+    } else {
+      throw new Error('Código inválido');
+    }
+
+    const isValid = await this.accessCodeService.validateAndDeleteCode(enteredCode);
+    
+    if (isValid) {
+      // Devuelve tanto el estado de éxito como el rol del usuario
+      this.dialogRef.close({ success: true, role: userRole });
+    } else {
       this.handleInvalidCode();
     }
+  } catch (error) {
+    this.handleInvalidCode();
   }
+}
 
   private handleInvalidCode() {
     this.attempts++;
