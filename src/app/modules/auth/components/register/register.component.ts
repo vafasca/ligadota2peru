@@ -4,7 +4,7 @@ import { NgForm } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
-import { PlayerRole } from 'src/app/modules/admin/models/jugador.model';
+import { PlayerDivision, PlayerRole } from 'src/app/modules/admin/models/jugador.model';
 import { AccessCodeDialogComponent } from 'src/app/modules/homepage/components/access-code-dialog/access-code-dialog.component';
 import { Firestore, doc, setDoc } from '@angular/fire/firestore';
 
@@ -150,26 +150,42 @@ export class RegisterComponent {
 
   dialogRef.afterClosed().subscribe(result => {
     if (result && result.success) {
-      this.proceedWithRegistration(email, password, result.role, result.accessCode);
+      this.proceedWithRegistration(
+        email, 
+        password, 
+        result.division, // Pasamos la división
+        result.accessCode
+      );
     } else {
       this.resetForm(form);
     }
   });
 }
 
-  private async proceedWithRegistration(email: string, password: string, role: PlayerRole, accessCode: string) {
+  private async proceedWithRegistration(
+  email: string, 
+  password: string, 
+  division: PlayerDivision, 
+  accessCode: string
+) {
   this.isLoading = true;
 
   try {
     const userCredential = await createUserWithEmailAndPassword(this.auth, email, password);
     
-    // Guarda el rol y el código de acceso en Firestore
-    await this.saveUserRole(userCredential.user.uid, role, accessCode);
+    // Guardamos el log completo
+    await this.saveRegistrationLog(
+      userCredential.user.uid,
+      email,
+      division,
+      accessCode
+    );
     
     await sendEmailVerification(userCredential.user);
     await signOut(this.auth);
 
-    sessionStorage.setItem('userRole', role);
+    // Guarda la división en sessionStorage
+    sessionStorage.setItem('userDivision', division);
     
     this.showSuccess('¡Registro exitoso! Hemos enviado un correo de verificación');
     
@@ -178,7 +194,7 @@ export class RegisterComponent {
         email: email,
         fromRegistration: true,
         registrationComplete: true,
-        userRole: role
+        userDivision: division // Pasamos la división
       }
     });
     
@@ -188,10 +204,10 @@ export class RegisterComponent {
   }
 }
 
-private async saveUserRole(uid: string, role: PlayerRole, accessCode: string) {
+private async saveUserRole(uid: string, division: PlayerDivision, accessCode: string) {
   const userRef = doc(this.firestore, `usersLogRegistration/${uid}`);
   await setDoc(userRef, {
-    rolUser: role,
+    playerDivision: division, // Guardamos la división en Firestore
     accessCodeUsed: accessCode,
     registrationDate: new Date().toISOString()
   }, { merge: true });
@@ -205,6 +221,26 @@ private async saveUserRole(uid: string, role: PlayerRole, accessCode: string) {
     this.passwordStrength = 'weak';
     this.errorMessage = '';
   }
+
+  private async saveRegistrationLog(
+  uid: string, 
+  email: string, 
+  division: PlayerDivision, 
+  accessCode: string
+) {
+  const userRef = doc(this.firestore, `usersLogRegistration/${uid}`);
+  
+  const logData = {
+    userId: uid,
+    email: email,
+    playerDivision: division,
+    accessCode: accessCode,
+    usedAt: new Date().toISOString(), // Fecha en formato ISO
+    registrationCompleted: false // Marcamos como no completado inicialmente
+  };
+
+  await setDoc(userRef, logData, { merge: true });
+}
 
   private handleError(error: any) {
     console.error('Error en registro:', error);

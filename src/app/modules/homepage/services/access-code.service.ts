@@ -1,29 +1,34 @@
 import { Injectable } from '@angular/core';
 import { deleteDoc, doc, Firestore, getDoc } from '@angular/fire/firestore';
+import { PlayerDivision } from '../../admin/models/jugador.model';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AccessCodeService {
 
-  private readonly codeCollections = ['accessCodeAdm', 'accessCodeDiv1', 'accessCodeDiv2', 'accessCodeSubAdm', 'accessCodePlayer'];
+  private readonly codeCollections = [
+    { name: 'accessCodeDiv1', division: PlayerDivision.Division1 },
+    { name: 'accessCodeDiv2', division: PlayerDivision.Division2 }
+  ];
 
   constructor(private firestore: Firestore) { }
 
-  async validateAndDeleteCode(code: string): Promise<{ found: boolean; collection?: string }> {
+  async validateAndDeleteCode(code: string): Promise<{ found: boolean; division?: PlayerDivision; collection?: string }> {
     try {
-      // Verificar en cada colección
       for (const collection of this.codeCollections) {
-        const codeRef = doc(this.firestore, `${collection}/${code}`);
+        const codeRef = doc(this.firestore, `${collection.name}/${code}`);
         const codeSnap = await getDoc(codeRef);
 
         if (codeSnap.exists()) {
-          // eliminar el código después de validarlo
-          // await deleteDoc(codeRef);
-          return { found: true, collection };
+          await deleteDoc(codeRef);
+          return {
+            found: true,
+            division: collection.division,
+            collection: collection.name
+          };
         }
       }
-      // Si no se encontró en ninguna colección
       return { found: false };
     } catch (error) {
       console.error('Error validating code:', error);

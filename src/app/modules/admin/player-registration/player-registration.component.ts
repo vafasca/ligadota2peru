@@ -6,6 +6,7 @@ import { finalize, Subscription } from 'rxjs';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
 import { Auth, onAuthStateChanged  } from '@angular/fire/auth';
+import { Firestore, doc, getDoc, updateDoc } from '@angular/fire/firestore';
 
 @Component({
   selector: 'app-player-registration',
@@ -19,21 +20,36 @@ export class PlayerRegistrationComponent {
   players: Player[] = [];
   currentUserUid: string | null = null;
   userRole: PlayerRole = PlayerRole.Player; // Valor por defecto
+  playerDivision: PlayerDivision = PlayerDivision.PorDefinir;
 
   constructor(
     private playerSvc: PlayerService,
     private snackBar: MatSnackBar,
     private auth: Auth,
-    private router: Router
+    private router: Router,
+    private firestore: Firestore
   ) {}
 
   ngOnInit(): void {
     this.setupAuthListener();
-    // Recupera el rol de sessionStorage o del estado de navegación
-  const navigation = this.router.getCurrentNavigation();
-  this.userRole = navigation?.extras?.state?.['userRole'] ||
-                 sessionStorage.getItem('userRole') as PlayerRole ||
-                 PlayerRole.Player;
+    this.loadDivisionFromFirestore();
+  }
+
+  private async loadDivisionFromFirestore() {
+    const user = this.auth.currentUser;
+    if (!user) return;
+
+    try {
+      const userRef = doc(this.firestore, `usersLogRegistration/${user.uid}`);
+      const userSnap = await getDoc(userRef);
+      
+      if (userSnap.exists()) {
+        const data = userSnap.data();
+        this.playerDivision = data['playerDivision'] || PlayerDivision.PorDefinir;
+      }
+    } catch (error) {
+      console.error('Error loading division:', error);
+    }
   }
 
   private setupAuthListener(): void {
@@ -76,64 +92,94 @@ export class PlayerRegistrationComponent {
     }
   }
 
-  onSubmit(form: NgForm): void {
-    if (form.valid && this.currentUserUid) {
-      this.isLoading = true;
-  
-      const mmrValue = Number(form.value.mmr) || 0;
-      const { medal, medalImage } = this.calculateMedalAndImage(mmrValue);
-  
-      const newPlayer: Player = {
-        uid: this.currentUserUid,
-        avatar: this.selectedAvatar.toString(),
-        nick: form.value.nick,
-        idDota: form.value.idDota,
-        category: form.value.category,
-        mmr: mmrValue,
-        status: form.value.status || 'Activo',
-        rating: form.value.rating || 0,
-        observations: form.value.observations || '',
-        medal: medal,
-        medalImage: medalImage,
-        role: form.value.role || 'Por definir',
-        secondaryRole: form.value.secondaryRole || '',
-        secondaryCategory: form.value.secondaryCategory || '',
-        isCaptain: false,
-        availability: PlayerAvailability.Available,
-        rolUser: this.userRole,//modify
-        playerDivision: PlayerDivision.PorDefinir,
-        registrationDate: new Date(),
-        socialMedia: {
-          twitch: form.value.twitch || '',
-          youtube: form.value.youtube || '',
-          kick: form.value.kick || '',
-          twitter: form.value.twitter || '',
-          discord: form.value.discord || '',
-          instagram: form.value.instagram || '',
-          facebook: form.value.facebook || '',
-          tiktok: form.value.tiktok || ''
-        },
-        matches: []
-      };
-  
-      this.playerSvc.addPlayer(newPlayer)
-        .pipe(finalize(() => this.isLoading = false))
-        .subscribe({
-          next: () => {
-            this.showSnackbar('✅ Registro de jugador completado con éxito', 'success');
-            form.resetForm();
-            this.selectedAvatar = 'assets/medallas/profile_default.png';
-            this.router.navigate(['/profile']);
-          },
-          error: (error) => {
-            console.error('Error al guardar el jugador:', error);
-            this.showSnackbar('❌ Error al completar el registro', 'error');
-          }
-        });
-    } else if (!this.currentUserUid) {
-      this.showSnackbar('❌ No hay usuario autenticado', 'error');
+  async onSubmit(form: NgForm): Promise<void> {
+  if (form.valid && this.currentUserUid) {
+    this.isLoading = true;
+
+    const mmrValue = Number(form.value.mmr) || 0;
+    const { medal, medalImage } = this.calculateMedalAndImage(mmrValue);
+
+    const newPlayer: Player = {
+      uid: this.currentUserUid,
+      avatar: this.selectedAvatar.toString(),
+      nick: form.value.nick,
+      idDota: form.value.idDota,
+      category: form.value.category,
+      mmr: mmrValue,
+      status: form.value.status || 'Activo',
+      rating: form.value.rating || 0,
+      observations: form.value.observations || '',
+      medal: medal,
+      medalImage: medalImage,
+      role: form.value.role || 'Por definir',
+      secondaryRole: form.value.secondaryRole || '',
+      secondaryCategory: form.value.secondaryCategory || '',
+      isCaptain: false,
+      availability: PlayerAvailability.Available,
+      rolUser: this.userRole,
+      playerDivision: this.playerDivision,
+      registrationDate: new Date(),
+      socialMedia: {
+        twitch: form.value.twitch || '',
+        youtube: form.value.youtube || '',
+        kick: form.value.kick || '',
+        twitter: form.value.twitter || '',
+        discord: form.value.discord || '',
+        instagram: form.value.instagram || '',
+        facebook: form.value.facebook || '',
+        tiktok: form.value.tiktok || ''
+      },
+      matches: []
+    };
+
+    try {
+      // 1. Guardar el jugador en la colección principal
+      await this.playerSvc.addPlayer(newPlayer).toPromise();
+
+      // 2. Actualizar el registro en usersLogRegistration para marcar como completado
+      const logRef = doc(this.firestore, `usersLogRegistration/${this.currentUserUid}`);
+      await updateDoc(logRef, {
+        registrationCompleted: true,
+        completedAt: new Date().toISOString(),
+        playerInfo: { // Podemos guardar información relevante del jugador
+          nick: newPlayer.nick,
+          mmr: newPlayer.mmr,
+          division: newPlayer.playerDivision
+        }
+      });
+
+      // 3. Limpiar y redirigir
+      this.showSnackbar('✅ Registro de jugador completado con éxito', 'success');
+      form.resetForm();
+      this.selectedAvatar = 'assets/medallas/profile_default.png';
+      
+      // Limpiar cualquier dato temporal (si aún usas sessionStorage)
+      sessionStorage.removeItem('userDivision');
+      
+      this.router.navigate(['/profile']);
+
+    } catch (error) {
+      console.error('Error en el proceso de registro:', error);
+      let errorMessage = '❌ Error al completar el registro';
+      
+      // Mensajes más específicos según el error
+      if (error instanceof Error) {
+        if (error.message.includes('permission-denied')) {
+          errorMessage = '❌ No tienes permisos para realizar esta acción';
+        } else if (error.message.includes('network-error')) {
+          errorMessage = '❌ Error de conexión. Verifica tu internet';
+        }
+      }
+      
+      this.showSnackbar(errorMessage, 'error');
+    } finally {
+      this.isLoading = false;
     }
+
+  } else if (!this.currentUserUid) {
+    this.showSnackbar('❌ No hay usuario autenticado', 'error');
   }
+}
 
   private calculateMedalAndImage(mmr: number): { medal: string, medalImage: string } {
     const medalRanges = [

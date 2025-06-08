@@ -19,7 +19,7 @@ import {
   arrayUnion,
   arrayRemove
 } from '@angular/fire/firestore';
-import { Player } from '../models/jugador.model';
+import { Player, PlayerDivision } from '../models/jugador.model';
 import { catchError, from, map, Observable, of, switchMap, tap, throwError } from 'rxjs';
 import { Match } from '../models/match.model';
 import { Team } from '../models/equipos.model';
@@ -135,6 +135,35 @@ updatePlayer(uid: string, data: Partial<Player>): Observable<void> {
       })
     );
   }
+
+  // player.service.ts
+
+getAvailablePlayersByDivision(division: PlayerDivision): Observable<Player[]> {
+  const q = query(
+    this.playersCollection,
+    where('status', '==', 'Activo'),
+    where('availability', '==', 'available'),
+    where('playerDivision', '==', division)
+  );
+
+  return new Observable<Player[]>(observer => {
+    const unsubscribe = onSnapshot(
+      q,
+      (snapshot: QuerySnapshot) => {
+        const players = snapshot.docs.map(doc => ({
+          uid: doc.id,
+          ...doc.data()
+        } as Player));
+        observer.next(players);
+      },
+      (error) => {
+        console.error('Error escuchando jugadores disponibles por división:', error);
+        observer.error(error);
+      }
+    );
+    return () => unsubscribe();
+  });
+}
 
   /**
    * Adds a match to player's matches subcollection

@@ -37,30 +37,18 @@ async verifyCode() {
   const enteredCode = this.accessForm.value.accessCode;
   
   try {
-    let userRole: PlayerRole;
+    const validationResult = await this.accessCodeService.validateAndDeleteCode(enteredCode);
     
-    if (enteredCode.startsWith('adm') && enteredCode.length === 9) {
-      userRole = PlayerRole.Admin;
-    } else if (enteredCode.startsWith('subadm') && enteredCode.length === 9) {
-      userRole = PlayerRole.SubAdmin;
-    } else if (enteredCode.startsWith('player') && enteredCode.length === 9) {
-      userRole = PlayerRole.Player;
-    } else {
+    if (!validationResult.found) {
       throw new Error('Código inválido');
     }
 
-    const isValid = await this.accessCodeService.validateAndDeleteCode(enteredCode);
-    
-    if (isValid) {
-      // Devuelve el estado de éxito, el rol y el código de acceso
-      this.dialogRef.close({
-        success: true,
-        role: userRole,
-        accessCode: enteredCode // Añade el código de acceso al resultado
-      });
-    } else {
-      this.handleInvalidCode();
-    }
+    // Devuelve el estado de éxito y la división encontrada
+    this.dialogRef.close({
+      success: true,
+      division: validationResult.division,
+      accessCode: enteredCode
+    });
   } catch (error) {
     this.handleInvalidCode();
   }

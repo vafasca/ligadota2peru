@@ -177,7 +177,6 @@ export class LobbyComponent {
       
       const newRole = event.container.id;
       this.teamService.updatePlayerRole(this.userTeam.id, player.uid, newRole).subscribe({
-        next: () => console.log(`Player role updated to ${newRole}`),
         error: (err) => console.error('Error updating player role:', err)
       });
     }
