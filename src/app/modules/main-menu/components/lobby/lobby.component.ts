@@ -27,6 +27,9 @@ export class LobbyComponent {
   selectedRoleType: 'primary' | 'secondary' = 'primary';
   isCopied = false;
   lastCopiedId: number | null = null;
+  currentUserDivision: PlayerDivision = PlayerDivision.PorDefinir;
+  onlinePlayersCount = 0;
+  showDivisionBreakdown = false;
 
   player: Player = {
     uid: '',
@@ -127,27 +130,34 @@ export class LobbyComponent {
     this.authSubscription.add({ unsubscribe });
   }
 
-  private loadPlayerData(uid: string): void {
-    this.isLoading = true;
-    this.playerService.getPlayer(uid).subscribe({
-      next: (playerData) => {
-        if (playerData) {
-          this.player = playerData;
-          this.isTeamCaptain = playerData.isCaptain || false;
-          this.isLoading = false;
-        } else {
-          this.errorMessage = 'Perfil no encontrado';
-          this.isLoading = false;
-          this.router.navigate(['/complete-profile']);
-        }
-      },
-      error: (err) => {
-        console.error('[LOBBY] Error loading player:', err);
-        this.errorMessage = 'Error al cargar perfil';
-        this.isLoading = false;
-      }
-    });
+  toggleDivisionView(): void {
+    this.showDivisionBreakdown = !this.showDivisionBreakdown;
   }
+
+  private loadPlayerData(uid: string): void {
+  this.isLoading = true;
+  this.playerService.getPlayer(uid).subscribe({
+    next: (playerData) => {
+      if (playerData) {
+        this.player = playerData;
+        this.currentUserDivision = playerData.playerDivision;
+        this.isTeamCaptain = playerData.isCaptain || false;
+        this.isLoading = false;
+        // Cargar jugadores filtrados por división
+        this.loadAvailablePlayers();
+      } else {
+        this.errorMessage = 'Perfil no encontrado';
+        this.isLoading = false;
+        this.router.navigate(['/complete-profile']);
+      }
+    },
+    error: (err) => {
+      console.error('[LOBBY] Error loading player:', err);
+      this.errorMessage = 'Error al cargar perfil';
+      this.isLoading = false;
+    }
+  });
+}
 
   private loadUserTeam(playerId: string): void {
     this.teamsSub = this.teamService.getUserTeam(playerId).subscribe({
@@ -240,9 +250,11 @@ export class LobbyComponent {
   }
   
   // Suscribirse a jugadores activos (para el contador total)
+  // Suscribirse a jugadores activos (para el contador total)
   const activePlayersSub = this.playerService.getActivePlayers().subscribe({
     next: (players) => {
       this.allActivePlayers = players;
+      this.updateOnlinePlayersCount(players);
     },
     error: (err) => {
       console.error('[LOBBY] Error loading active players:', err);
@@ -250,7 +262,7 @@ export class LobbyComponent {
   });
 
   // Suscribirse a jugadores disponibles (para la lista de disponibles)
-  const availablePlayersSub = this.playerService.getAvailablePlayers().subscribe({
+  const availablePlayersSub = this.playerService.getAvailablePlayersByDivision(this.currentUserDivision).subscribe({
     next: (players) => {
       this.availablePlayers = players.filter(p => p.uid !== this.currentUserUid);
       
@@ -268,6 +280,21 @@ export class LobbyComponent {
   this.availablePlayersSub = new Subscription();
   this.availablePlayersSub.add(activePlayersSub);
   this.availablePlayersSub.add(availablePlayersSub);
+}
+
+private updateOnlinePlayersCount(players: Player[]): void {
+  this.onlinePlayersCount = players.filter(p =>
+    p.playerDivision === this.currentUserDivision
+  ).length;
+}
+
+// En el componente
+getDivisionName(division: PlayerDivision): string {
+  switch(division) {
+    case PlayerDivision.Division1: return 'DIVISIÓN 1';
+    case PlayerDivision.Division2: return 'DIVISIÓN 2';
+    default: return 'POR DEFINIR';
+  }
 }
 
   openCreateTeamDialog(): void {

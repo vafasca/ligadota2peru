@@ -14,15 +14,16 @@
       </div>
       <div class="player-info">
         <h1 class="dota-font">{{ player.nick }}</h1>
+        <!-- En el template del lobby, dentro de player-info -->
         <div class="player-meta">
           <span class="player-id">ID Dota 2: {{ player.idDota }}</span>
           <span class="player-mmr">
             <img [src]="player.medalImage" class="medal-icon">
             {{ player.mmr }} MMR
           </span>
-          <!-- <span class="player-category tier-{{player.category.toLowerCase()}}">
-            {{ player.category }}
-          </span> -->
+          <span class="player-division" [ngClass]="'division-' + player.playerDivision.toLowerCase()">
+            {{ getDivisionName(player.playerDivision) }}
+          </span>
         </div>
         <div class="player-roles">
           <span class="role-badge primary-role">{{ player.role }}</span>
@@ -156,15 +157,17 @@
     <h1 class="lobby-title dota-font">LOBBY DE JUGADORES</h1>
     <div class="lobby-subtitle">
       <!-- Alternativa más destacada -->
-      <div class="online-players-badge">
-        <div class="online-icon">
-          <i class="fas fa-users"></i>
+      <div class="online-players-container">
+        <div class="online-players-badge">
+          <div class="online-icon">
+            <i class="fas fa-users"></i>
+          </div>
+          <div class="online-count">
+            <span class="count">{{ onlinePlayersCount }}</span>
+            <span class="label">JUGADORES EN {{ getDivisionName(currentUserDivision) }}</span>
+          </div>
         </div>
-        <div class="online-count">
-          <span class="count">{{ allActivePlayers.length }}</span>
-          <span class="label">JUGADORES EN LÍNEA</span>
-        </div>
-      </div>
+    </div>
     </div>
 
     <!-- Sección de Mi Equipo -->

@@ -190,6 +190,33 @@
   color: #fff;
 }
 
+/* En el archivo CSS */
+.player-division {
+  padding: 3px 8px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+.division-division1 {
+  background-color: rgba(202, 50, 50, 0.3);
+  border: 1px solid #ca3232;
+  color: #ff6b6b;
+}
+
+.division-division2 {
+  background-color: rgba(58, 80, 107, 0.3);
+  border: 1px solid #3a506b;
+  color: #a0c4ff;
+}
+
+.division-por_definir {
+  background-color: rgba(156, 163, 175, 0.3);
+  border: 1px solid #9ca3af;
+  color: #e2e8f0;
+}
+
 /* BOTONES MÁS COMPACTOS */
 .profile-actions {
   justify-content: center;
@@ -365,6 +392,12 @@
 }
 
 /* Estilos para la versión destacada */
+/* Estilos para la sección de jugadores en línea */
+.online-players-container {
+  position: relative;
+  display: inline-block;
+}
+
 .online-players-badge {
   display: flex;
   align-items: center;
@@ -375,6 +408,51 @@
   margin: 0 auto 20px;
   width: fit-content;
   box-shadow: 0 0 10px rgba(228, 174, 13, 0.3);
+}
+
+.online-players-badge:hover {
+  background: rgba(0, 0, 0, 0.7);
+  box-shadow: 0 0 15px rgba(228, 174, 13, 0.5);
+}
+
+.division-breakdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background: rgba(11, 20, 34, 0.95);
+  border: 1px solid #3a506b;
+  border-radius: 8px;
+  padding: 10px;
+  margin-top: 5px;
+  z-index: 10;
+  display: flex;
+  gap: 15px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+}
+
+.division-count {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 14px;
+  padding: 5px 10px;
+  border-radius: 4px;
+}
+
+.division-count.division1 {
+  background: rgba(202, 50, 50, 0.2);
+  border: 1px solid #ca3232;
+  color: #ff6b6b;
+}
+
+.division-count.division2 {
+  background: rgba(58, 80, 107, 0.2);
+  border: 1px solid #3a506b;
+  color: #a0c4ff;
+}
+
+.division-count i {
+  font-size: 12px;
 }
 
 .online-icon {
