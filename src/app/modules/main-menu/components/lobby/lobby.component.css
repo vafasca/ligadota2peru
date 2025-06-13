@@ -915,6 +915,15 @@
   min-width: 200px;
 }
 
+.temp-division-badge {
+  background: rgba(228, 174, 13, 0.3);
+  border: 1px solid #e4ae0d;
+  padding: 4px 8px;
+  font-size: 12px;
+  border-radius: 6px;
+  margin-top: -5px;
+}
+
 /* Estilos para el botón de capitán */
 .captain-toggle-button {
   background: linear-gradient(135deg, #f8d64e 0%, #e4ae0d 50%, #7a0707 100%);
@@ -1179,6 +1188,102 @@
 
 .add-button:hover::after {
   opacity: 1;
+}
+
+/* Estilos para el botón de cambio de división */
+.toggle-division-button {
+  background: linear-gradient(145deg, #1a2a42 0%, #0e1a2b 100%);
+  border: 1px solid #4a6da7;
+  color: #e4ae0d;
+  padding: 10px 15px;
+  font-weight: bold;
+  text-transform: uppercase;
+  font-size: 12px;
+  letter-spacing: 1px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 180px;
+  justify-content: center;
+}
+
+.toggle-division-button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(228, 174, 13, 0.2), transparent);
+  transition: 0.5s;
+  z-index: -1;
+}
+
+.toggle-division-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(74, 109, 167, 0.4);
+  color: #fff;
+}
+
+.toggle-division-button:hover::before {
+  left: 100%;
+}
+
+.toggle-division-button:active {
+  transform: translateY(0);
+}
+
+/* Efecto de borde animado */
+.toggle-division-button::after {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  border: 2px solid #e4ae0d;
+  border-radius: 6px;
+  opacity: 0;
+  transition: all 0.3s ease;
+}
+
+.toggle-division-button:hover::after {
+  opacity: 1;
+  animation: pulseBorder 1.5s infinite;
+}
+
+@keyframes pulseBorder {
+  0% {
+    transform: scale(1);
+    opacity: 0.7;
+  }
+  70% {
+    transform: scale(1.05);
+    opacity: 0.3;
+  }
+  100% {
+    transform: scale(1.1);
+    opacity: 0;
+  }
+}
+
+/* Icono del botón */
+.toggle-division-button i {
+  font-size: 14px;
+  color: #e4ae0d;
+  transition: all 0.3s ease;
+}
+
+.toggle-division-button:hover i {
+  color: #fff;
+  transform: rotate(180deg);
 }
 
 /* Tooltip moderno */

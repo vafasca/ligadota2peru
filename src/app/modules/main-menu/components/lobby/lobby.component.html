@@ -317,6 +317,16 @@
         </select>
       </div>
 
+      <div class="filter-actions">
+        <button *ngIf="player.playerDivision === PlayerDivision.Division1 ||
+                      player.rolUser === PlayerRole.Admin ||
+                      player.rolUser === PlayerRole.SubAdmin"
+                class="dota-button small-button toggle-division-button"
+                (click)="toggleTempDivision()">
+          {{ currentUserDivision === PlayerDivision.Division1 ? 'Jugar en División 2' : 'Volver a División 1' }}
+        </button>
+      </div>
+
       <!-- Botón de capitán centrado -->
       <div
         class="captain-button-container"

@@ -142,25 +142,28 @@ getAvailablePlayersByDivision(division: PlayerDivision): Observable<Player[]> {
   const q = query(
     this.playersCollection,
     where('status', '==', 'Activo'),
-    where('availability', '==', 'available'),
-    where('playerDivision', '==', division)
+    where('availability', '==', 'available')
   );
 
   return new Observable<Player[]>(observer => {
-    const unsubscribe = onSnapshot(
-      q,
-      (snapshot: QuerySnapshot) => {
-        const players = snapshot.docs.map(doc => ({
-          uid: doc.id,
-          ...doc.data()
-        } as Player));
-        observer.next(players);
-      },
-      (error) => {
-        console.error('Error escuchando jugadores disponibles por división:', error);
-        observer.error(error);
-      }
-    );
+    const unsubscribe = onSnapshot(q, snapshot => {
+      const players = snapshot.docs.map(doc => ({
+        uid: doc.id,
+        ...doc.data()
+      } as Player)).filter(player => {
+        // Mostrar solo si:
+        // - Su división temporal es esta, o
+        // - Su división original es esta Y no tiene visibilidad temporal
+        return (
+          player.tempVisibleDivision === division ||
+          (player.playerDivision === division && !player.tempVisibleDivision)
+        );
+      });
+      observer.next(players);
+    }, error => {
+      console.error('Error escuchando jugadores disponibles:', error);
+      observer.error(error);
+    });
     return () => unsubscribe();
   });
 }

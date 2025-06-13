@@ -30,6 +30,8 @@ export class LobbyComponent {
   currentUserDivision: PlayerDivision = PlayerDivision.PorDefinir;
   onlinePlayersCount = 0;
   showDivisionBreakdown = false;
+  public PlayerDivision = PlayerDivision;
+  public PlayerRole = PlayerRole;
 
   player: Player = {
     uid: '',
@@ -140,10 +142,14 @@ export class LobbyComponent {
     next: (playerData) => {
       if (playerData) {
         this.player = playerData;
-        this.currentUserDivision = playerData.playerDivision;
+
+        // Aquí decides cuál es la división actual que debe mostrarse
+        this.currentUserDivision = playerData.tempVisibleDivision || playerData.playerDivision;
+
         this.isTeamCaptain = playerData.isCaptain || false;
         this.isLoading = false;
-        // Cargar jugadores filtrados por división
+
+        // Cargar jugadores filtrados por división visible
         this.loadAvailablePlayers();
       } else {
         this.errorMessage = 'Perfil no encontrado';
@@ -283,9 +289,16 @@ export class LobbyComponent {
 }
 
 private updateOnlinePlayersCount(players: Player[]): void {
-  this.onlinePlayersCount = players.filter(p =>
-    p.playerDivision === this.currentUserDivision
-  ).length;
+  const filteredPlayers = players.filter(p => {
+    // Si tiene tempVisibleDivision, mostrar SOLO en esa división
+    if (p.tempVisibleDivision) {
+      return p.tempVisibleDivision === this.currentUserDivision;
+    }
+    // Si no tiene tempVisibleDivision, mostrar en su división original
+    return p.playerDivision === this.currentUserDivision;
+  });
+
+  this.onlinePlayersCount = filteredPlayers.length;
 }
 
 // En el componente
@@ -313,6 +326,28 @@ getDivisionName(division: PlayerDivision): string {
       }
     });
   }
+
+  toggleTempDivision(): void {
+  if (!this.player.uid) return;
+
+  const newDivision = this.currentUserDivision === PlayerDivision.Division1
+    ? PlayerDivision.Division2
+    : PlayerDivision.Division1;
+
+  const updateData: Partial<Player> = {
+    tempVisibleDivision: newDivision
+  };
+
+  this.playerService.updatePlayer(this.player.uid, updateData).subscribe({
+    next: () => {
+      this.currentUserDivision = newDivision;
+      this.loadAvailablePlayers(); // Actualizar lista
+    },
+    error: (err) => {
+      console.error('Error al actualizar división temporal:', err);
+    }
+  });
+}
 
   openAddPlayerDialog(role: string): void {
     if (!this.userTeam || !this.isTeamCaptain) return;
@@ -515,13 +550,14 @@ getDivisionName(division: PlayerDivision): string {
 
 getPlayersByCategory(category: string): Player[] {
   return this.availablePlayers.filter(player => {
-    // Determinar qué campos usar según la selección
     const usePrimary = this.selectedRoleType === 'primary';
-
     const playerCategory = usePrimary ? player.category : player.secondaryCategory;
     const isNotCaptain = !player.isCaptain;
+    const isVisibleInCurrentDivision =
+      player.playerDivision === this.currentUserDivision ||
+      player.tempVisibleDivision === this.currentUserDivision;
 
-    return playerCategory === category && isNotCaptain;
+    return playerCategory === category && isNotCaptain && isVisibleInCurrentDivision;
   });
 }
 

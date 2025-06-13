@@ -22,6 +22,7 @@ export interface Player {
   availability?: PlayerAvailability;
   rolUser: PlayerRole;
   playerDivision: PlayerDivision;
+  tempVisibleDivision?: PlayerDivision;
   socialMedia?: {
     twitch?: string;
     youtube?: string;
