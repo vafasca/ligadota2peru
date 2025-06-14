@@ -200,14 +200,14 @@
 }
 
 .division-division1 {
-  background-color: rgba(202, 50, 50, 0.3);
-  border: 1px solid #ca3232;
+
+
   color: #ff6b6b;
 }
 
 .division-division2 {
-  background-color: rgba(58, 80, 107, 0.3);
-  border: 1px solid #3a506b;
+
+
   color: #a0c4ff;
 }
 
@@ -1417,6 +1417,29 @@
   border-radius: 4px;
   font-family: monospace;
 }
+
+.division-badge::after {
+  content: attr(data-division);
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0, 0, 0, 0.8);
+  color: #0de431;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s;
+  border: 1px solid #e4ae0d;
+}
+
+.division-badge:hover::after {
+  opacity: 1;
+}
+
 
 /* RESPONSIVE */
 @media (max-width: 1200px) {

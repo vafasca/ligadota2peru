@@ -136,6 +136,14 @@ export class LobbyComponent {
     this.showDivisionBreakdown = !this.showDivisionBreakdown;
   }
 
+  getShortDivisionName(division: PlayerDivision): string {
+    switch(division) {
+      case PlayerDivision.Division1: return 'D1';
+      case PlayerDivision.Division2: return 'D2';
+      default: return 'PD';
+    }
+  }
+
   private loadPlayerData(uid: string): void {
   this.isLoading = true;
   this.playerService.getPlayer(uid).subscribe({
@@ -304,9 +312,9 @@ private updateOnlinePlayersCount(players: Player[]): void {
 // En el componente
 getDivisionName(division: PlayerDivision): string {
   switch(division) {
-    case PlayerDivision.Division1: return 'DIVISIÓN 1';
-    case PlayerDivision.Division2: return 'DIVISIÓN 2';
-    default: return 'POR DEFINIR';
+    case PlayerDivision.Division1: return 'División 1';
+    case PlayerDivision.Division2: return 'División 2';
+    default: return 'Por definir';
   }
 }
 

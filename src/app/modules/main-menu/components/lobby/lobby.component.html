@@ -381,15 +381,17 @@
                 (click)="viewProfile(player)"
               >
                 <div class="player-avatar-container">
-                  <img
-                    [src]="player.avatar"
-                    alt="Avatar"
-                    class="player-avatar"
-                  />
-                  <div
-                    class="player-status"
-                    [ngClass]="getPlayerStatusClass(player)"
-                  ></div>
+                  <img [src]="player.avatar" alt="Avatar" class="player-avatar" />
+                  <div class="player-status" [ngClass]="getPlayerStatusClass(player)"></div>
+                  <!-- Badge de división simplificado -->
+                  <div class="division-badge" [ngClass]="'division-' + player.playerDivision"
+                  [attr.data-division]="getDivisionName(player.playerDivision)">
+                    <i class="fas" [ngClass]="{
+                      'fa-trophy': player.playerDivision === PlayerDivision.Division1,
+                      'fa-medal': player.playerDivision === PlayerDivision.Division2
+                    }"></i>
+                    <span>{{ player.playerDivision === PlayerDivision.Division1 ? 'DIV 1' : 'DIV 2' }}</span>
+                  </div>
                 </div>
 
                 <div class="player-info">
