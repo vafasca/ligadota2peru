@@ -15,7 +15,8 @@ import {
 import { Observable, from, throwError } from 'rxjs';
 import { catchError, map, switchMap } from 'rxjs/operators';
 import { Team, TeamPlayer } from '../../admin/models/equipos.model';
-import { Player } from '../../admin/models/jugador.model';
+import { Player, PlayerDivision } from '../../admin/models/jugador.model';
+import { PlayerService } from '../../admin/services/player.service';
 // import { Team, TeamPlayer } from '../models/equipos.model';
 
 @Injectable({
@@ -24,16 +25,38 @@ import { Player } from '../../admin/models/jugador.model';
 export class TeamService {
   private teamsCollection;
 
-  constructor(private firestore: Firestore) {
+  constructor(private firestore: Firestore, private playerService: PlayerService) {
      this.teamsCollection = collection(this.firestore, 'teams');
   }
 
   createTeam(team: Omit<Team, 'id'>): Observable<string> {
-    return from(addDoc(this.teamsCollection, team)).pipe(
-      map(ref => ref.id),
-      catchError(this.handleError)
-    );
-  }
+  // Asegúrate de que el equipo tenga la división del capitán
+  return this.playerService.getPlayer(team.captainId).pipe(
+    switchMap(captain => {
+      if (!captain) {
+        return throwError(() => new Error('Capitán no encontrado'));
+      }
+      
+      const teamWithDivision = {
+        ...team,
+        division: captain.tempVisibleDivision || captain.playerDivision
+      };
+      
+      return from(addDoc(this.teamsCollection, teamWithDivision)).pipe(
+        map(ref => ref.id),
+        catchError(this.handleError)
+      );
+    }),
+    catchError(this.handleError)
+  );
+}
+
+getTeamsByDivision(division: PlayerDivision): Observable<Team[]> {
+  return this.getTeams().pipe(
+    map(teams => teams.filter(team => team.division === division))
+  );
+}
+
 
   getTeam(teamId: string): Observable<Team | null> {
     const teamDocRef = doc(this.firestore, `teams/${teamId}`);

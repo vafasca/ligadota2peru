@@ -1,5 +1,7 @@
 // team.model.ts
 
+import { PlayerDivision } from "./jugador.model";
+
 export interface TeamPlayer {
   uid: string;
   role: string;
@@ -20,4 +22,5 @@ export interface Team {
   logo?: string;
   description?: string;
   status: 'active' | 'inactive' | 'disbanded';
+  division?: PlayerDivision;
 }

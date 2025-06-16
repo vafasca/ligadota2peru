@@ -2,8 +2,10 @@ import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { Team, TeamPlayer } from 'src/app/modules/admin/models/equipos.model';
+import { PlayerDivision } from 'src/app/modules/admin/models/jugador.model';
 import { PlayerService } from 'src/app/modules/admin/services/player.service';
 import { TeamService } from 'src/app/modules/main-menu/services/team.service';
+import { Auth, onAuthStateChanged} from '@angular/fire/auth';
 
 @Component({
   selector: 'app-buscar-rivales-component',
@@ -12,8 +14,11 @@ import { TeamService } from 'src/app/modules/main-menu/services/team.service';
 })
 export class BuscarRivalesComponentComponent {
 teams: Team[] = [];
+teamsDiv1: Team[] = [];
+teamsDiv2: Team[] = [];
 private teamSubscription!: Subscription;
-// En tu archivo buscar-rivales-component.component.ts
+currentDivision: PlayerDivision = PlayerDivision.PorDefinir;
+activeDivision: 'div1' | 'div2' = 'div1';
 
 rolesOrder = [
   { key: 'Hard Support', label: 'Hard Support' },
@@ -23,23 +28,31 @@ rolesOrder = [
   { key: 'Soft Support', label: 'Soft Support' }
 ];
 
-  constructor(private playerService: PlayerService, private router: Router, private teamService: TeamService) {}
+  constructor(private playerService: PlayerService, private router: Router, private teamService: TeamService, private auth: Auth) {}
 
 
   ngOnInit(): void {
+    this.loadCurrentUserDivision();
     this.loadTeamsRealTime();
   }
 
-  ngOnDestroy(): void {
-    if (this.teamSubscription) {
-      this.teamSubscription.unsubscribe();
-    }
+  loadCurrentUserDivision(): void {
+    onAuthStateChanged(this.auth, user => {
+      if (user) {
+        this.playerService.getPlayer(user.uid).subscribe(player => {
+          if (player) {
+            this.currentDivision = player.tempVisibleDivision || player.playerDivision;
+          }
+        });
+      }
+    });
   }
 
   loadTeamsRealTime(): void {
     this.teamSubscription = this.teamService.getTeams().subscribe({
       next: (teams) => {
-        this.teams = teams;
+        this.teamsDiv1 = teams.filter(team => team.division === PlayerDivision.Division1);
+        this.teamsDiv2 = teams.filter(team => team.division === PlayerDivision.Division2);
       },
       error: (err) => {
         console.error('Error loading teams:', err);
@@ -76,5 +89,11 @@ getTeamTotalMMR(players: TeamPlayer[]): number {
 
   hasRoleFilled(team: Team, role: string): boolean {
     return team.players.some(player => player.role === role);
+  }
+
+    ngOnDestroy(): void {
+    if (this.teamSubscription) {
+      this.teamSubscription.unsubscribe();
+    }
   }
 }
