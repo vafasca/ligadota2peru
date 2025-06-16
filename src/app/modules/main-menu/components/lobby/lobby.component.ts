@@ -762,6 +762,16 @@ goToProfile(): void {
     }
 }
 
+getTeamTotalMMR(players: any[]): number {
+  if (!players || players.length === 0) return 0;
+  return players.reduce((total, player) => total + (player.mmr || 0), 0);
+}
+
+// En tu componente
+getMMRClass(totalMMR: number): string {
+  return totalMMR > 50000 ? 'elite' : '';
+}
+
   ngOnDestroy(): void {
     this.authSubscription.unsubscribe();
     if (this.playersSub) this.playersSub.unsubscribe();

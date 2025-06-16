@@ -188,11 +188,9 @@
               <h3 class="team-name">{{ userTeam.name }}</h3>
               <div class="team-meta">
                 <span
-                  class="team-category tier-{{
-                    userTeam.category.toLowerCase()
-                  }}"
+                  class="team-category {{ getMMRClass(getTeamTotalMMR(userTeam.players)) }}"
                 >
-                  {{ userTeam.category }}
+                  {{ getTeamTotalMMR(userTeam.players) }} MMR Total
                 </span>
                 <span class="team-players-count">
                   <i class="fas fa-users"></i> {{ userTeam.players.length }}/5
@@ -205,7 +203,7 @@
           </div>
 
           <div class="team-description">
-            <p>{{ userTeam.description || "Sin descripción" }}</p>
+            <p>Descripción: {{ userTeam.description || "Sin descripción" }}</p>
           </div>
         </div>
 
