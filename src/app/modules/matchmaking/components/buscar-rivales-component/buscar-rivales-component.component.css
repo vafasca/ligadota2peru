@@ -124,22 +124,28 @@
 /* Team Header */
 .team-card-header {
   display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
   padding: 1.5rem;
   border-bottom: 1px solid #2a3543;
   background: linear-gradient(to right, #121a25, #1a2435);
+  position: relative;
 }
 
 .team-badge {
   position: relative;
+  margin-bottom: 1rem;
 }
 
 .team-logo {
-  width: 70px;
-  height: 70px;
+  width: 80px;
+  height: 80px;
   border-radius: 50%;
   border: 3px solid #d7a538;
   object-fit: cover;
   background: #0e131d;
+  box-shadow: 0 0 15px rgba(215, 165, 56, 0.2);
 }
 
 .team-rank {
@@ -160,38 +166,72 @@
 }
 
 .team-info {
-  flex: 1;
+  width: 100%;
 }
 
 .team-name {
-  font-size: 1.4rem;
-  margin: 0 0 0.5rem 0;
+  font-size: 1.5rem;
+  margin: 0 0 0.8rem 0;
   color: #f8e3a1;
   font-weight: 600;
+  letter-spacing: 0.5px;
+  position: relative;
+  display: inline-block;
+}
+
+.team-name::after {
+  content: '';
+  position: absolute;
+  bottom: -5px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 50px;
+  height: 2px;
+  background: linear-gradient(to right, transparent, #d7a538, transparent);
 }
 
 .team-meta {
   display: flex;
-  gap: 1rem;
+  justify-content: center;
+  gap: 1.5rem;
   align-items: center;
-  margin-bottom: 0.8rem;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
 }
 
 .team-category {
-  color: #d7a538;
-  font-weight: 500;
-  background: rgba(215, 165, 56, 0.1);
-  padding: 0.3rem 0.6rem;
+  color: #f8e3a1;
+  font-weight: 600;
+  background: rgba(215, 165, 56, 0.15);
+  padding: 0.4rem 1rem;
   border-radius: 50px;
-  border: 1px solid rgba(215, 165, 56, 0.3);
+  border: 1px solid rgba(215, 165, 56, 0.4);
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.team-category::before {
+  content: '⚔️';
+  font-size: 0.8rem;
 }
 
 .team-slot {
   color: #8b8f94;
   background: rgba(139, 143, 148, 0.1);
-  padding: 0.3rem 0.6rem;
-  border-radius: 4px;
+  padding: 0.4rem 1rem;
+  border-radius: 50px;
   border: 1px solid rgba(139, 143, 148, 0.3);
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.team-slot::before {
+  content: '👥';
+  font-size: 0.8rem;
 }
 
 .team-roles {
@@ -352,15 +392,18 @@
 
 .team-description {
   font-size: 0.9rem;
-  color: #8b8f94;
+  color: #a0a8b0;
+  line-height: 1.5;
+
   margin-top: 0.5rem;
-  line-height: 1.4;
-  max-height: 60px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  display: -webkit-box;
-  -webkit-line-clamp: 3;
-  -webkit-box-orient: vertical;
+}
+
+/* Estilo para la corona del capitán */
+.fa-crown {
+  color: #d7a538;
+  margin-left: 0.3rem;
+  font-size: 0.9em;
+  text-shadow: 0 0 5px rgba(215, 165, 56, 0.5);
 }
 
 /* Animations */
@@ -418,4 +461,270 @@
 
 .empty-slot-text {
   line-height: 1.2;
+}
+
+/* Responsive adjustments */
+@media (max-width: 1200px) {
+  .dota2-teams-grid {
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 1.5rem;
+  }
+  
+  .dota2-title {
+    font-size: 2.5rem;
+  }
+  
+  .navigation-buttons {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.8rem;
+  }
+}
+
+@media (max-width: 992px) {
+  .dota2-rivals-container {
+    padding: 1.5rem;
+  }
+  
+  .dota2-header {
+    margin-bottom: 2rem;
+  }
+  
+  .member-card {
+    padding: 0.8rem 0;
+  }
+}
+
+@media (max-width: 768px) {
+  /* Header adjustments */
+  .dota2-title {
+    font-size: 2.2rem;
+  }
+  
+  .dota2-subtitle {
+    font-size: 1rem;
+  }
+  
+  /* Team card adjustments */
+  .dota2-team-card {
+    border-radius: 6px;
+  }
+  
+  .team-card-header {
+    padding: 1.2rem;
+  }
+  
+  .team-logo {
+    width: 70px;
+    height: 70px;
+  }
+  
+  .team-name {
+    font-size: 1.3rem;
+  }
+  
+  .team-meta {
+    gap: 1rem;
+    flex-direction: column;
+  }
+  
+  .team-category, .team-slot {
+    padding: 0.3rem 0.8rem;
+  }
+  
+  /* Members list */
+  .team-members {
+    padding: 0 1rem;
+  }
+  
+  .member-card, .slot-empty {
+    flex-direction: column;
+    text-align: center;
+    gap: 0.5rem;
+  }
+  
+  .member-avatar, .empty-slot-icon {
+    margin-right: 0;
+    margin-bottom: 0.5rem;
+  }
+  
+  .member-actions {
+    margin-left: 0;
+    margin-top: 0.5rem;
+  }
+  
+  /* Footer buttons */
+  .team-footer {
+    padding: 1rem;
+  }
+  
+  .dota2-btn {
+    padding: 0.6rem 1.2rem;
+    font-size: 0.85rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .dota2-rivals-container {
+    padding: 1rem;
+  }
+  
+  .dota2-title {
+    font-size: 1.8rem;
+    letter-spacing: 1px;
+  }
+  
+  .dota2-title-decoration {
+    width: 150px;
+  }
+  
+  .dota2-teams-grid {
+    grid-template-columns: 1fr;
+    gap: 1.2rem;
+  }
+  
+  .team-card-header {
+    padding: 1rem;
+  }
+  
+  .team-logo {
+    width: 60px;
+    height: 60px;
+    border-width: 2px;
+  }
+  
+  .team-name {
+    font-size: 1.2rem;
+  }
+  
+  .team-description {
+    padding: 0;
+    font-size: 0.85rem;
+  }
+  
+  .empty-state h3 {
+    font-size: 1.3rem;
+  }
+  
+  .empty-state p {
+    font-size: 0.9rem;
+  }
+  
+  .empty-icon {
+    width: 80px;
+  }
+}
+
+@media (max-width: 400px) {
+  /* Ajustes generales */
+  .dota2-rivals-container {
+    padding: 0.8rem;
+  }
+  
+  /* Header */
+  .dota2-title {
+    font-size: 1.6rem;
+    margin-bottom: 0.5rem;
+  }
+  
+  .dota2-subtitle {
+    font-size: 0.9rem;
+  }
+  
+  /* Navegación */
+  .navigation-buttons {
+    flex-direction: column;
+    width: 100%;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+  }
+  
+  .dota2-btn {
+    width: 100%;
+    justify-content: center;
+    padding: 0.6rem;
+    font-size: 0.8rem;
+  }
+  
+  /* Tarjetas de equipo */
+  .dota2-team-card {
+    border-radius: 5px;
+  }
+  
+  .team-card-header {
+    padding: 0.8rem;
+  }
+  
+  .team-logo {
+    width: 50px;
+    height: 50px;
+  }
+  
+  /* Descripción - 2 líneas fijas */
+  .team-description {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    line-height: 1.4;
+    max-height: 2.8em; /* 2 líneas */
+    margin: 0.5rem 0;
+    font-size: 0.8rem;
+    padding: 0;
+  }
+  
+  /* Miembros del equipo */
+  .member-card, .slot-empty {
+    padding: 0.6rem 0;
+  }
+  
+  .member-name {
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+  }
+  
+  .fa-crown {
+    font-size: 0.8em;
+  }
+  
+  .member-details {
+    flex-direction: column;
+    gap: 0.2rem;
+    font-size: 0.75rem;
+  }
+  
+  .member-avatar, .empty-slot-icon {
+    width: 40px;
+    height: 40px;
+  }
+  
+  /* Pie de tarjeta */
+  .team-footer {
+    padding: 0.8rem;
+  }
+  
+  .dota2-btn.primary, .dota2-btn.disabled {
+    font-size: 0.8rem;
+    padding: 0.5rem 1rem;
+  }
+  
+  /* Estado vacío */
+  .dota2-empty-state {
+    padding: 2rem 1rem;
+  }
+  
+  .empty-state h3 {
+    font-size: 1.2rem;
+  }
+  
+  .empty-state p {
+    font-size: 0.85rem;
+  }
+  
+  .empty-icon {
+    width: 70px;
+  }
 }

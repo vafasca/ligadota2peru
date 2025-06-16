@@ -46,7 +46,7 @@
         <img [src]="member.avatar || 'assets/default-avatar.png'" alt="Avatar" class="member-avatar">
 
         <div class="member-info">
-          <h3 class="member-name">{{ member.nick }} - <i class="fas fa-crown" *ngIf="member.isCaptain"></i></h3>
+          <h3 class="member-name">{{ member.nick }}  <i class="fas fa-crown" *ngIf="member.isCaptain"></i></h3>
           <div class="member-details">
             <span class="member-role">{{ member.role }}</span>
             <span class="member-mmr">{{ member.mmr }} MMR</span>
