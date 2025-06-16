@@ -131,7 +131,6 @@
 
 .team-badge {
   position: relative;
-  margin-right: 1.5rem;
 }
 
 .team-logo {
@@ -174,17 +173,25 @@
 .team-meta {
   display: flex;
   gap: 1rem;
+  align-items: center;
   margin-bottom: 0.8rem;
-  font-size: 0.9rem;
 }
 
 .team-category {
   color: #d7a538;
   font-weight: 500;
+  background: rgba(215, 165, 56, 0.1);
+  padding: 0.3rem 0.6rem;
+  border-radius: 50px;
+  border: 1px solid rgba(215, 165, 56, 0.3);
 }
 
 .team-slot {
   color: #8b8f94;
+  background: rgba(139, 143, 148, 0.1);
+  padding: 0.3rem 0.6rem;
+  border-radius: 4px;
+  border: 1px solid rgba(139, 143, 148, 0.3);
 }
 
 .team-roles {

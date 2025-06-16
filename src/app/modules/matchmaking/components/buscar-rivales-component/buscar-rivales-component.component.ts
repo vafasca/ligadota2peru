@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
-import { Team } from 'src/app/modules/admin/models/equipos.model';
+import { Team, TeamPlayer } from 'src/app/modules/admin/models/equipos.model';
 import { PlayerService } from 'src/app/modules/admin/services/player.service';
 import { TeamService } from 'src/app/modules/main-menu/services/team.service';
 
@@ -56,17 +56,23 @@ goToLiveMatches(): void {
 }
 
 getMemberByRole(players: any[], role: string): any {
-  return players.find(player => player.role === role);
+  if (!players || players.length === 0) return null;
+  // El primer jugador en el array es el capitán
+  const member = players.find(player => player.role === role);
+  if (member) {
+    return {
+      ...member,
+      isCaptain: players[0].uid === member.uid
+    };
+  }
+  return null;
 }
 
-  // getTeamRank(team: Team): string {
-  //   // Implement your ranking logic here
-  //   const avgMmr = team.players.reduce((sum, player) => sum + player.mmr, 0) / team.players.length;
-  //   if (avgMmr > 5000) return 'S';
-  //   if (avgMmr > 4000) return 'A';
-  //   if (avgMmr > 3000) return 'B';
-  //   return 'C';
-  // }
+
+
+getTeamTotalMMR(players: TeamPlayer[]): number {
+  return players.reduce((total, player) => total + (player.mmr || 0), 0);
+}
 
   hasRoleFilled(team: Team, role: string): boolean {
     return team.players.some(player => player.role === role);

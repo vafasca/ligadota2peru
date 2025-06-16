@@ -27,7 +27,7 @@
         <div class="team-info">
           <h2 class="team-name">{{ team.name }}</h2>
           <div class="team-meta">
-            <span class="team-category">{{ team.category }}</span>
+            <span class="team-category">{{ getTeamTotalMMR(team.players) }} MMR Total</span>
             <span class="team-slot">{{ team.players.length }}/5</span>
           </div>
           <div class="team-description">
@@ -45,11 +45,8 @@
       <div class="member-card">
         <img [src]="member.avatar || 'assets/default-avatar.png'" alt="Avatar" class="member-avatar">
 
-        <!-- Mostrar corona si es capitán (primer jugador en el array) -->
-        <div class="captain-badge" *ngIf="member.isCaptain">👑</div>
-
         <div class="member-info">
-          <h3 class="member-name">{{ member.nick }}</h3>
+          <h3 class="member-name">{{ member.nick }} - <i class="fas fa-crown" *ngIf="member.isCaptain"></i></h3>
           <div class="member-details">
             <span class="member-role">{{ member.role }}</span>
             <span class="member-mmr">{{ member.mmr }} MMR</span>
