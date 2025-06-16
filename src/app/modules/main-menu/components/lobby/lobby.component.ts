@@ -174,22 +174,26 @@ export class LobbyComponent {
 }
 
   private loadUserTeam(playerId: string): void {
-    this.teamsSub = this.teamService.getUserTeam(playerId).subscribe({
-      next: (userTeam) => {
-        this.userTeam = userTeam || null;
-        this.showTeamSection = !!this.userTeam || this.isTeamCaptain;
-  
-        if (this.userTeam) {
-          this.loadTeamPlayersRealTime(this.userTeam.id);
-        } else {
-          this.teamPlayers = [];
+  this.teamsSub = this.teamService.getUserTeam(playerId).subscribe({
+    next: (userTeam) => {
+      this.userTeam = userTeam || null;
+      this.showTeamSection = !!this.userTeam || this.isTeamCaptain;
+      
+      if (this.userTeam) {
+        this.loadTeamPlayersRealTime(this.userTeam.id);
+        // Si el jugador es capitán y tiene equipo, forzar la división del equipo
+        if (this.isTeamCaptain) {
+          this.currentUserDivision = this.userTeam.division || this.player.playerDivision;
         }
-      },
-      error: (err) => {
-        console.error('[LOBBY] Error loading teams:', err);
+      } else {
+        this.teamPlayers = [];
       }
-    });
-  }
+    },
+    error: (err) => {
+      console.error('[LOBBY] Error loading teams:', err);
+    }
+  });
+}
 
   
   onDrop(event: CdkDragDrop<Player[]>) {
@@ -336,7 +340,9 @@ getDivisionName(division: PlayerDivision): string {
   }
 
   toggleTempDivision(): void {
-  if (!this.player.uid) return;
+  if (!this.player.uid || (this.isTeamCaptain && this.userTeam)) {
+    return;
+  }
 
   const newDivision = this.currentUserDivision === PlayerDivision.Division1
     ? PlayerDivision.Division2
@@ -398,14 +404,16 @@ getDivisionName(division: PlayerDivision): string {
       category: this.player.category,
       createdAt: new Date(),
       description: teamData.description,
-      status: 'active'
+      status: 'active',
+      division: this.currentUserDivision
     };
 
     this.teamService.createTeam(newTeam).subscribe({
       next: (teamId) => {
         this.playerService.updatePlayer(this.player.uid, {
           teamId,
-          availability: PlayerAvailability.InTeam
+          availability: PlayerAvailability.InTeam,
+          isCaptain: true
         }).subscribe(() => {
           this.loadUserTeam(this.player.uid);
         });

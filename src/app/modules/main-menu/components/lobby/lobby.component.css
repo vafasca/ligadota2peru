@@ -1531,6 +1531,19 @@
   opacity: 1;
 }
 
+.toggle-division-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  background: linear-gradient(135deg, #4a5568 0%, #2d3748 100%) !important;
+  border-color: #718096 !important;
+  color: #a0aec0 !important;
+}
+
+.toggle-division-button:disabled:hover {
+  transform: none !important;
+  box-shadow: none !important;
+}
+
 
 /* RESPONSIVE */
 @media (max-width: 1200px) {
