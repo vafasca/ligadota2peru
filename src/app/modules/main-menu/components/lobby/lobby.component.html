@@ -18,7 +18,7 @@
         <div class="player-meta">
           <span class="player-id">ID Dota 2: {{ player.idDota }}</span>
           <span class="player-mmr">
-            <img [src]="player.medalImage" class="medal-icon">
+            <img [src]="player.medalImage" class="medal-icon" alt="Medal" />
             {{ player.mmr }} MMR
           </span>
           <span class="player-division" [ngClass]="'division-' + player.playerDivision.toLowerCase()">
@@ -300,54 +300,83 @@
     </div>
 
     <!-- Filtros de búsqueda -->
-    <div class="filters-container">
-      <!-- Nuevo selector para cambiar entre rol principal/secundario -->
-      <div class="filter-group">
-        <label for="roleTypeFilter" class="filter-label">Mostrar:</label>
-        <select
-          id="roleTypeFilter"
-          class="dota-select"
-          [(ngModel)]="selectedRoleType"
-          (change)="applyFilters()"
-        >
-          <option value="primary">Rol principal</option>
-          <option value="secondary">Rol secundario</option>
-        </select>
+<div class="filters-container">
+  <!-- Botón de Volverse Capitán -->
+  <div class="captain-button-container">
+    <button
+      class="dota-button captain-toggle-button"
+      (click)="toggleCaptainStatus()"
+      *ngIf="!userTeam && player.availability === 'available'"
+    >
+      <i class="fas fa-crown"></i>
+      {{ isTeamCaptain ? "Dejar de ser Capitán" : "Volverse Capitán" }}
+    </button>
+  </div>
+
+  <!-- Botones de división (División 1 y División 2) -->
+  <div class="division-toggle-container">
+    <button 
+      *ngIf="player.playerDivision === PlayerDivision.Division1 ||
+            player.rolUser === PlayerRole.Admin ||
+            player.rolUser === PlayerRole.SubAdmin"
+      class="division-button radiant"
+      [class.active]="currentUserDivision === PlayerDivision.Division1"
+      (click)="currentUserDivision !== PlayerDivision.Division1 ? toggleTempDivision() : null"
+      [disabled]="(isTeamCaptain && userTeam) || currentUserDivision === PlayerDivision.Division1">
+      <div class="division-badge">
+        <div class="division-icon">
+          <img src="../../../../../assets/trofeo_icon.png" alt="Radiant" class="division-emblem">
+        </div>
+        <div class="division-info">
+          <span class="division-title">DIVISIÓN 1</span>
+          <span class="division-status">{{ currentUserDivision === PlayerDivision.Division1 ? 'ACTUAL' : 'CAMBIAR' }}</span>
+        </div>
       </div>
-
-      <div class="filter-actions">
-        <button *ngIf="player.playerDivision === PlayerDivision.Division1 ||
-              player.rolUser === PlayerRole.Admin ||
-              player.rolUser === PlayerRole.SubAdmin"
-              class="dota-button small-button toggle-division-button"
-              (click)="toggleTempDivision()"
-              [disabled]="isTeamCaptain && userTeam">
-              {{ currentUserDivision === PlayerDivision.Division1 ? 'Jugar en División 2' : 'Volver a División 1' }}
-        </button>
+    </button>
+    <button 
+      class="division-button dire"
+      [class.active]="currentUserDivision === PlayerDivision.Division2"
+      (click)="currentUserDivision !== PlayerDivision.Division2 ? toggleTempDivision() : null"
+      [disabled]="(isTeamCaptain && userTeam) || 
+                (player.playerDivision === PlayerDivision.Division2 && 
+                  player.rolUser !== PlayerRole.Admin && 
+                  player.rolUser !== PlayerRole.SubAdmin)">
+      <div class="division-badge">
+        <div class="division-icon">
+          <img src="../../../../../assets/medalla_icon.png" alt="Dire" class="division-emblem">
+        </div>
+        <div class="division-info">
+          <span class="division-title">DIVISIÓN 2</span>
+          <span class="division-status">{{ currentUserDivision === PlayerDivision.Division2 ? 'ACTUAL' : 'CAMBIAR' }}</span>
+        </div>
       </div>
+    </button>
+  </div>
 
-      <!-- Botón de capitán centrado -->
-      <div
-        class="captain-button-container"
-        *ngIf="!userTeam && player.availability === 'available'"
-      >
-        <button
-          class="dota-button captain-toggle-button"
-          (click)="toggleCaptainStatus()"
-        >
-          <i class="fas fa-crown"></i>
-          {{ isTeamCaptain ? "Dejar de ser Capitán" : "Volverse Capitán" }}
-        </button>
-      </div>
+  <!-- Acciones: Buscar rivales / Partidas en curso -->
+  <div class="filter-actions">
+    <button class="dota-button filter-button" (click)="buscarRivales($event)">
+      Buscar Rivales
+    </button>
+    <button class="dota-button refresh-button" (click)="enCurso()">
+      <i class="fas fa-sync-alt"></i> Partidas en Curso
+    </button>
+  </div>
 
-      <button class="dota-button filter-button" (click)="buscarRivales($event)">
-        Buscar Rivales
-      </button>
-
-      <button class="dota-button refresh-button" (click)="enCurso()">
-        <i class="fas fa-sync-alt"></i> Partidas en Curso
-      </button>
-    </div>
+  <!-- Selector de rol -->
+  <div class="filter-group">
+    <label for="roleTypeFilter" class="filter-label">Mostrar:</label>
+    <select
+      id="roleTypeFilter"
+      class="dota-select"
+      [(ngModel)]="selectedRoleType"
+      (change)="applyFilters()"
+    >
+      <option value="primary">Rol principal</option>
+      <option value="secondary">Rol secundario</option>
+    </select>
+  </div>
+</div>
 
     <!-- Lista de jugadores por categoría -->
     <div

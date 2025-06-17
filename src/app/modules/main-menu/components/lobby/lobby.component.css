@@ -153,8 +153,8 @@
 }
 
 .medal-icon {
-  width: 20px;
-  height: 20px;
+  width: 25px;
+  height: 25px;
 }
 
 .player-category {
@@ -206,8 +206,6 @@
 }
 
 .division-division2 {
-
-
   color: #a0c4ff;
 }
 
@@ -490,42 +488,54 @@
 
 .filters-container {
   display: flex;
-  flex-wrap: wrap;
+  flex-direction: column;
+  align-items: center;
   gap: 15px;
   margin-bottom: 30px;
-  align-items: center;
   background: rgba(0, 0, 0, 0.5);
-  padding: 15px;
+  padding: 20px;
   border-radius: 8px;
   border: 1px solid #7a0707;
 }
 
 .filter-group {
   display: flex;
-  align-items: center;
-  gap: 10px;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+  width: 100%;
+  max-width: 300px;
 }
 
 .filter-label {
-  color: #e4ae0d;
+  font-size: 14px;
   font-weight: bold;
-  white-space: nowrap;
+  color: #e4ae0d;
+  text-transform: uppercase;
+  letter-spacing: 1px;
 }
 
 .dota-select {
-  background: rgba(0, 0, 0, 0.7);
+  background-color: rgba(0, 0, 0, 0.7);
   border: 1px solid #7a0707;
   color: #fff;
-  padding: 8px 15px;
+  padding: 8px 12px;
+  font-size: 14px;
   border-radius: 4px;
-  min-width: 150px;
-  transition: all 0.3s;
+  width: 100%;
+  max-width: 100%;
+  transition: all 0.3s ease;
 }
 
 .dota-select:focus {
   outline: none;
   border-color: #e4ae0d;
   box-shadow: 0 0 8px rgba(228, 174, 13, 0.5);
+}
+
+.dota-select option {
+  background-color: #1a1a1a;
+  color: #fff;
 }
 
 .filter-button {
@@ -538,16 +548,13 @@
 }
 
 .refresh-button {
-  background: #333;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  pointer-events: none;
+  background: linear-gradient(135deg, #e4ae0d 0%, #7a0707 100%);
+  margin-left: auto;
   cursor: not-allowed;
 }
 
 .refresh-button:hover {
-  background: #555;
+  background: #ff0000;
 }
 
 /* SECCIÓN DE MI EQUIPO CON DRAG AND DROP */
@@ -909,14 +916,12 @@
 
 /* Contenedor del botón de capitán */
 .captain-button-container {
-  flex: 1;
-  display: flex;
-  justify-content: center;
-  min-width: 200px;
+  width: 100%;
+  text-align: center;
 }
 
 .temp-division-badge {
-  background: rgba(228, 174, 13, 0.3);
+  background: rgba(23, 57, 206, 0.3);
   border: 1px solid #e4ae0d;
   padding: 4px 8px;
   font-size: 12px;
@@ -934,7 +939,6 @@
   font-weight: bold;
   text-transform: uppercase;
   transition: all 0.3s;
-  display: flex;
   align-items: center;
   gap: 8px;
   white-space: nowrap;
@@ -954,8 +958,17 @@
 /* Contenedor para los botones de acción */
 .filter-actions {
   display: flex;
-  gap: 10px;
-  margin-left: auto;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 15px;
+  width: 100%;
+}
+
+.filter-button,
+.refresh-button {
+  min-width: 160px;
+  flex: 1 1 auto;
+  text-align: center;
 }
 
 /* Estilos mejorados para team-info */
@@ -1544,85 +1557,205 @@
   box-shadow: none !important;
 }
 
+/* Contenedor principal */
+.division-toggle-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 15px;
+  width: 100%;
+}
+
+/* Estilo base de los botones */
+.division-button {
+  display: flex;
+  align-items: center;
+  padding: 8px 15px;
+  border-radius: 20px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  background: transparent;
+  position: relative;
+  overflow: hidden;
+  min-width: 140px;
+}
+
+/* Estilo Radiant (División 1) */
+.division-button.radiant {
+  border: 1px solid rgba(252, 6, 6, 0.3);
+}
+
+.division-button.radiant.active {
+  background: linear-gradient(135deg, rgba(110, 190, 90, 0.15) 0%, rgba(20, 40, 30, 0.7) 100%);
+  border: 1px solid #fa4545;
+  box-shadow: 0 0 15px rgba(175, 20, 27, 0.4);
+}
+
+.division-button.radiant .division-title {
+  color: #f7c5c5;
+}
+
+.division-button.radiant.active .division-title {
+  color: #d2f7c5;
+  text-shadow: 0 0 8px rgba(243, 9, 9, 0.6);
+}
+
+.division-button.radiant .division-status {
+  color: #be4646;
+  
+}
+
+/* Estilo Dire (División 2) */
+.division-button.dire {
+  border: 1px solid rgba(3, 70, 170, 0.3);
+}
+
+.division-button.dire.active {
+  background: linear-gradient(135deg, rgba(190, 70, 70, 0.15) 0%, rgba(40, 20, 20, 0.7) 100%);
+  border: 1px solid #1182df;
+  box-shadow: 0 0 15px rgba(190, 70, 70, 0.4);
+}
+
+.division-button.dire .division-title {
+  color: #00d9ff;
+}
+
+.division-button.dire.active .division-title {
+  color: #00aeff;
+  text-shadow: 0 0 8px rgba(247, 197, 197, 0.6);
+}
+
+.division-button.dire .division-status {
+  color: #a0c4ff;
+}
+
+/* Badge interior */
+.division-badge {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+}
+
+.division-icon {
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.division-emblem {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.3));
+}
+
+.division-button.active .division-emblem {
+  filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.8));
+}
+
+.division-button:not(:disabled):hover .division-emblem {
+  transform: scale(1.1);
+}
+
+.division-info {
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+}
+
+.division-title {
+  font-family: 'Radiance', sans-serif;
+  font-size: 14px;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  transition: all 0.3s ease;
+}
+
+.division-status {
+  font-size: 15px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  opacity: 0.8;
+}
+
+/* Efectos hover */
+.division-button:not(:disabled):hover {
+  transform: translateY(-2px);
+}
+
+.division-button.radiant:not(:disabled):hover {
+  box-shadow: 0 4px 12px rgba(190, 70, 70, 0.3);
+  
+}
+
+.division-button.dire:not(:disabled):hover {
+  box-shadow: 0 4px 12px rgba(3, 66, 102, 0.3);
+}
+
+/* Estado desactivado */
+.division-button:disabled {
+  opacity: 1;
+}
+
+.division-button:disabled .division-info {
+  opacity: 0.5;
+}
+
+.division-button:disabled .division-emblem {
+  filter: none;
+  opacity: 1;
+}
+
+/* Efecto de partículas para el activo */
+.division-button.active::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(
+    to bottom right,
+    rgba(255, 255, 255, 0) 45%,
+    rgba(255, 255, 255, 0.2) 50%,
+    rgba(255, 255, 255, 0) 55%
+  );
+  transform: rotate(30deg);
+  animation: shine 3s infinite;
+  opacity: 0.5;
+}
+
+@keyframes shine {
+  0% { transform: translateX(-100%) rotate(30deg); }
+  100% { transform: translateX(100%) rotate(30deg); }
+}
+
+/* Efecto de pulso para el activo */
+@keyframes pulse-glow {
+  0% { box-shadow: 0 0 5px currentColor; }
+  50% { box-shadow: 0 0 20px currentColor; }
+  100% { box-shadow: 0 0 5px currentColor; }
+}
+
+.division-button.active {
+  animation: pulse-glow 2s infinite;
+}
+
 
 /* RESPONSIVE */
 @media (max-width: 1200px) {
-  .profile-header {
-    flex-direction: column;
-    gap: 20px;
-  }
-  
-  .profile-section {
-    min-width: 100%;
-    justify-content: center;
-    padding: 15px;
-  }
-  
-  .social-media-row {
-    justify-content: center !important;
-  }
-  
-  .social-media-container {
-    order: 2;
-  }
-  
-  .profile-actions {
-    order: 3;
-    margin-top: 0;
-  }
-  
-  .action-buttons-grid {
-    flex-direction: row;
-    flex-wrap: wrap;
-    justify-content: center;
-  }
-  
-  .button-row {
-    flex-direction: row;
-    flex-wrap: wrap;
-  }
-  
-  .dota-button-middle {
-    min-width: 160px;
-    max-width: 160px;
-  }
-}
 
-@media (max-width: 992px) {
-  .filters-container {
-    flex-direction: column;
-    align-items: stretch;
-  }
-  
-  .filter-group {
-    width: 100%;
-    justify-content: space-between;
-  }
-  
-  .filter-actions {
-    margin-left: 0;
-    justify-content: center;
-    width: 100%;
-    margin-top: 15px;
-  }
-  
-  .captain-button-container {
-    order: -1;
-    margin-bottom: 15px;
-  }
-  
-  .team-roles-container {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-
-@media (max-width: 768px) {
   .profile-data {
     flex-direction: column;
     text-align: center;
     min-width: 100%;
   }
-  
+
   .player-meta {
     justify-content: center;
     flex-wrap: wrap;
@@ -1631,189 +1764,349 @@
   .player-roles {
     justify-content: center;
   }
-  
+
   .profile-avatar {
     width: 90px;
     height: 90px;
   }
-  
-  .lobby-title {
-    font-size: 28px;
-  }
-  
-  .lobby-subtitle {
-    font-size: 16px;
-  }
-  
-  .category-title {
-    font-size: 22px;
-  }
-  
-  .section-title {
-    font-size: 24px;
-  }
-  
-  .role-columns-container {
+  .profile-header {
     flex-direction: column;
+    gap: 20px;
   }
-  
-  .role-column-wrapper {
+  .profile-section {
+    min-width: 100%;
+    justify-content: center;
+    padding: 15px;
+  }
+  .social-media-row {
+    justify-content: center !important;
+  }
+  .social-media-container {
+    order: 2;
+  }
+  .profile-actions {
+    order: 3;
+    margin-top: 0;
+  }
+  .action-buttons-grid {
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .button-row {
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+  .dota-button-middle {
+    min-width: 160px;
+    max-width: 160px;
+  }
+
+  /* Responsive filters-container */
+  .filters-container {
+    gap: 12px;
+    padding: 15px;
+  }
+
+  .division-button {
+    min-width: 180px;
+    font-size: 13px;
+  }
+  .filter-group {
+    max-width: 280px;
+    gap: 5px;
+  }
+  .filter-label {
+    font-size: 13px;
+  }
+  .dota-select {
+    font-size: 13px;
+    padding: 6px 10px;
+  }
+  .captain-button-container {
+    margin-top: 10px;
+    width: 100%;
+    text-align: center;
+  }
+  .filter-actions {
+    margin-top: 10px;
+    justify-content: center;
+    width: 100%;
+  }
+  .filter-button,
+  .refresh-button {
+    min-width: 140px;
+  }
+}
+
+@media (max-width: 992px) {
+
+  .profile-data {
+    flex-direction: column;
+    text-align: center;
     min-width: 100%;
   }
+
+  .player-meta {
+    justify-content: center;
+    flex-wrap: wrap;
+  }
   
-  .role-column {
-    height: auto;
-    max-height: 300px;
+  .player-roles {
+    justify-content: center;
+  }
+
+  .profile-avatar {
+    width: 90px;
+    height: 90px;
+  }
+  .filters-container {
+    gap: 10px;
+    padding: 12px;
+  }
+  .filter-group {
+    max-width: 100%;
+    align-items: center;
+    text-align: center;
+  }
+  .filter-label {
+    text-align: center;
+    font-size: 12px;
+  }
+  .dota-select {
+    font-size: 12px;
+    padding: 6px 10px;
+  }
+  .captain-button-container {
+    order: -1;
+    margin-bottom: 15px;
+    width: 100%;
+  }
+  .filter-button,
+  .refresh-button {
+    min-width: 130px;
+    flex: 1 1 100%;
+  }
+
+  .division-button {
+    min-width: 160px;
+    font-size: 12px;
+  }
+}
+
+@media (max-width: 768px) {
+
+  .profile-data {
+    flex-direction: column;
+    text-align: center;
+    min-width: 100%;
+  }
+
+  .player-meta {
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  
+  .player-roles {
+    justify-content: center;
+  }
+
+  .profile-avatar {
+    width: 90px;
+    height: 90px;
+  }
+
+  .filters-container {
+    gap: 8px;
+    padding: 10px;
+  }
+
+  .division-button {
+    min-width: 140px;
+    font-size: 11px;
+  }
+  .filter-group {
+    align-items: center;
+    text-align: center;
+  }
+  .filter-label {
+    font-size: 13px;
+  }
+  .dota-select {
+    font-size: 11px;
+    padding: 5px 8px;
+  }
+  .captain-button-container {
+    width: 100%;
+    text-align: center;
+  }
+  .filter-button,
+  .refresh-button {
+    min-width: 120px;
+  }
+  .team-roles-container {
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
   }
 }
 
 @media (max-width: 576px) {
   .lobby-container {
-    padding: 10px;
+    gap: 6px;
+    padding: 8px;
   }
-  
+
+  .division-button {
+    min-width: 120px;
+    font-size: 10px;
+    padding: 6px;
+  }
   .profile-avatar {
     width: 80px;
     height: 80px;
   }
-  
   .status-indicator {
     width: 14px;
     height: 14px;
   }
-  
   .social-media-row img {
     width: 30px;
     height: 30px;
   }
-  
-  .dota-button-middle {
-    min-width: 140px;
-    max-width: 140px;
-    padding: 8px 10px;
-    font-size: 11px;
-  }
-  
-  .team-roles-container {
-    grid-template-columns: 1fr;
-  }
-  
-  .team-role-card {
-    min-height: 120px;
-  }
-  
-  .team-player-avatar {
-    width: 50px;
-    height: 50px;
-  }
-  
-  .player-card {
-    padding: 10px;
-  }
-  
-  .player-avatar {
-    width: 45px;
-    height: 45px;
-  }
-  
-  .player-nick {
-    font-size: 15px;
-  }
-  
-  .player-mmr {
-    font-size: 12px;
-  }
-  
-  .player-role {
-    font-size: 12px;
-  }
-  
-  .role-title {
-    font-size: 14px;
-  }
-  
-  .team-player-nick {
-    font-size: 15px;
-  }
-  
-  .team-player-mmr {
-    font-size: 13px;
-  }
-  
-  .online-players-badge {
-    padding: 5px 10px 5px 5px;
-  }
-  
-  .online-icon {
-    width: 35px;
-    height: 35px;
-    font-size: 16px;
-  }
-  
-  .online-count .count {
-    font-size: 18px;
-  }
-  
-  .online-count .label {
-    font-size: 9px;
-  }
-}
-
-@media (max-width: 400px) {
-  .profile-avatar {
-    width: 70px;
-    height: 70px;
-  }
-  
   .dota-button-middle {
     min-width: 120px;
     max-width: 120px;
+    padding: 6px 10px;
     font-size: 10px;
   }
-  
-  .social-media-row img {
-    width: 28px;
-    height: 28px;
+
+  /* Filters container mobile styles */
+  .filters-container {
+    flex-direction: column;
+    gap: 6px;
+    padding: 6px;
+    border-radius: 6px;
   }
-  
-  .lobby-title {
-    font-size: 24px;
+  .filter-group {
+    align-items: center;
+    text-align: center;
   }
-  
-  .category-title {
-    font-size: 20px;
+  .filter-label {
+    font-size: 12px;
   }
-  
-  .section-title {
-    font-size: 22px;
+  .dota-select {
+    font-size: 10px;
+    padding: 4px 6px;
   }
-  
+  .captain-button-container {
+    width: 100%;
+    text-align: center;
+  }
+  .filter-button,
+  .refresh-button {
+    min-width: 100px;
+    font-size: 11px;
+  }
+  .team-role-card {
+    min-height: 100px;
+  }
+  .team-player-avatar {
+    width: 40px;
+    height: 40px;
+  }
+  .player-card {
+    padding: 8px;
+  }
+  .player-avatar {
+    width: 40px;
+    height: 40px;
+  }
   .player-nick {
     font-size: 14px;
   }
-  
   .player-mmr {
     font-size: 11px;
   }
-  
   .player-role {
     font-size: 11px;
   }
-  
   .role-title {
-    font-size: 13px;
+    font-size: 12px;
   }
-  
   .team-player-nick {
     font-size: 14px;
   }
-  
   .team-player-mmr {
     font-size: 12px;
   }
-  
-  .dota-button {
-    padding: 8px 12px;
-    font-size: 12px;
+  .online-players-badge {
+    padding: 4px 8px 4px 4px;
+  }
+  .online-icon {
+    width: 30px;
+    height: 30px;
+    font-size: 14px;
+  }
+  .online-count .count {
+    font-size: 16px;
+  }
+  .online-count .label {
+    font-size: 8px;
+  }
+}
+
+@media (max-width: 484px) {
+  .division-toggle-container {
+    flex-direction: column;
+    width: 100%;
+    gap: 6px;
+    padding: 6px;
+  }
+  .division-button {
+    min-width: 100px;
+    font-size: 9px;
+    padding: 4px;
+  }
+  .division-badge {
+    justify-content: center;
+  }
+  .division-info {
+    flex: 1;
+    text-align: center;
+  }
+  .division-title {
+    font-size: 11px;
+  }
+  .division-status {
+    font-size: 9px;
+  }
+  .division-icon {
+    width: 22px;
+    height: 22px;
+  }
+
+  /* Filters container on extra small screens */
+  .filters-container {
+    gap: 4px;
+    padding: 6px;
+  }
+  .filter-group {
+    width: 100%;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .filter-label {
+    font-size: 11px;
+  }
+  .dota-select {
+    font-size: 10px;
+  }
+  .captain-button-container {
+    width: 100%;
+    text-align: center;
+  }
+  .filter-button,
+  .refresh-button {
+    min-width: 90px;
+    font-size: 10px;
   }
 }
