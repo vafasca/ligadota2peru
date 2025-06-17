@@ -553,6 +553,20 @@
   border: 1px dashed #3a506b;
 }
 
+/*Boton View*/
+.member-actions .dota2-btn.small {
+  background: rgba(58, 71, 90, 0.5);
+  color: #e1e1e1;
+  border: 1px solid #3a475a;
+  transition: all 0.2s ease;
+}
+
+.member-actions .dota2-btn.small:hover {
+  background: rgba(215, 165, 56, 0.2);
+  color: #f8e3a1;
+  border-color: #d7a538;
+}
+
 /* Responsive adjustments */
 @media (max-width: 1200px) {
   .dota2-teams-grid {

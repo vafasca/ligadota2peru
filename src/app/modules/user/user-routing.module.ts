@@ -9,13 +9,6 @@ const routes: Routes = [
   {
     path: 'profile/:idDota',
     component: PlayerProfileComponent,
-    data: { mode: 'view' } // Nuevo modo de visualización
-  },
-  {
-    path: 'my-profile',
-    component: PlayerProfileComponent,
-    canActivate: [authGuard],
-    data: { mode: 'edit' } // Modo normal para usuarios autenticados
   }
 ];
 

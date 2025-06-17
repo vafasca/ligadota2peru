@@ -156,7 +156,7 @@ export class PlayerRegistrationComponent {
       // Limpiar cualquier dato temporal (si aún usas sessionStorage)
       sessionStorage.removeItem('userDivision');
       
-      this.router.navigate(['/profile']);
+      this.router.navigate(['/profile', newPlayer.idDota]);
 
     } catch (error) {
       console.error('Error en el proceso de registro:', error);

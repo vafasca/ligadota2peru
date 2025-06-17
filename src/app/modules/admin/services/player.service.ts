@@ -17,7 +17,8 @@ import {
   where,
   updateDoc,
   arrayUnion,
-  arrayRemove
+  arrayRemove,
+  limit
 } from '@angular/fire/firestore';
 import { Player, PlayerDivision } from '../models/jugador.model';
 import { catchError, from, map, Observable, of, switchMap, tap, throwError } from 'rxjs';
@@ -546,6 +547,26 @@ getTeamPlayers(teamId: string): Observable<Player[]> {
     catchError((error: FirestoreError) => {
       console.error('Error obteniendo jugadores del equipo:', error);
       return throwError(() => new Error(this.getFirestoreErrorMessage(error)));
+    })
+  );
+}
+
+getPlayerByDotaId(idDota: number): Observable<Player | null> {
+  const q = query(
+    this.playersCollection, 
+    where('idDota', '==', idDota),
+    limit(1)
+  );
+
+  return from(getDocs(q)).pipe(
+    map(snapshot => {
+      if (snapshot.empty) return null;
+      const doc = snapshot.docs[0];
+      return { uid: doc.id, ...doc.data() } as Player;
+    }),
+    catchError(error => {
+      console.error('Error getting player by Dota ID:', error);
+      return of(null);
     })
   );
 }

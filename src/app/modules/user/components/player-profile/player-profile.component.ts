@@ -14,6 +14,9 @@ import { AuthService } from 'src/app/modules/auth/services/auth.service';
 export class PlayerProfileComponent {
   @ViewChild('matchesContainer') matchesContainer!: ElementRef;
   showAllMatches = false;
+  isViewMode = false;
+  isOwner = false;
+  currentUserId: string | null = null;
   
   // Datos del jugador inicializados vacíos
   player: Player = {
@@ -69,69 +72,131 @@ export class PlayerProfileComponent {
   ) {}
 
   ngOnInit(): void {
-    this.setupAuthListener();
+    this.loadProfileData();
+    
+    // Escuchar cambios de autenticación
+    this.authService.currentUser$.subscribe(user => {
+      this.currentUserId = user?.uid || null;
+      this.checkOwnership();
+    });
   }
 
-  ngOnDestroy(): void {
-    this.cleanupSubscriptions();
-  }
-
-  private setupAuthListener(): void {
-  this.authSub = this.authService.currentUser$.subscribe({
-    next: (user) => {
-      if (user?.uid) {
-        // Obtener idDota de la ruta
-        const idDotaFromRoute = this.route.snapshot.paramMap.get('idDota');
+//   private setupAuthListener(): void {
+//   this.authSub = this.authService.currentUser$.subscribe({
+//     next: (user) => {
+//       if (user?.uid) {
+//         // Obtener idDota de la ruta
+//         const idDotaFromRoute = this.route.snapshot.paramMap.get('idDota');
         
-        // Verificar coincidencia con el perfil del usuario
-        this.playerService.getPlayer(user.uid).subscribe(player => {
-          if (player) {
-            if (idDotaFromRoute && player.idDota !== +idDotaFromRoute) {
-              // Redirigir al perfil correcto si el idDota no coincide
-              this.router.navigate(['/profile', player.idDota]);
-            } else {
-              this.loadPlayerData(user.uid);
-            }
-          } else {
-            this.errorMessage = 'Perfil no encontrado. Completa tu registro.';
-            this.isLoading = false;
-            this.router.navigate(['/complete-profile']);
-          }
-        });
-      } else {
-        this.handleUnauthenticated();
-      }
-    },
-    error: (err) => {
-      console.error('Error en auth listener:', err);
-      this.handleUnauthenticated();
+//         // Verificar coincidencia con el perfil del usuario
+//         this.playerService.getPlayer(user.uid).subscribe(player => {
+//           if (player) {
+//             if (idDotaFromRoute && player.idDota !== +idDotaFromRoute) {
+//               // Redirigir al perfil correcto si el idDota no coincide
+//               this.router.navigate(['/profile', player.idDota]);
+//             } else {
+//               this.loadPlayerData(user.uid);
+//             }
+//           } else {
+//             this.errorMessage = 'Perfil no encontrado. Completa tu registro.';
+//             this.isLoading = false;
+//             this.router.navigate(['/complete-profile']);
+//           }
+//         });
+//       } else {
+//         this.handleUnauthenticated();
+//       }
+//     },
+//     error: (err) => {
+//       console.error('Error en auth listener:', err);
+//       this.handleUnauthenticated();
+//     }
+//   });
+// }
+
+private loadProfileData(): void {
+    const idDota = this.route.snapshot.paramMap.get('idDota');
+    
+    if (!idDota) {
+      this.router.navigate(['/']);
+      return;
     }
-  });
-}
 
-  private loadPlayerData(uid: string): void {
-    this.isLoading = true;
-    this.errorMessage = '';
-
-    this.playerSub = this.playerService.getPlayer(uid).subscribe({
-      next: (playerData) => {
-        if (playerData) {
-          this.player = playerData;
-          // console.log('Datos del jugador cargados:', this.player);
-          this.loadPlayerMatches(uid);
+    // Cargar perfil por idDota
+    this.playerService.getPlayerByDotaId(+idDota).subscribe({
+      next: (player) => {
+        if (player) {
+          this.player = player;
+          this.checkOwnership();
+          this.loadPlayerMatches(player.uid);
         } else {
-          this.errorMessage = 'Perfil no encontrado. Completa tu registro.';
+          this.errorMessage = 'Perfil no encontrado';
           this.isLoading = false;
-          this.router.navigate(['/complete-profile']);
         }
       },
       error: (err) => {
-        console.error('Error cargando jugador:', err);
-        this.errorMessage = 'Error al cargar perfil. Intenta nuevamente.';
+        this.errorMessage = 'Error al cargar perfil';
         this.isLoading = false;
       }
     });
   }
+
+  private checkOwnership(): void {
+    if (!this.player || !this.currentUserId) {
+      this.isOwner = false;
+      return;
+    }
+    this.isOwner = this.player.uid === this.currentUserId;
+  }
+
+// private loadProfileByDotaId(): void {
+//     const idDota = this.route.snapshot.paramMap.get('idDota');
+    
+//     if (!idDota) {
+//       this.router.navigate(['/']);
+//       return;
+//     }
+
+//     this.playerService.getPlayerByDotaId(+idDota).subscribe({
+//       next: (player) => {
+//         if (player) {
+//           this.player = player;
+//           this.loadPlayerMatches(player.uid);
+//         } else {
+//           this.errorMessage = 'Perfil no encontrado';
+//           this.isLoading = false;
+//         }
+//       },
+//       error: (err) => {
+//         this.errorMessage = 'Error al cargar perfil';
+//         this.isLoading = false;
+//       }
+//     });
+//   }
+
+  // private loadPlayerData(uid: string): void {
+  //   this.isLoading = true;
+  //   this.errorMessage = '';
+
+  //   this.playerSub = this.playerService.getPlayer(uid).subscribe({
+  //     next: (playerData) => {
+  //       if (playerData) {
+  //         this.player = playerData;
+  //         // console.log('Datos del jugador cargados:', this.player);
+  //         this.loadPlayerMatches(uid);
+  //       } else {
+  //         this.errorMessage = 'Perfil no encontrado. Completa tu registro.';
+  //         this.isLoading = false;
+  //         this.router.navigate(['/complete-profile']);
+  //       }
+  //     },
+  //     error: (err) => {
+  //       console.error('Error cargando jugador:', err);
+  //       this.errorMessage = 'Error al cargar perfil. Intenta nuevamente.';
+  //       this.isLoading = false;
+  //     }
+  //   });
+  // }
 
   private loadPlayerMatches(uid: string): void {
     this.matchesSub = this.playerService.getPlayerMatches(uid).subscribe({
@@ -149,13 +214,13 @@ export class PlayerProfileComponent {
     });
   }
 
-  private handleUnauthenticated(): void {
-    this.errorMessage = 'Debes iniciar sesión para ver este perfil';
-    this.isLoading = false;
-    setTimeout(() => {
-      this.router.navigate(['/login']);
-    }, 1500);
-  }
+  // private handleUnauthenticated(): void {
+  //   this.errorMessage = 'Debes iniciar sesión para ver este perfil';
+  //   this.isLoading = false;
+  //   setTimeout(() => {
+  //     this.router.navigate(['/login']);
+  //   }, 1500);
+  // }
 
   private calculateStats(): void {
     this.stats.totalMatches = this.matches.length;
@@ -260,5 +325,9 @@ export class PlayerProfileComponent {
     if (this.authSub) this.authSub.unsubscribe();
     if (this.playerSub) this.playerSub.unsubscribe();
     if (this.matchesSub) this.matchesSub.unsubscribe();
+  }
+
+    ngOnDestroy(): void {
+    this.cleanupSubscriptions();
   }
 }

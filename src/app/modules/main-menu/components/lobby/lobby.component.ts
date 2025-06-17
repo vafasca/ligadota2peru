@@ -766,7 +766,7 @@ showCopyFeedback(): void {
 
 goToProfile(): void {
     if (this.player?.uid) {
-      this.router.navigate(['/profile']);
+      this.router.navigate(['/profile/', this.player.idDota]);
     }
 }
 
