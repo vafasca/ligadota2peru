@@ -1,5 +1,5 @@
 import { Component, ElementRef, ViewChild } from '@angular/core';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { Player, PlayerDivision, PlayerRole } from 'src/app/modules/admin/models/jugador.model';
 import { Match } from 'src/app/modules/admin/models/match.model';
@@ -63,6 +63,7 @@ export class PlayerProfileComponent {
 
   constructor(
     private router: Router,
+    private route: ActivatedRoute,
     private playerService: PlayerService,
     private authService: AuthService
   ) {}
@@ -76,20 +77,37 @@ export class PlayerProfileComponent {
   }
 
   private setupAuthListener(): void {
-    this.authSub = this.authService.currentUser$.subscribe({
-      next: (user) => {
-        if (user?.uid) {
-          this.loadPlayerData(user.uid);
-        } else {
-          this.handleUnauthenticated();
-        }
-      },
-      error: (err) => {
-        console.error('Error en auth listener:', err);
+  this.authSub = this.authService.currentUser$.subscribe({
+    next: (user) => {
+      if (user?.uid) {
+        // Obtener idDota de la ruta
+        const idDotaFromRoute = this.route.snapshot.paramMap.get('idDota');
+        
+        // Verificar coincidencia con el perfil del usuario
+        this.playerService.getPlayer(user.uid).subscribe(player => {
+          if (player) {
+            if (idDotaFromRoute && player.idDota !== +idDotaFromRoute) {
+              // Redirigir al perfil correcto si el idDota no coincide
+              this.router.navigate(['/profile', player.idDota]);
+            } else {
+              this.loadPlayerData(user.uid);
+            }
+          } else {
+            this.errorMessage = 'Perfil no encontrado. Completa tu registro.';
+            this.isLoading = false;
+            this.router.navigate(['/complete-profile']);
+          }
+        });
+      } else {
         this.handleUnauthenticated();
       }
-    });
-  }
+    },
+    error: (err) => {
+      console.error('Error en auth listener:', err);
+      this.handleUnauthenticated();
+    }
+  });
+}
 
   private loadPlayerData(uid: string): void {
     this.isLoading = true;

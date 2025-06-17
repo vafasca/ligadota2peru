@@ -15,6 +15,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import {MatButtonModule} from '@angular/material/button';
 import {MatSnackBarModule} from '@angular/material/snack-bar';
 import { ElevatorLoadingComponent } from './shared-components/elevator-loading/elevator-loading.component';
+import { UserRoutingModule } from './modules/user/user-routing.module';
 
 @NgModule({
   declarations: [
@@ -24,6 +25,7 @@ import { ElevatorLoadingComponent } from './shared-components/elevator-loading/e
   imports: [
     BrowserModule,
     AppRoutingModule,
+    UserRoutingModule,
     MatButtonModule,
     MatSnackBarModule,
 

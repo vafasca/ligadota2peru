@@ -104,37 +104,46 @@ export class AuthService {
     }
   }
 
-  async login(email: string, password: string): Promise<{ success: boolean; needsVerification?: boolean; user?: User; message?: string }> {
-    try {
-      const userCredential = await signInWithEmailAndPassword(this.auth, email, password);
-      const user = userCredential.user;
-      
-      if (!user.emailVerified) {
-        await signOut(this.auth);
-        const message = 'Por favor verifica tu correo electrónico antes de iniciar sesión';
-        // console.warn('[Auth] ' + message);
-        return { 
-          success: false, 
-          needsVerification: true, 
-          user,
-          message 
-        };
-      }
-      
-      // console.log('[Auth] Sesión iniciada correctamente');
-      return { 
-        success: true,
-        user
-      };
-    } catch (error) {
-      const message = this.handleLoginError(error);
-      // console.error('[Auth] Error en login:', error);
+  async login(email: string, password: string): Promise<{ 
+  success: boolean; 
+  needsVerification?: boolean; 
+  user?: User; 
+  message?: string;
+  idDota?: number;
+}> {
+  try {
+    const userCredential = await signInWithEmailAndPassword(this.auth, email, password);
+    const user = userCredential.user;
+    
+    if (!user.emailVerified) {
+      await signOut(this.auth);
+      const message = 'Por favor verifica tu correo electrónico antes de iniciar sesión';
       return { 
         success: false, 
+        needsVerification: true, 
+        user,
         message 
       };
     }
+    
+    // Obtener el idDota del jugador
+    const playerDocRef = doc(this.firestore, `players/${user.uid}`);
+    const playerSnapshot = await getDoc(playerDocRef);
+    const idDota = playerSnapshot.exists() ? (playerSnapshot.data() as Player).idDota : undefined; // Usar undefined en lugar de null
+
+    return { 
+      success: true,
+      user,
+      idDota
+    };
+  } catch (error) {
+    const message = this.handleLoginError(error);
+    return { 
+      success: false, 
+      message 
+    };
   }
+}
 
   private handleLoginError(error: any): string {
     const defaultMessage = 'Error al iniciar sesión. Verifica tus credenciales.';

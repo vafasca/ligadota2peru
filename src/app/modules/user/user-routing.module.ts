@@ -6,7 +6,17 @@ import { authGuard } from '../auth/guards/auth.guard';
 
 const routes: Routes = [
   { path: '', component: UserComponent },
-  { path: 'profile', component: PlayerProfileComponent, canActivate: [authGuard] },
+  {
+    path: 'profile/:idDota',
+    component: PlayerProfileComponent,
+    data: { mode: 'view' } // Nuevo modo de visualización
+  },
+  {
+    path: 'my-profile',
+    component: PlayerProfileComponent,
+    canActivate: [authGuard],
+    data: { mode: 'edit' } // Modo normal para usuarios autenticados
+  }
 ];
 
 @NgModule({

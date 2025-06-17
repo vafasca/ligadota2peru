@@ -25,36 +25,40 @@ export class LoginComponent {
   ) {}
 
   async onSubmit(form: NgForm) {
-    if (form.valid) {
-      this.isLoading = true;
-      this.errorMessage = '';
+  if (form.valid) {
+    this.isLoading = true;
+    this.errorMessage = '';
+    
+    const { email, password } = form.value;
+    
+    try {
+      const result = await this.authService.login(email, password);
       
-      const { email, password } = form.value;
-      
-      try {
-        const result = await this.authService.login(email, password);
-        
-        if (result.success) {
-          this.showSuccess('Inicio de sesión exitoso');
-          this.router.navigate(['/completar_registro']);
-        } else if (result.needsVerification) {
-          this.router.navigate(['/login/verificacion'], { 
-            state: { email: email } 
-          });
-          this.showError(result.message || 'Por favor verifica tu correo electrónico');
+      if (result.success) {
+        this.showSuccess('Inicio de sesión exitoso');
+        // Navegar al perfil con el idDota
+        if (result.idDota) {
+          this.router.navigate(['/profile', result.idDota]);
         } else {
-          this.showError(result.message || 'Error al iniciar sesión');
+          this.router.navigate(['/completar_registro']);
         }
-      } catch (error) {
-        // console.error('Error en login:', error);
-        this.showError('Ocurrió un error inesperado. Inténtalo de nuevo.');
-      } finally {
-        this.isLoading = false;
+      } else if (result.needsVerification) {
+        this.router.navigate(['/login/verificacion'], { 
+          state: { email: email } 
+        });
+        this.showError(result.message || 'Por favor verifica tu correo electrónico');
+      } else {
+        this.showError(result.message || 'Error al iniciar sesión');
       }
-    } else {
-      this.showError('Por favor completa todos los campos correctamente');
+    } catch (error) {
+      this.showError('Ocurrió un error inesperado. Inténtalo de nuevo.');
+    } finally {
+      this.isLoading = false;
     }
+  } else {
+    this.showError('Por favor completa todos los campos correctamente');
   }
+}
 
   togglePasswordVisibility(): void {
     this.showPassword = !this.showPassword;
