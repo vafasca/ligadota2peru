@@ -5,6 +5,7 @@ import { BehaviorSubject, from, Observable, of } from 'rxjs';
 import { map, catchError, switchMap, distinctUntilChanged, shareReplay } from 'rxjs/operators';
 import { Firestore, doc, getDoc } from '@angular/fire/firestore';
 import { Player } from '../../admin/models/jugador.model';
+import { PlayerService } from '../../admin/services/player.service';
 
 @Injectable({
   providedIn: 'root'
@@ -22,7 +23,7 @@ export class AuthService {
   
   private authStateReady = false;
 
-  constructor() {
+  constructor(private playerService: PlayerService) {
     this.setupAuthStateListener();
   }
 
@@ -43,6 +44,29 @@ export class AuthService {
       }
     });
   }
+
+  // auth.service.ts (añade estos métodos)
+async setOnlineStatus(): Promise<void> {
+  const userId = this.getCurrentUserId();
+  if (userId) {
+    try {
+      await this.playerService.updatePlayer(userId, { status: 'Activo' }).toPromise();
+    } catch (error) {
+      console.error('Error al actualizar estado a activo:', error);
+    }
+  }
+}
+
+async setOfflineStatus(): Promise<void> {
+  const userId = this.getCurrentUserId();
+  if (userId) {
+    try {
+      await this.playerService.updatePlayer(userId, { status: 'Inactivo' }).toPromise();
+    } catch (error) {
+      console.error('Error al actualizar estado a inactivo:', error);
+    }
+  }
+}
 
   private isWaitingVerificationPage(): boolean {
     return this.router.url.includes('verificacion');

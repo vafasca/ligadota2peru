@@ -35,6 +35,7 @@ export class LoginComponent {
       const result = await this.authService.login(email, password);
       
       if (result.success) {
+        await this.authService.setOnlineStatus();
         this.showSuccess('Inicio de sesión exitoso');
         // Navegar al perfil con el idDota
         if (result.idDota) {

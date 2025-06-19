@@ -3,7 +3,7 @@
     <div class="avatar-info-container">
       <div class="avatar-container">
         <img [src]="player.avatar" alt="Avatar" class="profile-avatar">
-        <div class="status-indicator" [ngClass]="getStatusClass()" *ngIf="isOwner"></div>
+        <div class="status-indicator" [ngClass]="getStatusClass()"></div>
       </div>
       <div class="player-info">
         <h1 class="dota-font">{{player.nick}}</h1>
