@@ -1,5 +1,5 @@
 export interface Invitation {
-    id: string; // Hacerlo requerido cuando se usa
+    id: string;
     teamId: string;
     teamName: string;
     captainId: string;

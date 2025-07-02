@@ -54,15 +54,11 @@ export class PlayerRegistrationComponent {
 
   private setupAuthListener(): void {
     onAuthStateChanged(this.auth, (user) => {
-      // console.log('AUTH_STATE_CHANGED - USUARIO RECIBIDO:', user);
       this.currentUserUid = user?.uid || null;
-      // console.log('CURRENT_USER_UID ACTUALIZADO:', this.currentUserUid);
-      
+
       if (!this.currentUserUid) {
-        // console.log('🚨 [COMPONENTE] REDIRIGIENDO A LOGIN');
         this.router.navigate(['/login']);
       } else {
-        // console.log('🔄 [COMPONENTE] CARGANDO JUGADORES');
         this.loadPlayers();
       }
     });
@@ -72,7 +68,6 @@ export class PlayerRegistrationComponent {
     this.subscription = this.playerSvc.getPlayers().subscribe({
       next: (players) => {
         this.players = players;
-        // console.log('Jugadores obtenidos:', this.players);
       },
       error: (error) => {
         console.error('Error al obtener jugadores:', error);
@@ -141,7 +136,7 @@ export class PlayerRegistrationComponent {
       await updateDoc(logRef, {
         registrationCompleted: true,
         completedAt: new Date().toISOString(),
-        playerInfo: { // Podemos guardar información relevante del jugador
+        playerInfo: {
           nick: newPlayer.nick,
           mmr: newPlayer.mmr,
           division: newPlayer.playerDivision

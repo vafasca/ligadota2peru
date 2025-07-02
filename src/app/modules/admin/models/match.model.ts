@@ -1,7 +1,7 @@
 // match.model.ts
 export interface Match {
     id: string;
-    result: 'win' | 'loss'; // Tipo literal estricto
+    result: 'win' | 'loss';
     date: Date;
     heroName: string;
     heroImage: string;

@@ -5,8 +5,8 @@ export interface Tournament {
     startDate: Date;
     endDate: Date;
     prizePool: number;
-    teams: string[]; // IDs de equipos
-    matches: string[]; // IDs de partidas
+    teams: string[];
+    matches: string[];
     status: 'Planificado' | 'En Curso' | 'Finalizado' | 'Cancelado';
     rules: TournamentRules;
     brackets?: TournamentBracket;
@@ -31,6 +31,6 @@ export interface TournamentBracket {
 
 export interface BracketStage {
     name: string;
-    matches: string[]; // IDs de partidas
+    matches: string[];
     isCompleted: boolean;
 }
