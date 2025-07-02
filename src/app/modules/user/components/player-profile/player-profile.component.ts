@@ -5,6 +5,7 @@ import { Player, PlayerDivision, PlayerRole } from 'src/app/modules/admin/models
 import { Match } from 'src/app/modules/admin/models/match.model';
 import { PlayerService } from 'src/app/modules/admin/services/player.service';
 import { AuthService } from 'src/app/modules/auth/services/auth.service';
+import { NotificationService } from 'src/app/shared-services/notification.service';
 
 @Component({
   selector: 'app-player-profile',
@@ -68,7 +69,8 @@ export class PlayerProfileComponent {
     private router: Router,
     private route: ActivatedRoute,
     private playerService: PlayerService,
-    private authService: AuthService
+    private authService: AuthService,
+    private notificationService: NotificationService
   ) {}
 
   ngOnInit(): void {
@@ -80,39 +82,6 @@ export class PlayerProfileComponent {
       this.checkOwnership();
     });
   }
-
-//   private setupAuthListener(): void {
-//   this.authSub = this.authService.currentUser$.subscribe({
-//     next: (user) => {
-//       if (user?.uid) {
-//         // Obtener idDota de la ruta
-//         const idDotaFromRoute = this.route.snapshot.paramMap.get('idDota');
-        
-//         // Verificar coincidencia con el perfil del usuario
-//         this.playerService.getPlayer(user.uid).subscribe(player => {
-//           if (player) {
-//             if (idDotaFromRoute && player.idDota !== +idDotaFromRoute) {
-//               // Redirigir al perfil correcto si el idDota no coincide
-//               this.router.navigate(['/profile', player.idDota]);
-//             } else {
-//               this.loadPlayerData(user.uid);
-//             }
-//           } else {
-//             this.errorMessage = 'Perfil no encontrado. Completa tu registro.';
-//             this.isLoading = false;
-//             this.router.navigate(['/complete-profile']);
-//           }
-//         });
-//       } else {
-//         this.handleUnauthenticated();
-//       }
-//     },
-//     error: (err) => {
-//       console.error('Error en auth listener:', err);
-//       this.handleUnauthenticated();
-//     }
-//   });
-// }
 
 private loadProfileData(): void {
     const idDota = this.route.snapshot.paramMap.get('idDota');
@@ -149,55 +118,6 @@ private loadProfileData(): void {
     this.isOwner = this.player.uid === this.currentUserId;
   }
 
-// private loadProfileByDotaId(): void {
-//     const idDota = this.route.snapshot.paramMap.get('idDota');
-    
-//     if (!idDota) {
-//       this.router.navigate(['/']);
-//       return;
-//     }
-
-//     this.playerService.getPlayerByDotaId(+idDota).subscribe({
-//       next: (player) => {
-//         if (player) {
-//           this.player = player;
-//           this.loadPlayerMatches(player.uid);
-//         } else {
-//           this.errorMessage = 'Perfil no encontrado';
-//           this.isLoading = false;
-//         }
-//       },
-//       error: (err) => {
-//         this.errorMessage = 'Error al cargar perfil';
-//         this.isLoading = false;
-//       }
-//     });
-//   }
-
-  // private loadPlayerData(uid: string): void {
-  //   this.isLoading = true;
-  //   this.errorMessage = '';
-
-  //   this.playerSub = this.playerService.getPlayer(uid).subscribe({
-  //     next: (playerData) => {
-  //       if (playerData) {
-  //         this.player = playerData;
-  //         // console.log('Datos del jugador cargados:', this.player);
-  //         this.loadPlayerMatches(uid);
-  //       } else {
-  //         this.errorMessage = 'Perfil no encontrado. Completa tu registro.';
-  //         this.isLoading = false;
-  //         this.router.navigate(['/complete-profile']);
-  //       }
-  //     },
-  //     error: (err) => {
-  //       console.error('Error cargando jugador:', err);
-  //       this.errorMessage = 'Error al cargar perfil. Intenta nuevamente.';
-  //       this.isLoading = false;
-  //     }
-  //   });
-  // }
-
   private loadPlayerMatches(uid: string): void {
     this.matchesSub = this.playerService.getPlayerMatches(uid).subscribe({
       next: (matches) => {
@@ -213,14 +133,6 @@ private loadProfileData(): void {
       }
     });
   }
-
-  // private handleUnauthenticated(): void {
-  //   this.errorMessage = 'Debes iniciar sesión para ver este perfil';
-  //   this.isLoading = false;
-  //   setTimeout(() => {
-  //     this.router.navigate(['/login']);
-  //   }, 1500);
-  // }
 
   private calculateStats(): void {
     this.stats.totalMatches = this.matches.length;

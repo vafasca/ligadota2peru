@@ -16,11 +16,16 @@ import {MatButtonModule} from '@angular/material/button';
 import {MatSnackBarModule} from '@angular/material/snack-bar';
 import { ElevatorLoadingComponent } from './shared-components/elevator-loading/elevator-loading.component';
 import { UserRoutingModule } from './modules/user/user-routing.module';
+import { NotificationsComponent } from './shared-components/notifications/notifications.component';
+import { ChallengeResponseDialogComponent } from './shared-components/challenge-response-dialog/challenge-response-dialog.component';
+import { SharedModule } from './shared-module/shared.module';
+import { ConfirmChallengeDialogComponent } from './shared-components/confirm-challenge-dialog/confirm-challenge-dialog.component';
 
 @NgModule({
   declarations: [
     AppComponent,
-    ElevatorLoadingComponent
+    ElevatorLoadingComponent,
+    ConfirmChallengeDialogComponent
   ],
   imports: [
     BrowserModule,
@@ -28,6 +33,7 @@ import { UserRoutingModule } from './modules/user/user-routing.module';
     UserRoutingModule,
     MatButtonModule,
     MatSnackBarModule,
+    SharedModule,
 
     // Inicialización de Firebase
     provideFirebaseApp(() => initializeApp(environment.firebaseConfig)),

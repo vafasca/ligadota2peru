@@ -82,9 +82,16 @@
         </div>
 
         <div class="team-footer">
-          <button class="dota2-btn primary" *ngIf="team.players.length < 5">Challenge</button>
-          <button class="dota2-btn disabled" *ngIf="team.players.length >= 5">Team Full</button>
-        </div>
+  <button 
+    class="dota2-btn primary" 
+    *ngIf="canChallenge(team)"
+    (click)="challengeTeam(team)">
+    Challenge
+  </button>
+  <button class="dota2-btn disabled" *ngIf="team.players.length < 2">
+    Team Incompleto
+  </button>
+</div>
       </div>
     </div>
   </div>
@@ -140,9 +147,16 @@
         </div>
 
         <div class="team-footer">
-          <button class="dota2-btn primary" *ngIf="team.players.length < 5">Challenge</button>
-          <button class="dota2-btn disabled" *ngIf="team.players.length >= 5">Team Full</button>
-        </div>
+  <button 
+    class="dota2-btn primary" 
+    *ngIf="canChallenge(team)"
+    (click)="challengeTeam(team)">
+    Challenge
+  </button>
+  <button class="dota2-btn disabled" *ngIf="team.players.length < 2">
+    Team Incompleto
+  </button>
+</div>
       </div>
     </div>
   </div>

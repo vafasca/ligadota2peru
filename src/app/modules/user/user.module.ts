@@ -5,6 +5,7 @@ import { UserRoutingModule } from './user-routing.module';
 import { UserComponent } from './user.component';
 import { MaterialModule } from 'src/app/material/material/material.module';
 import { PlayerProfileComponent } from './components/player-profile/player-profile.component';
+import { SharedModule } from 'src/app/shared-module/shared.module';
 
 
 @NgModule({
@@ -15,7 +16,8 @@ import { PlayerProfileComponent } from './components/player-profile/player-profi
   imports: [
     CommonModule,
     UserRoutingModule,
-    MaterialModule
+    MaterialModule,
+    SharedModule
   ]
 })
 export class UserModule { }

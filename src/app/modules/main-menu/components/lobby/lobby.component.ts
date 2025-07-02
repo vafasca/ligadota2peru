@@ -10,6 +10,8 @@ import { CreateTeamDialogComponent } from '../create-team-dialog/create-team-dia
 import { AddPlayerDialogComponent } from '../add-player-dialog/add-player-dialog.component';
 import { CdkDragDrop, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
 import { TeamService } from '../../services/team.service';
+import { NotificationService } from 'src/app/shared-services/notification.service';
+
 
 @Component({
   selector: 'app-lobby',
@@ -88,31 +90,13 @@ export class LobbyComponent {
     private auth: Auth,
     private playerService: PlayerService,
     private dialog: MatDialog,
-    private teamService: TeamService
+    private teamService: TeamService,
+    private notificationService: NotificationService
   ) {}
 
   ngOnInit(): void {
     this.setupAuthListener();
-    // Al iniciar, cargamos el rol temporal si existe
-    //this.loadTempRole();
   }
-
-  // private loadTempRole(): void {
-  //   const savedRole = sessionStorage.getItem('tempRole');
-  //   if (savedRole) {
-  //     this.tempRole = savedRole;
-  //   } else {
-  //     this.tempRole = this.player.role;
-  //   }
-  // }
-
-  // private saveTempRole(): void {
-  //   sessionStorage.setItem('tempRole', this.tempRole);
-  // }
-
-  // private clearTempRole(): void {
-  //   sessionStorage.removeItem('tempRole');
-  // }
 
   private setupAuthListener(): void {
     this.authSubscription = new Subscription();
@@ -595,18 +579,6 @@ getPlayersByCategoryAndRole(category: string, role: string): Player[] {
   applyFilters(): void {
   // Forzar la actualización
   this.filteredCategories = [...this.categories];
-  
-  // Debug (puedes remover esto después)
-  // console.log('Filtros aplicados:', {
-  //   roleType: this.selectedRoleType,
-  //   players: this.availablePlayers.map(p => ({
-  //     nick: p.nick,
-  //     category: p.category,
-  //     secondaryCategory: p.secondaryCategory,
-  //     role: p.role,
-  //     secondaryRole: p.secondaryRole
-  //   }))
-  // });
 }
 
   getPlayerStatusClass(player: Player): string {

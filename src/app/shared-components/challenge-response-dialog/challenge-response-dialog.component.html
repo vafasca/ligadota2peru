@@ -1,0 +1,10 @@
+<!-- challenge-response-dialog.component.html -->
+<h2 mat-dialog-title>Desafío Recibido</h2>
+<mat-dialog-content>
+  <p>{{data.message}}</p>
+  <p>¿Deseas aceptar este desafío?</p>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-button (click)="rejectChallenge()">Rechazar</button>
+  <button mat-raised-button color="primary" (click)="acceptChallenge()">Aceptar</button>
+</mat-dialog-actions>

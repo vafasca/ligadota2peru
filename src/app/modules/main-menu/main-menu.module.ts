@@ -16,6 +16,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { FilterByRolePipePipe } from './pipes/filter-by-role-pipe.pipe';
 import { AddPlayerDialogComponent } from './components/add-player-dialog/add-player-dialog.component';
 import { MatListModule } from '@angular/material/list';
+import { SharedModule } from 'src/app/shared-module/shared.module';
 
 @NgModule({
   declarations: [
@@ -35,7 +36,8 @@ import { MatListModule } from '@angular/material/list';
     MatInputModule,
     MatButtonModule,
     ReactiveFormsModule,
-    MatListModule
+    MatListModule,
+    SharedModule
   ]
 })
 export class MainMenuModule { }

@@ -1,0 +1,9 @@
+<!-- confirm-challenge-dialog.component.html -->
+<h2 mat-dialog-title>Confirmar Desafío</h2>
+<mat-dialog-content>
+  <p>¿Estás seguro que deseas desafiar al equipo {{data.teamName}}?</p>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-button (click)="onNoClick()">Cancelar</button>
+  <button mat-raised-button color="primary" [mat-dialog-close]="true">Desafiar</button>
+</mat-dialog-actions>
