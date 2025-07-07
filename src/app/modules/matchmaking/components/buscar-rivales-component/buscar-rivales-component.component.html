@@ -102,28 +102,38 @@
             Challenge
           </button>
 
-          <div *ngIf="hasReciprocalChallenge(team)" class="reciprocal-challenge-message">
-            <i class="fas fa-exchange-alt"></i> Este equipo ya te ha desafiado
-            <button class="dota2-btn small" (click)="viewPendingChallenge(team)">
-              Ver desafío
-            </button>
-          </div>
-          
-          <!-- Mensaje para equipos in_game -->
-          <div *ngIf="team.status === 'in_game'" class="team-status-message">
-            <i class="fas fa-gamepad"></i> En partida - No disponible
-          </div>
-          
-          <!-- Mensaje para otros estados -->
-          <div *ngIf="team.status !== 'active' && team.status !== 'in_game'" 
-               class="team-status-message">
-            {{ getTeamStatusText(team.status) | uppercase }}
-          </div>
-          
-          <!-- Mensaje para equipos incompletos -->
-          <button *ngIf="team.players.length < 2" class="dota2-btn disabled">
-            Team Incompleto
-          </button>
+          <!-- Mensaje consolidado de estado -->
+  <div class="team-status-message" [ngClass]="{
+    'warning': currentUserTeam?.status === 'in_game',
+    'info': team.status === 'in_game',
+    'error': !canChallenge(team) && team.status === 'active'
+  }">
+    <i class="fas" [ngClass]="{
+      'fa-exclamation-triangle': currentUserTeam?.status === 'in_game',
+      'fa-gamepad': team.status === 'in_game',
+      'fa-info-circle': !canChallenge(team) && team.status === 'active'
+    }"></i>
+    
+    <span *ngIf="currentUserTeam?.status === 'in_game'">
+      No puedes desafiar mientras estés en partida
+    </span>
+    
+    <span *ngIf="team.status === 'in_game' && currentUserTeam?.status !== 'in_game'">
+      En partida - No disponible
+    </span>
+    
+    <span *ngIf="!canChallenge(team) && team.status === 'active' && currentUserTeam?.status !== 'in_game'">
+      {{ getChallengeDisabledReason(team) }}
+    </span>
+    
+    <span *ngIf="hasReciprocalChallenge(team)">
+      <i class="fas fa-exchange-alt"></i> Este equipo ya te ha desafiado
+      <button class="dota2-btn small" (click)="viewPendingChallenge(team)">
+        Ver desafío
+      </button>
+    </span>
+  </div>
+
         </div>
       </div>
     </div>
@@ -200,28 +210,37 @@
             Challenge
           </button>
 
-          <div *ngIf="hasReciprocalChallenge(team)" class="reciprocal-challenge-message">
-            <i class="fas fa-exchange-alt"></i> Este equipo ya te ha desafiado
-            <button class="dota2-btn small" (click)="viewPendingChallenge(team)">
-              Ver desafío
-            </button>
-          </div>
-          
-          <!-- Mensaje para equipos in_game -->
-          <div *ngIf="team.status === 'in_game'" class="team-status-message">
-            <i class="fas fa-gamepad"></i> En partida - No disponible
-          </div>
-          
-          <!-- Mensaje para otros estados -->
-          <div *ngIf="team.status !== 'active' && team.status !== 'in_game'" 
-               class="team-status-message">
-            {{ getTeamStatusText(team.status) | uppercase }}
-          </div>
-          
-          <!-- Mensaje para equipos incompletos -->
-          <button *ngIf="team.players.length < 2" class="dota2-btn disabled">
-            Team Incompleto
-          </button>
+          <!-- Mensaje consolidado de estado -->
+  <div class="team-status-message" [ngClass]="{
+    'warning': currentUserTeam?.status === 'in_game',
+    'info': team.status === 'in_game',
+    'error': !canChallenge(team) && team.status === 'active'
+  }">
+    <i class="fas" [ngClass]="{
+      'fa-exclamation-triangle': currentUserTeam?.status === 'in_game',
+      'fa-gamepad': team.status === 'in_game',
+      'fa-info-circle': !canChallenge(team) && team.status === 'active'
+    }"></i>
+    
+    <span *ngIf="currentUserTeam?.status === 'in_game'">
+      No puedes desafiar mientras estés en partida
+    </span>
+    
+    <span *ngIf="team.status === 'in_game' && currentUserTeam?.status !== 'in_game'">
+      En partida - No disponible
+    </span>
+    
+    <span *ngIf="!canChallenge(team) && team.status === 'active' && currentUserTeam?.status !== 'in_game'">
+      {{ getChallengeDisabledReason(team) }}
+    </span>
+    
+    <span *ngIf="hasReciprocalChallenge(team)">
+      <i class="fas fa-exchange-alt"></i> Este equipo ya te ha desafiado
+      <button class="dota2-btn small" (click)="viewPendingChallenge(team)">
+        Ver desafío
+      </button>
+    </span>
+  </div>
         </div>
       </div>
     </div>

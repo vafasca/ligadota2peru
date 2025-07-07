@@ -318,10 +318,12 @@
 
 /* Team Footer */
 .team-footer {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
   padding: 1.5rem;
   background: linear-gradient(to right, #121a25, #1a2435);
   border-top: 1px solid #2a3543;
-  text-align: center;
 }
 
 /* Buttons */
@@ -670,37 +672,64 @@
 
 /* Estilos para el mensaje de estado en el footer */
 .team-status-message {
-  background-color: #f5f5f5;
-  padding: 8px;
+  padding: 0.8rem 1rem;
   border-radius: 4px;
-  text-align: center;
-  color: #f44336;
-  font-weight: bold;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  line-height: 1.4;
 }
 
 .team-status-message i {
-  margin-right: 5px;
+  font-size: 1.1rem;
+  flex-shrink: 0;
 }
 
 /* Estilo para el mensaje de desafío recíproco */
 .reciprocal-challenge-message {
-  background-color: #fff3e0;
-  padding: 10px;
+  background-color: rgba(255, 215, 64, 0.15);
+  border-left: 3px solid #ffd740;
+  color: #ffe082;
+  padding: 0.8rem 1rem;
   border-radius: 4px;
-  border-left: 4px solid #ff9800;
-  margin: 5px 0;
   display: flex;
   align-items: center;
   justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.8rem;
 }
 
 .reciprocal-challenge-message i {
-  color: #ff9800;
-  margin-right: 8px;
+  color: #ffd740;
+  margin-right: 0.5rem;
 }
 
 .reciprocal-challenge-message button {
-  margin-left: 10px;
+  margin-left: auto;
+}
+
+/* Estilos para el mensaje de advertencia */
+.team-status-message.warning {
+  background-color: rgba(255, 145, 0, 0.15);
+  border-left: 3px solid #ff9100;
+  color: #ffd180;
+}
+
+.team-status-message.info {
+  background-color: rgba(244, 67, 54, 0.15);
+  border-left: 3px solid #f44336;
+  color: #ff8a80;
+}
+
+.team-status-message.error {
+  background-color: rgba(255, 82, 82, 0.15);
+  border-left: 3px solid #ff5252;
+  color: #ff9e80;
+}
+
+.team-status-message.warning i {
+  color: #ff6d00;
 }
 
 /* Responsive adjustments */
@@ -801,6 +830,22 @@
   .dota2-btn {
     padding: 0.6rem 1.2rem;
     font-size: 0.85rem;
+  }
+
+  .team-status-message {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+
+  .reciprocal-challenge-message {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .reciprocal-challenge-message button {
+    margin-left: 0;
+    width: 100%;
   }
 }
 

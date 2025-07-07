@@ -48,12 +48,18 @@ export class AuthService {
   // auth.service.ts (añade estos métodos)
 async setOnlineStatus(): Promise<void> {
   const userId = this.getCurrentUserId();
-  if (userId) {
-    try {
+  if (!userId) return;
+
+  try {
+    // Verificar si el documento del jugador existe
+    const playerDocRef = doc(this.firestore, `players/${userId}`);
+    const playerSnap = await getDoc(playerDocRef);
+    
+    if (playerSnap.exists()) {
       await this.playerService.updatePlayer(userId, { status: 'Activo' }).toPromise();
-    } catch (error) {
-      console.error('Error al actualizar estado a activo:', error);
     }
+  } catch (error) {
+    console.error('Error al actualizar estado a activo:', error);
   }
 }
 

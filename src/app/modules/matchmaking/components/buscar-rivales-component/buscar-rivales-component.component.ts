@@ -196,19 +196,45 @@ getTeamStatusText(status: string): string {
   }
 
   canChallenge(team: Team): boolean {
-  const basicConditions = this.isCaptain && 
-    this.currentUserTeam !== null && 
-    this.currentUserTeam.players.length >= 2 && 
-    team.players.length >= 2 &&
-    this.currentUserTeam.id !== team.id &&
-    this.currentUserTeam.division === team.division &&
-    team.status === 'active';
-  if (!basicConditions) return false;
+  // 1. El usuario debe ser capitán
+  if (!this.isCaptain) return false;
+  // 2. Debe tener un equipo
+  if (!this.currentUserTeam) return false;
+  // 3. Su equipo debe estar 'active'
+  if (this.currentUserTeam.status !== 'active') {
+    return false;
+  }
+  // 4. El equipo objetivo debe estar 'active'
+  if (team.status !== 'active') {
+    return false;
+  }
+  // 5. Ambos equipos deben tener al menos 2 jugadores
+  if (this.currentUserTeam.players.length < 2 || team.players.length < 2) {
+    return false;
+  }
+  // 6. No puede desafiar a su propio equipo
+  if (this.currentUserTeam.id === team.id) {
+    return false;
+  }
+  // 7. Ambos equipos deben estar en la misma división
+  if (this.currentUserTeam.division !== team.division) {
+    return false;
+  }
+  // 8. No debe haber un desafío recíproco pendiente
+  if (this.hasReciprocalChallenge(team)) {
+    return false;
+  }
   return true;
 }
 
   async challengeTeam(team: Team): Promise<void> {
   if (!this.currentUserTeam || !this.currentUserId) return;
+
+  // Verificación adicional por seguridad
+  if (this.currentUserTeam.status !== 'active') {
+    this.snackBar.open('Tu equipo está actualmente en partida y no puede desafiar a otros', 'Cerrar', { duration: 5000 });
+    return;
+  }
 
   try {
     // 1. Verificar si el equipo objetivo ya nos ha desafiado (nuevo check)
@@ -330,6 +356,16 @@ private sendChallenge(team: Team): void {
         this.snackBar.open('Error al enviar el desafío', 'Cerrar', { duration: 3000 });
       }
     });
+}
+
+getChallengeDisabledReason(team: Team): string {
+  if (!this.isCaptain) return 'Solo los capitanes pueden desafiar';
+  if (!this.currentUserTeam) return 'Necesitas un equipo para desafiar';
+  if (this.currentUserTeam.players.length < 2) return 'Tu equipo necesita al menos 2 jugadores';
+  if (team.players.length < 2) return 'El equipo rival necesita al menos 2 jugadores';
+  if (this.currentUserTeam.id === team.id) return 'No puedes desafiar a tu propio equipo';
+  if (this.currentUserTeam.division !== team.division) return 'Solo puedes desafiar equipos de tu misma división';
+  return 'No se puede desafiar a este equipo';
 }
 
   ngOnDestroy(): void {
