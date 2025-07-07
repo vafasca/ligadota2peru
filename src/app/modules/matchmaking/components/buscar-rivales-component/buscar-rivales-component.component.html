@@ -101,6 +101,13 @@
                   (click)="challengeTeam(team)">
             Challenge
           </button>
+
+          <div *ngIf="hasReciprocalChallenge(team)" class="reciprocal-challenge-message">
+            <i class="fas fa-exchange-alt"></i> Este equipo ya te ha desafiado
+            <button class="dota2-btn small" (click)="viewPendingChallenge(team)">
+              Ver desafío
+            </button>
+          </div>
           
           <!-- Mensaje para equipos in_game -->
           <div *ngIf="team.status === 'in_game'" class="team-status-message">
@@ -192,6 +199,13 @@
                   (click)="challengeTeam(team)">
             Challenge
           </button>
+
+          <div *ngIf="hasReciprocalChallenge(team)" class="reciprocal-challenge-message">
+            <i class="fas fa-exchange-alt"></i> Este equipo ya te ha desafiado
+            <button class="dota2-btn small" (click)="viewPendingChallenge(team)">
+              Ver desafío
+            </button>
+          </div>
           
           <!-- Mensaje para equipos in_game -->
           <div *ngIf="team.status === 'in_game'" class="team-status-message">

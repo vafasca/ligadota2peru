@@ -30,10 +30,17 @@ private challengesCollection = collection(this.firestore, 'challenges');
   }
 
   createChallenge(challenge: Omit<Challenge, 'id'>): Observable<string> {
-    return from(addDoc(this.challengesCollection, challenge)).pipe(
-      map(ref => ref.id)
-    );
-  }
+  return this.checkReciprocalChallenge(challenge.fromTeamId, challenge.toTeamId).pipe(
+    switchMap(hasReciprocalChallenge => {
+      if (hasReciprocalChallenge) {
+        throw new Error('Ya existe un desafío pendiente del equipo contrario');
+      }
+      return from(addDoc(this.challengesCollection, challenge)).pipe(
+        map(ref => ref.id)
+      );
+    })
+  );
+}
 
   updateChallenge(challengeId: string, data: Partial<Challenge>): Observable<void> {
     const challengeDocRef = doc(this.firestore, `challenges/${challengeId}`);
@@ -126,5 +133,18 @@ private challengesCollection = collection(this.firestore, 'challenges');
   });
   
   await batch.commit();
+}
+
+checkReciprocalChallenge(fromTeamId: string, toTeamId: string): Observable<boolean> {
+  const q = query(
+    this.challengesCollection,
+    where('fromTeamId', '==', toTeamId),
+    where('toTeamId', '==', fromTeamId),
+    where('status', '==', 'pending')
+  );
+
+  return from(getDocs(q)).pipe(
+    map(snapshot => !snapshot.empty)
+  );
 }
 }

@@ -13,6 +13,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { ConfirmChallengeDialogComponent } from 'src/app/shared-components/confirm-challenge-dialog/confirm-challenge-dialog.component';
 import { Challenge } from 'src/app/modules/admin/models/challenge.model';
 import { Notification } from 'src/app/modules/admin/models/notification.model';
+import { ChallengeResponseDialogComponent } from 'src/app/shared-components/challenge-response-dialog/challenge-response-dialog.component';
 
 @Component({
   selector: 'app-buscar-rivales-component',
@@ -29,6 +30,7 @@ export class BuscarRivalesComponentComponent {
   currentUserTeam: Team | null = null;
   currentUserId: string | null = null;
   isCaptain = false;
+  pendingChallenges: Challenge[] = [];
 
   rolesOrder = [
     { key: 'Hard Support', label: 'Hard Support' },
@@ -53,6 +55,7 @@ export class BuscarRivalesComponentComponent {
     this.loadCurrentUserDivision();
     this.loadTeamsRealTime();
     this.loadCurrentUserData();
+    this.loadPendingChallenges();
   }
 
   loadCurrentUserDivision(): void {
@@ -82,6 +85,17 @@ export class BuscarRivalesComponentComponent {
     error: (err) => {
       console.error('Error loading teams:', err);
     },
+  });
+}
+
+private loadPendingChallenges(): void {
+  if (!this.currentUserTeam) return;
+  
+  this.challengeService.getChallengesForTeam(this.currentUserTeam.id).subscribe({
+    next: (challenges) => {
+      this.pendingChallenges = challenges;
+    },
+    error: (err) => console.error('Error loading challenges:', err)
   });
 }
 
@@ -182,38 +196,96 @@ getTeamStatusText(status: string): string {
   }
 
   canChallenge(team: Team): boolean {
-  return this.isCaptain &&
-        this.currentUserTeam !== null &&
-        this.currentUserTeam.players.length >= 2 &&
-        team.players.length >= 2 &&
-        this.currentUserTeam.id !== team.id &&
-        this.currentUserTeam.division === team.division &&
-        team.status === 'active';
+  const basicConditions = this.isCaptain && 
+    this.currentUserTeam !== null && 
+    this.currentUserTeam.players.length >= 2 && 
+    team.players.length >= 2 &&
+    this.currentUserTeam.id !== team.id &&
+    this.currentUserTeam.division === team.division &&
+    team.status === 'active';
+  if (!basicConditions) return false;
+  return true;
 }
 
   async challengeTeam(team: Team): Promise<void> {
   if (!this.currentUserTeam || !this.currentUserId) return;
 
-  // Verificar si ya existe un desafío pendiente
-  const hasExistingChallenge = await firstValueFrom(
-    this.challengeService.checkExistingChallenge(this.currentUserTeam.id, team.id)
-  );
+  try {
+    // 1. Verificar si el equipo objetivo ya nos ha desafiado (nuevo check)
+    const hasReciprocalChallenge = await firstValueFrom(
+      this.challengeService.checkReciprocalChallenge(this.currentUserTeam.id, team.id)
+    );
 
-  if (hasExistingChallenge) {
-    this.snackBar.open('Ya has enviado un desafío a este equipo', 'Cerrar', { duration: 3000 });
-    return;
-  }
-
-  const dialogRef = this.dialog.open(ConfirmChallengeDialogComponent, {
-    width: '500px',
-    data: { teamName: team.name }
-  });
-
-  dialogRef.afterClosed().subscribe(result => {
-    if (result) {
-      this.sendChallenge(team);
+    if (hasReciprocalChallenge) {
+      this.snackBar.open(
+        `No puedes desafiar a ${team.name} porque ya te han desafiado primero. 
+        Espera su respuesta o rechaza su desafío.`, 
+        'Cerrar', 
+        { duration: 5000 }
+      );
+      return;
     }
-  });
+
+    // 2. Verificar si ya existe un desafío pendiente (check existente)
+    const hasExistingChallenge = await firstValueFrom(
+      this.challengeService.checkExistingChallenge(this.currentUserTeam.id, team.id)
+    );
+
+    if (hasExistingChallenge) {
+      this.snackBar.open('Ya has enviado un desafío a este equipo', 'Cerrar', { duration: 3000 });
+      return;
+    }
+
+    // 3. Mostrar diálogo de confirmación
+    const dialogRef = this.dialog.open(ConfirmChallengeDialogComponent, {
+      width: '500px',
+      data: { 
+        teamName: team.name,
+        teamMMR: this.getTeamTotalMMR(team.players),
+        yourTeamMMR: this.getTeamTotalMMR(this.currentUserTeam.players)
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.sendChallenge(team);
+      }
+    });
+
+  } catch (error) {
+    console.error('Error checking challenges:', error);
+    this.snackBar.open('Error al verificar desafíos existentes', 'Cerrar', { duration: 3000 });
+  }
+}
+
+hasReciprocalChallenge(team: Team): boolean {
+  // Esta es una verificación optimista del frontend
+  // La verificación real se hace en el servicio
+  return this.pendingChallenges.some(challenge => 
+    challenge.fromTeamId === team.id && 
+    challenge.toTeamId === this.currentUserTeam?.id &&
+    challenge.status === 'pending'
+  );
+}
+
+viewPendingChallenge(team: Team): void {
+  const challenge = this.pendingChallenges.find(c => 
+    c.fromTeamId === team.id && 
+    c.toTeamId === this.currentUserTeam?.id
+  );
+  
+  if (challenge) {
+    // Aquí puedes implementar la lógica para mostrar el desafío pendiente
+    this.dialog.open(ChallengeResponseDialogComponent, {
+      width: '500px',
+      data: {
+        challengeId: challenge.id,
+        fromTeamName: challenge.fromTeamName,
+        fromTeamDescription: challenge.fromTeamDescription,
+        toTeamId: challenge.toTeamId
+      }
+    });
+  }
 }
 
 private sendChallenge(team: Team): void {
