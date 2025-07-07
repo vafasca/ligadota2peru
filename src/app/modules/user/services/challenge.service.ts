@@ -1,7 +1,9 @@
 import { Injectable } from '@angular/core';
-import { Firestore, collection, addDoc, doc, updateDoc, deleteDoc, onSnapshot, query, where, getDocs, writeBatch } from '@angular/fire/firestore';
-import { Observable, from, map, switchMap } from 'rxjs';
+import { Firestore, collection, addDoc, doc, updateDoc, deleteDoc, onSnapshot, query, where, getDocs, writeBatch, getDoc } from '@angular/fire/firestore';
+import { Observable, forkJoin, from, map, switchMap } from 'rxjs';
 import { Challenge } from '../../admin/models/challenge.model';
+import { TeamService } from '../../main-menu/services/team.service';
+import { TeamAvailability } from '../../admin/models/equipos.model';
 
 @Injectable({
   providedIn: 'root'
@@ -9,7 +11,10 @@ import { Challenge } from '../../admin/models/challenge.model';
 export class ChallengeService {
 private challengesCollection = collection(this.firestore, 'challenges');
 
-  constructor(private firestore: Firestore) {}
+  constructor(
+    private firestore: Firestore,
+    private teamService: TeamService
+  ) {}
 
   checkExistingChallenge(fromTeamId: string, toTeamId: string): Observable<boolean> {
     const q = query(
@@ -60,9 +65,42 @@ private challengesCollection = collection(this.firestore, 'challenges');
   }
 
   acceptChallenge(challengeId: string): Observable<void> {
-    const challengeDocRef = doc(this.firestore, `challenges/${challengeId}`);
-    return from(updateDoc(challengeDocRef, { status: 'accepted' }));
-  }
+  const challengeDocRef = doc(this.firestore, `challenges/${challengeId}`);
+  return from(getDoc(challengeDocRef)).pipe(
+    switchMap(challengeSnapshot => {
+      if (!challengeSnapshot.exists()) {
+        throw new Error('Desafío no encontrado');
+      }
+      const challenge = challengeSnapshot.data() as Challenge;
+      // Verificar el estado de ambos equipos
+      return forkJoin([
+        this.teamService.getTeam(challenge.fromTeamId),
+        this.teamService.getTeam(challenge.toTeamId)
+      ]).pipe(
+        switchMap(([fromTeam, toTeam]) => {
+          if (!fromTeam || !toTeam) {
+            throw new Error('Uno de los equipos no existe');
+          }
+          if (fromTeam.status !== 'active' || toTeam.status !== 'active') {
+            throw new Error('Uno de los equipos no está disponible');
+          }
+          // Proceder con la aceptación
+          return from(updateDoc(challengeDocRef, { status: 'accepted' })).pipe(
+            switchMap(() => {
+              const updateFromTeam = this.teamService.updateTeam(challenge.fromTeamId, {
+                status: TeamAvailability.InGame
+              });
+              const updateToTeam = this.teamService.updateTeam(challenge.toTeamId, {
+                status: TeamAvailability.InGame
+              });
+              return Promise.all([updateFromTeam, updateToTeam]).then(() => {});
+            })
+          );
+        })
+      );
+    })
+  );
+}
 
   rejectChallenge(challengeId: string): Observable<void> {
     const challengeDocRef = doc(this.firestore, `challenges/${challengeId}`);

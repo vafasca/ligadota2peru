@@ -39,6 +39,7 @@ constructor(
     },
     error: (err) => {
       console.error('Error accepting challenge:', err);
+      // Mostrar mensaje de error al usuario
       this.dialogRef.close(false);
     }
   });

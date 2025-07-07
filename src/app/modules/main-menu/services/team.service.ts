@@ -197,6 +197,11 @@ getUserTeam(userId: string): Observable<Team | null> {
   });
 }
 
+finishGame(teamId: string): Observable<void> {
+  const teamDocRef = doc(this.firestore, `teams/${teamId}`);
+  return from(updateDoc(teamDocRef, { status: 'active' }));
+}
+
   private handleError(error: any): Observable<never> {
     console.error('Error in TeamService:', error);
     return throwError(() => new Error('An error occurred'));
