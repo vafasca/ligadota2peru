@@ -4,6 +4,7 @@ export interface Challenge {
     id?: string;
     fromTeamId: string;
     fromTeamName: string;
+    fromTeamDescription: string;
     toTeamId: string;
     toTeamName: string;
     status: 'pending' | 'accepted' | 'rejected' | 'canceled';

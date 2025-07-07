@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { Firestore, collection, addDoc, doc, updateDoc, onSnapshot, query, where } from '@angular/fire/firestore';
-import { from, map, Observable } from 'rxjs';
+import { Firestore, collection, addDoc, doc, updateDoc, onSnapshot, query, where, getDocs } from '@angular/fire/firestore';
+import { from, map, Observable, switchMap } from 'rxjs';
 import { Notification } from '../modules/admin/models/notification.model'; // Adjust the import path as necessary
 
 @Injectable({
@@ -35,9 +35,28 @@ private notificationsCollection = collection(this.firestore, 'notifications');
     return from(updateDoc(notificationDocRef, { read: true }));
   }
 
-  createNotification(notification: Omit<Notification, 'id'>): Observable<string> {
-  return from(addDoc(this.notificationsCollection, notification)).pipe(
-    map(docRef => docRef.id)
+  createNotification(notification: Omit<Notification, 'id'> & { description?: string }): Observable<string> {
+    return from(addDoc(this.notificationsCollection, notification)).pipe(
+      map(docRef => docRef.id)
+    );
+}
+
+markAllAsReadForChallenge(teamId: string): Observable<void> {
+  const q = query(
+    this.notificationsCollection,
+    where('userId', '==', teamId),
+    where('type', '==', 'challenge'),
+    where('read', '==', false)
+  );
+
+  return from(getDocs(q)).pipe(
+    switchMap(snapshot => {
+      const batchPromises = snapshot.docs.map(doc => {
+        return updateDoc(doc.ref, { read: true });
+      });
+      return Promise.all(batchPromises);
+    }),
+    map(() => undefined)
   );
 }
 }

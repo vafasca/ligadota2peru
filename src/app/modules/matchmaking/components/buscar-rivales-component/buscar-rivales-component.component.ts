@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
-import { Subscription } from 'rxjs';
+import { firstValueFrom, Subscription } from 'rxjs';
 import { Team, TeamPlayer } from 'src/app/modules/admin/models/equipos.model';
 import { PlayerDivision } from 'src/app/modules/admin/models/jugador.model';
 import { PlayerService } from 'src/app/modules/admin/services/player.service';
@@ -180,48 +180,38 @@ export class BuscarRivalesComponentComponent {
            this.currentUserTeam.division === team.division;
   }
 
-  challengeTeam(team: Team): void {
-  console.log('challengeTeam() llamado');
-  console.log('currentUserTeam:', this.currentUserTeam);
-  console.log('team:', team);
-  console.log('isCaptain:', this.isCaptain);
+  async challengeTeam(team: Team): Promise<void> {
+  if (!this.currentUserTeam || !this.currentUserId) return;
 
-  if (!this.currentUserTeam) {
-    console.warn('No tienes equipo asignado.');
+  // Verificar si ya existe un desafío pendiente
+  const hasExistingChallenge = await firstValueFrom(
+    this.challengeService.checkExistingChallenge(this.currentUserTeam.id, team.id)
+  );
+
+  if (hasExistingChallenge) {
+    this.snackBar.open('Ya has enviado un desafío a este equipo', 'Cerrar', { duration: 3000 });
     return;
   }
 
-  if (!this.canChallenge(team)) {
-    console.warn('No puedes desafiar a este equipo por estas razones:');
-    console.log('Es capitán?', this.isCaptain);
-    console.log('Tiene equipo?', !!this.currentUserTeam);
-    console.log('Equipo propio tiene >=2 jugadores?', this.currentUserTeam.players.length >= 2);
-    console.log('Equipo rival tiene >=2 jugadores?', team.players.length >= 2);
-    console.log('Son equipos diferentes?', this.currentUserTeam.id !== team.id);
-    console.log('Misma división?', this.currentUserTeam.division === team.division);
-    return;
-  }
-
-  console.log('✅ Puedes desafiar al equipo. Abriendo diálogo...');
   const dialogRef = this.dialog.open(ConfirmChallengeDialogComponent, {
     width: '500px',
     data: { teamName: team.name }
   });
 
   dialogRef.afterClosed().subscribe(result => {
-    console.log('Resultado del diálogo:', result);
     if (result) {
       this.sendChallenge(team);
     }
   });
 }
 
-  private sendChallenge(team: Team): void {
+private sendChallenge(team: Team): void {
     if (!this.currentUserTeam || !this.currentUserId) return;
 
     const challenge: Omit<Challenge, 'id'> = {
       fromTeamId: this.currentUserTeam.id,
       fromTeamName: this.currentUserTeam.name,
+      fromTeamDescription: this.currentUserTeam.description || '', // Añadir descripción
       toTeamId: team.id,
       toTeamName: team.name,
       status: 'pending',
@@ -238,6 +228,7 @@ export class BuscarRivalesComponentComponent {
           userId: team.captainId,
           title: 'Nuevo Desafío',
           message: `${this.currentUserTeam?.name} te ha desafiado!`,
+          description: this.currentUserTeam?.description || '',
           type: 'challenge',
           challengeId: challengeId,
           read: false,
@@ -256,7 +247,7 @@ export class BuscarRivalesComponentComponent {
         this.snackBar.open('Error al enviar el desafío', 'Cerrar', { duration: 3000 });
       }
     });
-  }
+}
 
   ngOnDestroy(): void {
     if (this.teamSubscription) {

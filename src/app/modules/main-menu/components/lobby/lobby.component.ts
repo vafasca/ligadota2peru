@@ -4,7 +4,7 @@ import { map, Observable, Subscription, throwError } from 'rxjs';
 import { Player, PlayerAvailability, PlayerDivision, PlayerRole } from 'src/app/modules/admin/models/jugador.model';
 import { Auth, onAuthStateChanged, signOut } from '@angular/fire/auth';
 import { PlayerService } from 'src/app/modules/admin/services/player.service';
-import { Team } from 'src/app/modules/admin/models/equipos.model';
+import { Team, TeamAvailability } from 'src/app/modules/admin/models/equipos.model';
 import { MatDialog } from '@angular/material/dialog';
 import { CreateTeamDialogComponent } from '../create-team-dialog/create-team-dialog.component';
 import { AddPlayerDialogComponent } from '../add-player-dialog/add-player-dialog.component';
@@ -388,7 +388,7 @@ getDivisionName(division: PlayerDivision): string {
       category: this.player.category,
       createdAt: new Date(),
       description: teamData.description,
-      status: 'active',
+      status: TeamAvailability.Active,
       division: this.currentUserDivision
     };
 

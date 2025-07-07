@@ -21,6 +21,13 @@ export interface Team {
   createdAt: Date;
   logo?: string;
   description?: string;
-  status: 'active' | 'inactive' | 'disbanded';
+  status: TeamAvailability;
   division?: PlayerDivision;
+}
+
+export enum TeamAvailability {
+  Active = 'active',
+  Inactive = 'inactive',
+  Disbanded = 'disbanded',
+  InGame = 'in_game'
 }

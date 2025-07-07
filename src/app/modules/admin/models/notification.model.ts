@@ -3,6 +3,7 @@ export interface Notification {
     userId: string;
     title: string;
     message: string;
+    description?: string;
     type: 'challenge' | 'system';
     challengeId?: string;
     read: boolean;

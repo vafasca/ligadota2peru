@@ -56,7 +56,10 @@ notifications: any[] = [];
       width: '500px',
       data: {
         challengeId: notification.challengeId,
-        message: notification.message
+        message: notification.message,
+        fromTeamName: notification.message.split(' te ha desafiado!')[0], // Extrae el nombre del equipo del mensaje
+        fromTeamDescription: notification.description,
+        toTeamId: notification.userId
       }
     });
 
@@ -65,7 +68,7 @@ notifications: any[] = [];
         this.markAsRead(notification.id);
       }
     });
-  }
+}
 
   markAsRead(notificationId: string): void {
     this.notificationService.markAsRead(notificationId).subscribe({
