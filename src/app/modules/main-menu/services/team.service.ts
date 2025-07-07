@@ -197,6 +197,7 @@ getUserTeam(userId: string): Observable<Team | null> {
   });
 }
 
+//TERMINAR GAME CAMBIA ESTADO A ACTIVO
 finishGame(teamId: string): Observable<void> {
   const teamDocRef = doc(this.firestore, `teams/${teamId}`);
   return from(updateDoc(teamDocRef, { status: 'active' }));

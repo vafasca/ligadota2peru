@@ -34,9 +34,22 @@
   <!-- Contenido de División 1 -->
   <div class="division-content" *ngIf="activeDivision === 'div1'">
     <div class="dota2-teams-grid" *ngIf="teamsDiv1.length > 0; else noTeams">
-      <div class="dota2-team-card" *ngFor="let team of teamsDiv1" 
-           [ngClass]="{'full-team': team.players.length >= 5}"
+      <div class="dota2-team-card" 
+           *ngFor="let team of teamsDiv1" 
+           [ngClass]="{
+             'full-team': team.players.length >= 5,
+             'team-in-game': team.status === 'in_game',
+             'team-active': team.status === 'active',
+             'team-inactive': team.status === 'inactive',
+             'team-disbanded': team.status === 'disbanded'
+           }"
            [attr.data-division]="'division1'">
+        
+        <!-- Banner de estado -->
+        <div class="team-status-banner" *ngIf="team.status !== 'active'">
+          {{ getTeamStatusText(team.status) }}
+        </div>
+
         <div class="team-card-header">
           <div class="team-badge">
             <img src="../../../../../assets/add_icon.png" alt="Team Logo" class="team-logo">
@@ -82,16 +95,29 @@
         </div>
 
         <div class="team-footer">
-  <button 
-    class="dota2-btn primary" 
-    *ngIf="canChallenge(team)"
-    (click)="challengeTeam(team)">
-    Challenge
-  </button>
-  <button class="dota2-btn disabled" *ngIf="team.players.length < 2">
-    Team Incompleto
-  </button>
-</div>
+          <!-- Botón normal para equipos activos -->
+          <button *ngIf="team.status === 'active' && canChallenge(team)" 
+                  class="dota2-btn primary" 
+                  (click)="challengeTeam(team)">
+            Challenge
+          </button>
+          
+          <!-- Mensaje para equipos in_game -->
+          <div *ngIf="team.status === 'in_game'" class="team-status-message">
+            <i class="fas fa-gamepad"></i> En partida - No disponible
+          </div>
+          
+          <!-- Mensaje para otros estados -->
+          <div *ngIf="team.status !== 'active' && team.status !== 'in_game'" 
+               class="team-status-message">
+            {{ getTeamStatusText(team.status) | uppercase }}
+          </div>
+          
+          <!-- Mensaje para equipos incompletos -->
+          <button *ngIf="team.players.length < 2" class="dota2-btn disabled">
+            Team Incompleto
+          </button>
+        </div>
       </div>
     </div>
   </div>
@@ -99,9 +125,22 @@
   <!-- Contenido de División 2 -->
   <div class="division-content" *ngIf="activeDivision === 'div2'">
     <div class="dota2-teams-grid" *ngIf="teamsDiv2.length > 0; else noTeams">
-      <div class="dota2-team-card" *ngFor="let team of teamsDiv2" 
-           [ngClass]="{'full-team': team.players.length >= 5}"
+      <div class="dota2-team-card" 
+           *ngFor="let team of teamsDiv2" 
+           [ngClass]="{
+             'full-team': team.players.length >= 5,
+             'team-in-game': team.status === 'in_game',
+             'team-active': team.status === 'active',
+             'team-inactive': team.status === 'inactive',
+             'team-disbanded': team.status === 'disbanded'
+           }"
            [attr.data-division]="'division2'">
+        
+        <!-- Banner de estado -->
+        <div class="team-status-banner" *ngIf="team.status !== 'active'">
+          {{ getTeamStatusText(team.status) }}
+        </div>
+
         <div class="team-card-header">
           <div class="team-badge">
             <img src="../../../../../assets/add_icon.png" alt="Team Logo" class="team-logo">
@@ -147,16 +186,29 @@
         </div>
 
         <div class="team-footer">
-  <button 
-    class="dota2-btn primary" 
-    *ngIf="canChallenge(team)"
-    (click)="challengeTeam(team)">
-    Challenge
-  </button>
-  <button class="dota2-btn disabled" *ngIf="team.players.length < 2">
-    Team Incompleto
-  </button>
-</div>
+          <!-- Botón normal para equipos activos -->
+          <button *ngIf="team.status === 'active' && canChallenge(team)" 
+                  class="dota2-btn primary" 
+                  (click)="challengeTeam(team)">
+            Challenge
+          </button>
+          
+          <!-- Mensaje para equipos in_game -->
+          <div *ngIf="team.status === 'in_game'" class="team-status-message">
+            <i class="fas fa-gamepad"></i> En partida - No disponible
+          </div>
+          
+          <!-- Mensaje para otros estados -->
+          <div *ngIf="team.status !== 'active' && team.status !== 'in_game'" 
+               class="team-status-message">
+            {{ getTeamStatusText(team.status) | uppercase }}
+          </div>
+          
+          <!-- Mensaje para equipos incompletos -->
+          <button *ngIf="team.players.length < 2" class="dota2-btn disabled">
+            Team Incompleto
+          </button>
+        </div>
       </div>
     </div>
   </div>
@@ -165,8 +217,14 @@
     <div class="dota2-empty-state">
       <img src="../../../../../assets/add_icon.png" alt="No teams" class="empty-icon">
       <h3>El campo de batalla está tranquilo...</h3>
-      <p *ngIf="activeDivision === 'div1'">No hay equipos disponibles en División 1 actualmente</p>
-      <p *ngIf="activeDivision === 'div2'">No hay equipos disponibles en División 2 actualmente</p>
+      <p *ngIf="activeDivision === 'div1'">
+        No hay equipos disponibles en División 1 actualmente.
+        {{ teams.length !== teamsDiv1.length ? '(Algunos equipos están en partida)' : '' }}
+      </p>
+      <p *ngIf="activeDivision === 'div2'">
+        No hay equipos disponibles en División 2 actualmente.
+        {{ teams.length !== teamsDiv2.length ? '(Algunos equipos están en partida)' : '' }}
+      </p>
       <button class="dota2-btn primary" (click)="goToLobby()">Crea tu propio equipo</button>
     </div>
   </ng-template>

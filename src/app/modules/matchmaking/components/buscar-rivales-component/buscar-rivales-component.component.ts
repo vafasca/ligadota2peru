@@ -69,20 +69,31 @@ export class BuscarRivalesComponentComponent {
   }
 
   loadTeamsRealTime(): void {
-    this.teamSubscription = this.teamService.getTeams().subscribe({
-      next: (teams) => {
-        this.teamsDiv1 = teams.filter(
-          (team) => team.division === PlayerDivision.Division1
-        );
-        this.teamsDiv2 = teams.filter(
-          (team) => team.division === PlayerDivision.Division2
-        );
-      },
-      error: (err) => {
-        console.error('Error loading teams:', err);
-      },
-    });
-  }
+  this.teamSubscription = this.teamService.getTeams().subscribe({
+    next: (teams) => {
+      // Mostrar TODOS los equipos, no filtrar por status
+      this.teamsDiv1 = teams.filter(
+        (team) => team.division === PlayerDivision.Division1
+      );
+      this.teamsDiv2 = teams.filter(
+        (team) => team.division === PlayerDivision.Division2
+      );
+    },
+    error: (err) => {
+      console.error('Error loading teams:', err);
+    },
+  });
+}
+
+getTeamStatusText(status: string): string {
+  const statusTexts: Record<string, string> = {
+    'active': 'Disponible',
+    'in_game': 'En partida',
+    'inactive': 'Inactivo',
+    'disbanded': 'Disuelto'
+  };
+  return statusTexts[status] || status;
+}
 
   goToLobby(): void {
     this.router.navigate(['/lobby']);
@@ -171,14 +182,14 @@ export class BuscarRivalesComponentComponent {
   }
 
   canChallenge(team: Team): boolean {
-    // Modo prueba: mínimo 2 jugadores para desafiar
-    return this.isCaptain && 
-           this.currentUserTeam !== null && 
-           this.currentUserTeam.players.length >= 2 && 
-           team.players.length >= 2 &&
-           this.currentUserTeam.id !== team.id &&
-           this.currentUserTeam.division === team.division;
-  }
+  return this.isCaptain &&
+        this.currentUserTeam !== null &&
+        this.currentUserTeam.players.length >= 2 &&
+        team.players.length >= 2 &&
+        this.currentUserTeam.id !== team.id &&
+        this.currentUserTeam.division === team.division &&
+        team.status === 'active';
+}
 
   async challengeTeam(team: Team): Promise<void> {
   if (!this.currentUserTeam || !this.currentUserId) return;

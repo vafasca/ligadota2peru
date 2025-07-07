@@ -15,7 +15,7 @@
             *ngIf="isOwner">
             {{player.status}}
           </button>
-            <app-notifications></app-notifications>
+            <app-notifications *ngIf="isOwner"></app-notifications>
           <button class="dota-button logout-button" *ngIf="isOwner" (click)="logout()">
             Salir
           </button>
