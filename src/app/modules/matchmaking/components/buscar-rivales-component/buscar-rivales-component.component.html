@@ -125,6 +125,13 @@
     <span *ngIf="!canChallenge(team) && team.status === 'active' && currentUserTeam?.status !== 'in_game'">
       {{ getChallengeDisabledReason(team) }}
     </span>
+
+    <button *ngIf="!currentUserId" 
+            class="dota2-btn small" 
+            (click)="goToRegister()"
+            matTooltip="Crea una cuenta para comenzar a jugar">
+      Unete ahora
+    </button>
     
     <span *ngIf="hasReciprocalChallenge(team)">
       <i class="fas fa-exchange-alt"></i> Este equipo ya te ha desafiado
@@ -233,6 +240,13 @@
     <span *ngIf="!canChallenge(team) && team.status === 'active' && currentUserTeam?.status !== 'in_game'">
       {{ getChallengeDisabledReason(team) }}
     </span>
+
+    <button *ngIf="!currentUserId" 
+            class="dota2-btn small" 
+            (click)="goToRegister()"
+            matTooltip="Crea una cuenta para comenzar a jugar">
+      Unete ahora
+    </button>
     
     <span *ngIf="hasReciprocalChallenge(team)">
       <i class="fas fa-exchange-alt"></i> Este equipo ya te ha desafiado

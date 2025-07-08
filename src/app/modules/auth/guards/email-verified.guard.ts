@@ -7,25 +7,26 @@ import { from } from 'rxjs';
 import { mergeMap } from 'rxjs/operators';
 
 export const emailVerifiedGuard: CanActivateFn = (route, state) => {
-  const auth = inject(Auth);
-  const router = inject(Router);
-  const user = auth.currentUser;
+  return true; // Temporarily allow access to all routes
+  // const auth = inject(Auth);
+  // const router = inject(Router);
+  // const user = auth.currentUser;
 
-  if (!user) {
-    return of(router.createUrlTree(['/login']));
-  }
+  // if (!user) {
+  //   return of(router.createUrlTree(['/login']));
+  // }
 
-  return from(user.reload()).pipe(
-    map(() => {
-      return user.emailVerified 
-        ? true 
-        : router.createUrlTree(['/login/verificacion'], {
-            queryParams: { email: user.email }
-          });
-    }),
-    catchError(error => {
-      console.error('Error:', error);
-      return of(router.createUrlTree(['/error']));
-    })
-  );
+  // return from(user.reload()).pipe(
+  //   map(() => {
+  //     return user.emailVerified 
+  //       ? true 
+  //       : router.createUrlTree(['/login/verificacion'], {
+  //           queryParams: { email: user.email }
+  //         });
+  //   }),
+  //   catchError(error => {
+  //     console.error('Error:', error);
+  //     return of(router.createUrlTree(['/error']));
+  //   })
+  // );
 };

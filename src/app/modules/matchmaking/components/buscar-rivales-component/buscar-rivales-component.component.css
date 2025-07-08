@@ -732,6 +732,20 @@
   color: #ff6d00;
 }
 
+/* REGISTER TO JOIN */
+.team-status-message.register-prompt {
+  background-color: rgba(100, 181, 246, 0.15);
+  border-left: 3px solid #64b5f6;
+  color: #90caf9;
+}
+
+.team-status-message.register-prompt button {
+  margin-left: 0.5rem;
+  background: linear-gradient(to right, #64b5f6, #42a5f5);
+  color: #0d47a1;
+  border: none;
+}
+
 /* Responsive adjustments */
 @media (max-width: 1200px) {
   .dota2-teams-grid {

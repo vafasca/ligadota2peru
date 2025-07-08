@@ -34,11 +34,11 @@ export class AuthService {
       
       if (user) {
         // console.log('[Auth] Usuario autenticado:', user.email);
-        if (!user.emailVerified && !this.isWaitingVerificationPage()) {
-          this.router.navigate(['/login/verificacion'], {
-            state: { email: user.email }
-          });
-        }
+        // if (!user.emailVerified && !this.isWaitingVerificationPage()) {
+        //   this.router.navigate(['/login/verificacion'], {
+        //     state: { email: user.email }
+        //   });
+        // }
       } else {
         // console.log('[Auth] Usuario no autenticado');
       }
@@ -145,16 +145,16 @@ async setOfflineStatus(): Promise<void> {
     const userCredential = await signInWithEmailAndPassword(this.auth, email, password);
     const user = userCredential.user;
     
-    if (!user.emailVerified) {
-      await signOut(this.auth);
-      const message = 'Por favor verifica tu correo electrónico antes de iniciar sesión';
-      return { 
-        success: false, 
-        needsVerification: true, 
-        user,
-        message 
-      };
-    }
+    // if (!user.emailVerified) {
+    //   await signOut(this.auth);
+    //   const message = 'Por favor verifica tu correo electrónico antes de iniciar sesión';
+    //   return { 
+    //     success: false, 
+    //     needsVerification: true, 
+    //     user,
+    //     message 
+    //   };
+    // }
     
     // Obtener el idDota del jugador
     const playerDocRef = doc(this.firestore, `players/${user.uid}`);

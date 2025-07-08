@@ -181,15 +181,15 @@ export class RegisterComponent {
       accessCode
     );
     
-    await sendEmailVerification(userCredential.user);
-    await signOut(this.auth);
+    // await sendEmailVerification(userCredential.user);
+    // await signOut(this.auth);
 
     // Guarda la división en sessionStorage
     sessionStorage.setItem('userDivision', division);
     
     this.showSuccess('¡Registro exitoso! Hemos enviado un correo de verificación');
     
-    this.router.navigate(['/login/verificacion'], {
+    this.router.navigate(['/login'], {
       state: {
         email: email,
         fromRegistration: true,
