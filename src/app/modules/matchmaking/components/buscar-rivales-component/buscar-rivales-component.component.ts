@@ -209,7 +209,7 @@ getTeamStatusText(status: string): string {
     return false;
   }
   // 5. Ambos equipos deben tener al menos 2 jugadores
-  if (this.currentUserTeam.players.length < 2 || team.players.length < 2) {
+  if (this.currentUserTeam.players.length < 5 || team.players.length < 5) {
     return false;
   }
   // 6. No puede desafiar a su propio equipo
@@ -364,9 +364,9 @@ getChallengeDisabledReason(team: Team): string {
   }
   if (!this.isCaptain) return 'Solo los capitanes pueden desafiar';
   if (!this.currentUserTeam) return '¡Forma tu equipo para comenzar a desafiar a otros!';
-  if (this.currentUserTeam.players.length < 2) return 'Tu equipo necesita al menos 2 jugadores para desafiar';
-  if (team.players.length < 2) return 'El equipo rival necesita al menos 2 jugadores';
   if (this.currentUserTeam.id === team.id) return 'No puedes desafiar a tu propio equipo';
+  if (this.currentUserTeam.players.length < 5) return 'Tu equipo necesita 5 jugadores para desafiar';
+  if (team.players.length < 5) return 'El equipo rival necesita 5 jugadores';
   if (this.currentUserTeam.division !== team.division) return 'Solo puedes desafiar equipos de tu misma división';
   return 'No se puede desafiar a este equipo';
 }
