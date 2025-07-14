@@ -40,6 +40,13 @@ const routes: Routes = [
         (m) => m.HomepageModule
       ),
   },
+  {
+    path: 'tournament',
+    loadChildren: () =>
+      import('./modules/tournament/tournament.module').then(
+        (m) => m.TournamentModule
+      ),
+  },
 ];
 
 @NgModule({
