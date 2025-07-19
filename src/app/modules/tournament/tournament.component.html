@@ -1,63 +1,67 @@
+<!-- tournament.component.html -->
 <div class="tournament-container">
-      <div class="header">
-        <h1>Tournament Bracket Generator</h1>
-        <div class="controls">
-          <div class="input-group">
-            <label for="teamCount">Number of Teams:</label>
-            <select id="teamCount" [(ngModel)]="selectedTeamCount" (change)="generateBracket()">
-              <option value="4">4 Teams</option>
-              <option value="8">8 Teams</option>
-              <option value="16">16 Teams</option>
-              <option value="32">32 Teams</option>
-            </select>
-          </div>
-          <button (click)="generateBracket()" class="generate-btn">Generate Bracket</button>
-          <button (click)="randomizeScores()" class="randomize-btn">Simulate Results</button>
-        </div>
+  <div class="header">
+    <h1>Tournament Bracket Generator</h1>
+    <div class="controls">
+      <div class="input-group">
+        <label for="teamCount">Number of Teams:</label>
+        <select id="teamCount" [(ngModel)]="selectedTeamCount" (change)="generateBracket()">
+          <option value="4">4 Teams</option>
+          <option value="8">8 Teams</option>
+          <option value="16">16 Teams</option>
+          <option value="32">32 Teams</option>
+        </select>
       </div>
+      <button (click)="generateBracket()" class="generate-btn">Generate Bracket</button>
+      <button (click)="randomizeAllMatches()" class="randomize-btn">Simulate Results</button>
+    </div>
+  </div>
 
-      <div class="bracket-container" *ngIf="matches.length > 0">
-        <div class="round" *ngFor="let round of rounds; let roundIndex = index">
-          <div class="round-header">
-            <h3>{{ getRoundName(roundIndex) }}</h3>
+  <div class="bracket-container" *ngIf="matches.length > 0">
+    <div class="round" *ngFor="let round of rounds">
+      <div class="round-header">
+        <h3>{{ getRoundName(round) }}</h3>
+      </div>
+      <div class="matches">
+        <div 
+          class="match" 
+          *ngFor="let match of getMatchesForRound(round)"
+          [class.completed]="match.isCompleted"
+          (click)="simulateMatch(match)"
+        >
+          <div class="match-header">
+            <span class="match-label">PARTIDA {{ match.id.split('-')[3] }}</span>
           </div>
-          <div class="matches">
-            <div 
-              class="match" 
-              *ngFor="let match of getMatchesForRound(roundIndex + 1)"
-              [class.completed]="match.winner"
-            >
-              <div class="match-header">
-                <span class="match-label">PARTIDA {{ match.id }}</span>
+          <div class="teams">
+            <div class="team" [class.winner]="match.winner === match.team1">
+            <div class="team-info">
+              <img [src]="match.team1?.icon || 'assets/default-team-logo.png'" class="team-logo" *ngIf="match.team1?.icon">
+              <span class="team-icon" *ngIf="!match.team1?.icon">{{ match.team1?.icon || '❓' }}</span>
+              <span class="team-name">{{ match.team1?.name || 'TBD' }}</span>
+            </div>
+            <span class="score">{{ match.score1 ?? '' }}</span>
+          </div>
+            <div class="team" [class.winner]="match.winner === match.team2">
+              <div class="team-info">
+                <img [src]="match.team2?.icon || 'assets/default-team-logo.png'" class="team-logo" *ngIf="match.team2?.icon">
+                <span class="team-icon" *ngIf="!match.team2?.icon">{{ match.team2?.icon || '❓' }}</span>
+                <span class="team-name">{{ match.team2?.name || 'TBD' }}</span>
               </div>
-              <div class="teams">
-                <div class="team" [class.winner]="match.winner && match.team1 && match.winner.name === match.team1.name">
-                  <div class="team-info">
-                    <span class="team-icon">{{ getTeamIcon(match.team1?.name) }}</span>
-                    <span class="team-name">{{ match.team1?.name || 'TBD' }}</span>
-                  </div>
-                  <span class="score">{{ match.team1?.score ?? '' }}</span>
-                </div>
-                <div class="team" [class.winner]="match.winner && match.team2 && match.winner.name === match.team2.name">
-                  <div class="team-info">
-                    <span class="team-icon">{{ getTeamIcon(match.team2?.name) }}</span>
-                    <span class="team-name">{{ match.team2?.name || 'TBD' }}</span>
-                  </div>
-                  <span class="score">{{ match.team2?.score ?? '' }}</span>
-                </div>
-              </div>
+              <span class="score">{{ match.score2 ?? '' }}</span>
             </div>
           </div>
         </div>
       </div>
+    </div>
+  </div>
 
-      <div class="champion" *ngIf="champion">
-        <div class="champion-container">
-          <h2>🏆 CHAMPION</h2>
-          <div class="champion-team">
-            <span class="champion-icon">{{ getTeamIcon(champion.name) }}</span>
-            <span class="champion-name">{{ champion.name }}</span>
-          </div>
-        </div>
+  <div class="champion" *ngIf="champion">
+    <div class="champion-container">
+      <h2>🏆 CHAMPION</h2>
+      <div class="champion-team">
+        <span class="champion-icon">{{ champion.icon }}</span>
+        <span class="champion-name">{{ champion.name }}</span>
       </div>
     </div>
+  </div>
+</div>

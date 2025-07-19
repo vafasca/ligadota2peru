@@ -752,6 +752,10 @@ getMMRClass(totalMMR: number): string {
   return totalMMR > 50000 ? 'elite' : '';
 }
 
+goToTournaments() {
+  this.router.navigate(['/tournaments']);
+}
+
   ngOnDestroy(): void {
     this.authSubscription.unsubscribe();
     if (this.playersSub) this.playersSub.unsubscribe();

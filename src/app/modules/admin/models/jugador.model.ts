@@ -1,5 +1,5 @@
 // player.model.ts
-import { Match } from "./match.model";
+import { Match } from "./match2.model";
 
 export interface Player {
   uid: string;

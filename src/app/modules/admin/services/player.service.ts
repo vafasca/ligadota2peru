@@ -22,7 +22,7 @@ import {
 } from '@angular/fire/firestore';
 import { Player, PlayerDivision } from '../models/jugador.model';
 import { catchError, from, map, Observable, of, switchMap, tap, throwError } from 'rxjs';
-import { Match } from '../models/match.model';
+import { Match } from '../models/match2.model';
 import { Team } from '../models/equipos.model';
 
 

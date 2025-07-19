@@ -2,7 +2,7 @@ import { Component, ElementRef, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { Player, PlayerDivision, PlayerRole } from 'src/app/modules/admin/models/jugador.model';
-import { Match } from 'src/app/modules/admin/models/match.model';
+import { Match } from 'src/app/modules/admin/models/match2.model';
 import { PlayerService } from 'src/app/modules/admin/services/player.service';
 import { AuthService } from 'src/app/modules/auth/services/auth.service';
 import { NotificationService } from 'src/app/shared-services/notification.service';
