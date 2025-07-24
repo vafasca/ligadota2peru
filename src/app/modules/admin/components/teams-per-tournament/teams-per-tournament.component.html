@@ -1,0 +1,133 @@
+<div class="tournament-teams-container">
+  <!-- Header -->
+  <div class="tournament-header">
+    <button class="back-button" (click)="goBack()">
+      <i class="fas fa-arrow-left"></i> Volver
+    </button>
+    <div class="header-content">
+      <h1>{{ tournamentName }}</h1>
+      <p class="subtitle">Gestión de Equipos</p>
+    </div>
+    <div class="tournament-meta">
+      <span class="meta-item"><i class="fas fa-trophy"></i> {{ acceptedTeams.length }} Equipos</span>
+      <span class="meta-item"><i class="fas fa-clock"></i> {{ pendingTeams.length }} Solicitudes</span>
+      <span class="meta-item"><i class="fas fa-coins"></i> $1,000,000</span>
+    </div>
+  </div>
+
+  <!-- Tabs -->
+  <div class="teams-tabs">
+    <button 
+      [class.active]="activeTab === 'accepted'" 
+      (click)="activeTab = 'accepted'">
+      <i class="fas fa-check-circle"></i> Equipos Aceptados
+      <span class="badge">{{ acceptedTeams.length }}</span>
+    </button>
+    <button 
+      [class.active]="activeTab === 'pending'" 
+      (click)="activeTab = 'pending'">
+      <i class="fas fa-clock"></i> Solicitudes Pendientes
+      <span class="badge">{{ pendingTeams.length }}</span>
+    </button>
+  </div>
+
+  <!-- Teams Grid -->
+  <div class="teams-container">
+    <!-- Accepted Teams Tab -->
+    <div *ngIf="activeTab === 'accepted'" class="teams-list">
+      <div *ngFor="let team of acceptedTeams" class="team-card">
+        <div class="team-header">
+          <div class="team-logo {{ team.logo }}"></div>
+          <div class="team-info">
+            <h3>{{ team.name }}</h3>
+            <div class="team-stats">
+              <span><i class="fas fa-bolt"></i> {{ team.mmr }} MMR</span>
+              <span><i class="fas fa-trophy"></i> {{ team.wins }}W - {{ team.losses }}L</span>
+              <span><i class="fas fa-calendar"></i> {{ team.joinDate }}</span>
+            </div>
+          </div>
+          <button class="notes-button" (click)="openNotesDialog(team)">
+            <i class="fas fa-edit"></i> Notas
+          </button>
+        </div>
+        
+        <div class="team-players">
+          <h4>Jugadores</h4>
+          <div class="players-container">
+            <div class="players-grid">
+              <div *ngFor="let player of team.players" class="player-badge">
+                <div class="player-info">
+                  <!-- <img [src]="player.avatar" class="player-avatar" alt="{{ player.name }}"> -->
+                  <div class="player-details">
+                    <span class="player-name">{{ player.name }}</span>
+                    <span class="player-mmr">{{ player.mmr }} MMR</span>
+                    <span class="player-role">{{ player.role }}</span>
+                  </div>
+                </div>
+                <button class="view-profile" (click)="viewPlayerProfile(player.id); $event.stopPropagation()">
+                  <i class="fas fa-external-link-alt"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="team-actions">
+          <button class="action-button danger" (click)="removeTeam(team.id)">
+            <i class="fas fa-user-minus"></i> Eliminar Equipo
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Pending Teams Tab -->
+    <div *ngIf="activeTab === 'pending'" class="teams-list">
+      <div *ngFor="let team of pendingTeams" class="team-card">
+        <div class="team-header">
+          <div class="team-logo {{ team.logo }}"></div>
+          <div class="team-info">
+            <h3>{{ team.name }}</h3>
+            <div class="team-stats">
+              <span><i class="fas fa-bolt"></i> {{ team.mmr }} MMR</span>
+              <span><i class="fas fa-trophy"></i> {{ team.wins }}W - {{ team.losses }}L</span>
+              <span><i class="fas fa-calendar"></i> {{ team.joinDate }}</span>
+            </div>
+          </div>
+          <button class="notes-button" (click)="openNotesDialog(team)">
+            <i class="fas fa-edit"></i> Notas
+          </button>
+        </div>
+        
+        <div class="team-players">
+          <h4>Jugadores</h4>
+          <div class="players-container">
+            <div class="players-grid">
+              <div *ngFor="let player of team.players" class="player-badge">
+                <div class="player-info">
+                  <!-- <img [src]="player.avatar" class="player-avatar" alt="{{ player.name }}"> -->
+                  <div class="player-details">
+                    <span class="player-name">{{ player.name }}</span>
+                    <span class="player-mmr">{{ player.mmr }} MMR</span>
+                    <span class="player-role">{{ player.role }}</span>
+                  </div>
+                </div>
+                <button class="view-profile" (click)="viewPlayerProfile(player.id); $event.stopPropagation()">
+                  <i class="fas fa-external-link-alt"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="team-actions">
+          <button class="action-button success" (click)="acceptTeam(team.id)">
+            <i class="fas fa-check"></i> Aceptar
+          </button>
+          <button class="action-button danger" (click)="rejectTeam(team.id)">
+            <i class="fas fa-times"></i> Rechazar
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

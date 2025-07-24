@@ -5,6 +5,7 @@ import { authGuard } from '../auth/guards/auth.guard';
 import { emailVerifiedGuard } from '../auth/guards/email-verified.guard';
 import { PlayerRegistrationComponent } from './player-registration/player-registration.component';
 import { completeRegistrationGuard } from '../auth/guards/complete-registration.guard';
+import { AdminPanelComponent } from './components/admin-panel/admin-panel.component';
 
 const routes: Routes = [
   {
@@ -16,6 +17,10 @@ const routes: Routes = [
     path: 'completarregistro',
     component: PlayerRegistrationComponent,
     canActivate: [authGuard, completeRegistrationGuard]
+  },
+  {
+    path: 'admin-panel',
+    component: AdminPanelComponent,
   },
 ];
 

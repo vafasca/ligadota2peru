@@ -5,12 +5,14 @@ import { TournamentRoutingModule } from './tournament-routing.module';
 import { TournamentComponent } from './tournament.component';
 import { FormsModule } from '@angular/forms';
 import { SingleEliminationComponent } from './components/single-elimination/single-elimination.component';
+import { CreateTounamentComponent } from './components/create-tounament/create-tounament.component';
 
 
 @NgModule({
   declarations: [
     TournamentComponent,
-    SingleEliminationComponent
+    SingleEliminationComponent,
+    CreateTounamentComponent,
   ],
   imports: [
     CommonModule,

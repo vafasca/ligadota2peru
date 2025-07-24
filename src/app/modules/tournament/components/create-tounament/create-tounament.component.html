@@ -1,0 +1,154 @@
+<div class="tournament-container">
+  <!-- Header -->
+  <div class="tournament-header">
+    <h1 class="title">Torneos Dota 2</h1>
+    <div class="header-actions">
+      <button class="btn-create-tournament" (click)="openCreateModal()">
+        <i class="fas fa-plus"></i> Crear Torneo
+      </button>
+      <div class="search-box">
+        <input type="text" placeholder="Buscar torneos..." [(ngModel)]="searchQuery">
+        <i class="fas fa-search"></i>
+      </div>
+    </div>
+  </div>
+
+  <!-- Filtros -->
+  <div class="filters">
+    <div class="filter-tabs">
+      <button 
+        *ngFor="let tab of tabs" 
+        [class.active]="activeTab === tab.id"
+        (click)="activeTab = tab.id"
+      >
+        {{ tab.label }}
+      </button>
+    </div>
+    <div class="filter-options">
+      <select [(ngModel)]="selectedRegion">
+        <option value="">Todas las regiones</option>
+        <option *ngFor="let region of regions" [value]="region">{{ region }}</option>
+      </select>
+      <select [(ngModel)]="selectedFormat">
+        <option value="">Todos los formatos</option>
+        <option *ngFor="let format of formats" [value]="format">{{ format }}</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Lista de Torneos -->
+  <div class="tournament-list">
+    <div class="tournament-card" *ngFor="let tournament of filteredTournaments">
+      <div class="card-header">
+        <div class="prize-pool">
+          <i class="fas fa-trophy"></i>
+          <span>${{ tournament.prizePool | number }}</span>
+        </div>
+        <div class="status-badge" [class.upcoming]="tournament.status === 'upcoming'"
+                                [class.ongoing]="tournament.status === 'ongoing'"
+                                [class.completed]="tournament.status === 'completed'">
+          {{ tournament.status === 'upcoming' ? 'Próximamente' : 
+             tournament.status === 'ongoing' ? 'En curso' : 'Finalizado' }}
+        </div>
+      </div>
+      <div class="card-body">
+        <h3 class="tournament-name">{{ tournament.name }}</h3>
+        <div class="tournament-details">
+          <div class="detail">
+            <i class="fas fa-calendar-alt"></i>
+            <span>{{ tournament.startDate | date:'medium' }}</span>
+          </div>
+          <div class="detail">
+            <i class="fas fa-users"></i>
+            <span>{{ tournament.teams.length }}/{{ tournament.maxTeams }} equipos</span>
+          </div>
+          <div class="detail">
+            <i class="fas fa-globe"></i>
+            <span>{{ tournament.region }}</span>
+          </div>
+          <div class="detail">
+            <i class="fas fa-chess"></i>
+            <span>{{ tournament.format }}</span>
+          </div>
+        </div>
+      </div>
+      <div class="card-footer">
+        <button class="btn-view" (click)="viewTournament(tournament.id)">
+          Ver Detalles
+        </button>
+        <button 
+          class="btn-register" 
+          [disabled]="tournament.status !== 'upcoming'"
+          (click)="registerToTournament(tournament.id)"
+        >
+          Inscribirse
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Crear Torneo -->
+  <div class="modal" *ngIf="showCreateModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>Crear Nuevo Torneo</h2>
+        <button class="close-btn" (click)="closeCreateModal()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <form (ngSubmit)="createTournament()">
+          <div class="form-group">
+            <label>Nombre del Torneo</label>
+            <input type="text" [(ngModel)]="newTournament.name" name="name" required>
+          </div>
+          
+          <div class="form-row">
+            <div class="form-group">
+              <label>Fecha de Inicio</label>
+              <input type="datetime-local" [(ngModel)]="newTournament.startDate" name="startDate" required>
+            </div>
+            <div class="form-group">
+              <label>Fecha de Fin</label>
+              <input type="datetime-local" [(ngModel)]="newTournament.endDate" name="endDate" required>
+            </div>
+          </div>
+          
+          <div class="form-row">
+            <div class="form-group">
+              <label>Región</label>
+              <select [(ngModel)]="newTournament.region" name="region" required>
+                <option *ngFor="let region of regions" [value]="region">{{ region }}</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Formato</label>
+              <select [(ngModel)]="newTournament.format" name="format" required>
+                <option *ngFor="let format of formats" [value]="format">{{ format }}</option>
+              </select>
+            </div>
+          </div>
+          
+          <div class="form-row">
+            <div class="form-group">
+              <label>Máximo de Equipos</label>
+              <input type="number" [(ngModel)]="newTournament.maxTeams" name="maxTeams" min="2" required>
+            </div>
+            <div class="form-group">
+              <label>Premio (USD)</label>
+              <input type="number" [(ngModel)]="newTournament.prizePool" name="prizePool" min="0" required>
+            </div>
+          </div>
+          
+          <div class="form-group">
+            <label>Descripción</label>
+            <textarea [(ngModel)]="newTournament.description" name="description" rows="4"></textarea>
+          </div>
+          
+          <div class="form-actions">
+            <button type="button" class="btn-cancel" (click)="closeCreateModal()">Cancelar</button>
+            <button type="submit" class="btn-submit">Crear Torneo</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

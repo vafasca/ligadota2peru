@@ -1,0 +1,257 @@
+import { Injectable } from '@angular/core';
+import { addDoc, collection, CollectionReference, deleteDoc, doc, DocumentData, Firestore, FirestoreError, getDoc, getDocs, onSnapshot, orderBy, query, setDoc, updateDoc, where } from '@angular/fire/firestore';
+import { catchError, from, map, Observable, throwError } from 'rxjs';
+import { Tournament, TournamentStatus } from '../models/tournament.model';
+
+@Injectable({
+  providedIn: 'root'
+})
+export class PanelAdminService {
+private tournamentsCollection: CollectionReference<DocumentData>;
+
+  constructor(private firestore: Firestore) {
+    this.tournamentsCollection = collection(this.firestore, 'tournaments');
+  }
+
+  /**
+   * Creates a new tournament
+   * @param tournament Tournament data to be created
+   * @returns Observable with the tournament ID when created
+   */
+  createTournament(tournament: Tournament): Observable<string> {
+    return from(addDoc(this.tournamentsCollection, tournament)).pipe(
+      map(docRef => docRef.id),
+      catchError((error: FirestoreError) => {
+        console.error('Error creating tournament:', error);
+        return throwError(() => new Error(this.getFirestoreErrorMessage(error)));
+      })
+    );
+  }
+
+  /**
+   * Updates tournament data
+   * @param tournamentId Tournament ID
+   * @param data Partial tournament data to update
+   * @returns Observable with void when complete
+   */
+  updateTournament(tournamentId: string, data: Partial<Tournament>): Observable<void> {
+    const tournamentDocRef = doc(this.firestore, `tournaments/${tournamentId}`);
+    return from(updateDoc(tournamentDocRef, data)).pipe(
+      catchError((error: FirestoreError) => {
+        console.error('Error updating tournament:', error);
+        return throwError(() => new Error(this.getFirestoreErrorMessage(error)));
+      })
+    );
+  }
+
+  /**
+   * Gets a tournament by ID
+   * @param tournamentId Tournament ID
+   * @returns Observable with Tournament or null if not found
+   */
+  getTournament(tournamentId: string): Observable<Tournament | null> {
+    const tournamentDocRef = doc(this.firestore, `tournaments/${tournamentId}`);
+    return from(getDoc(tournamentDocRef)).pipe(
+      map(snapshot => {
+        return snapshot.exists() ? { id: snapshot.id, ...snapshot.data() } as Tournament : null;
+      }),
+      catchError((error: FirestoreError) => {
+        console.error('Error getting tournament:', error);
+        return throwError(() => new Error(this.getFirestoreErrorMessage(error)));
+      })
+    );
+  }
+
+  /**
+   * Gets all tournaments with real-time updates
+   * @returns Observable with array of Tournaments
+   */
+  // En tu servicio (tournament.service.ts)
+getTournaments(): Observable<Tournament[]> {
+  return new Observable<Tournament[]>(observer => {
+    const q = query(this.tournamentsCollection, orderBy('startDate', 'desc'));
+    const unsubscribe = onSnapshot(
+      q,
+      (snapshot) => {
+        const tournaments = snapshot.docs.map(doc => {
+          const data = doc.data();
+          return {
+            id: doc.id,
+            ...data,
+            // Convertir Timestamps a Dates
+            startDate: data['startDate']?.toDate() || null,
+            endDate: data['endDate']?.toDate() || null,
+            createdAt: data['createdAt']?.toDate() || null,
+            updatedAt: data['updatedAt']?.toDate() || null
+          } as Tournament;
+        });
+        observer.next(tournaments);
+      },
+      (error) => {
+        console.error('Error listening to tournaments:', error);
+        observer.error(error);
+      }
+    );
+
+    return () => unsubscribe();
+  });
+}
+
+  /**
+   * Gets tournaments by status
+   * @param status Tournament status to filter by
+   * @returns Observable with array of Tournaments
+   */
+  getTournamentsByStatus(status: TournamentStatus): Observable<Tournament[]> {
+    const q = query(
+      this.tournamentsCollection, 
+      where('status', '==', status),
+      orderBy('startDate', 'desc')
+    );
+    return from(getDocs(q)).pipe(
+      map(snapshot => snapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+      } as Tournament))),
+      catchError((error: FirestoreError) => {
+        console.error('Error getting tournaments by status:', error);
+        return throwError(() => new Error(this.getFirestoreErrorMessage(error)));
+      })
+    );
+  }
+
+  /**
+   * Gets active tournaments (status: 'En progreso')
+   * @returns Observable with array of Tournaments
+   */
+  getActiveTournaments(): Observable<Tournament[]> {
+    return this.getTournamentsByStatus('En progreso');
+  }
+
+  /**
+   * Gets scheduled tournaments (status: 'Programado')
+   * @returns Observable with array of Tournaments
+   */
+  getScheduledTournaments(): Observable<Tournament[]> {
+    return this.getTournamentsByStatus('Programado');
+  }
+
+  /**
+   * Gets finished tournaments (status: 'Finalizado')
+   * @returns Observable with array of Tournaments
+   */
+  getFinishedTournaments(): Observable<Tournament[]> {
+    return this.getTournamentsByStatus('Finalizado');
+  }
+
+  /**
+   * Deletes a tournament
+   * @param tournamentId Tournament ID to delete
+   * @returns Observable with void when complete
+   */
+  deleteTournament(tournamentId: string): Observable<void> {
+    const tournamentDocRef = doc(this.firestore, `tournaments/${tournamentId}`);
+    return from(deleteDoc(tournamentDocRef)).pipe(
+      catchError((error: FirestoreError) => {
+        console.error('Error deleting tournament:', error);
+        return throwError(() => new Error(this.getFirestoreErrorMessage(error)));
+      })
+    );
+  }
+
+  /**
+   * Adds a match to a tournament
+   * @param tournamentId Tournament ID
+   * @param match Match data to add
+   * @returns Observable with void when complete
+   */
+  addTournamentMatch(tournamentId: string, match: any): Observable<void> {
+    const matchDocRef = doc(this.firestore, `tournaments/${tournamentId}/matches/${match.id}`);
+    return from(setDoc(matchDocRef, match)).pipe(
+      catchError((error: FirestoreError) => {
+        console.error('Error adding match to tournament:', error);
+        return throwError(() => new Error(this.getFirestoreErrorMessage(error)));
+      })
+    );
+  }
+
+  /**
+   * Gets all matches for a tournament with real-time updates
+   * @param tournamentId Tournament ID
+   * @returns Observable with array of Matches
+   */
+  getTournamentMatches(tournamentId: string): Observable<any[]> {
+    const matchesCollection = collection(this.firestore, `tournaments/${tournamentId}/matches`);
+    return new Observable<any[]>(observer => {
+      const unsubscribe = onSnapshot(
+        matchesCollection,
+        (snapshot) => {
+          const matches = snapshot.docs.map(doc => ({
+            id: doc.id,
+            ...doc.data()
+          }));
+          observer.next(matches);
+        },
+        (error) => {
+          console.error('Error listening to tournament matches:', error);
+          observer.error(error);
+        }
+      );
+
+      return () => unsubscribe();
+    });
+  }
+
+  /**
+   * Gets pending matches for a tournament
+   * @param tournamentId Tournament ID
+   * @returns Observable with array of pending Matches
+   */
+  getPendingMatches(tournamentId: string): Observable<any[]> {
+    const matchesCollection = collection(this.firestore, `tournaments/${tournamentId}/matches`);
+    const q = query(matchesCollection, where('status', '==', 'pending'));
+    
+    return new Observable<any[]>(observer => {
+      const unsubscribe = onSnapshot(
+        q,
+        (snapshot) => {
+          const matches = snapshot.docs.map(doc => ({
+            id: doc.id,
+            ...doc.data()
+          }));
+          observer.next(matches);
+        },
+        (error) => {
+          console.error('Error listening to pending matches:', error);
+          observer.error(error);
+        }
+      );
+
+      return () => unsubscribe();
+    });
+  }
+
+  /**
+   * Translates Firestore error codes to user-friendly messages
+   * @param error Firestore error
+   * @returns Human-readable error message
+   */
+  private getFirestoreErrorMessage(error: FirestoreError): string {
+    const errorMessages: Record<string, string> = {
+      'permission-denied': 'No tienes permiso para realizar esta operación',
+      'unavailable': 'Error de conexión. Por favor verifica tu internet',
+      'not-found': 'El torneo no fue encontrado',
+      'already-exists': 'El torneo ya existe',
+      'invalid-argument': 'Datos del torneo no válidos',
+      'failed-precondition': 'Operación no permitida en el estado actual del torneo',
+      'aborted': 'Operación cancelada',
+      'out-of-range': 'Operación fuera de límites permitidos',
+      'unimplemented': 'Operación no implementada',
+      'internal': 'Error interno del servidor',
+      'data-loss': 'Pérdida de datos',
+      'unauthenticated': 'Debes autenticarte para realizar esta acción'
+    };
+
+    return errorMessages[error.code] || 'Ocurrió un error desconocido';
+  }
+}
