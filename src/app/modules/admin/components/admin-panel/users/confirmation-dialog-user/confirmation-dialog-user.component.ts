@@ -7,7 +7,9 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
   styleUrls: ['./confirmation-dialog-user.component.css']
 })
 export class ConfirmationDialogUserComponent {
-constructor(
+reason: string = '';
+
+  constructor(
     public dialogRef: MatDialogRef<ConfirmationDialogUserComponent>,
     @Inject(MAT_DIALOG_DATA) public data: {
       title: string;
@@ -15,6 +17,9 @@ constructor(
       confirmText?: string;
       cancelText?: string;
       isDestructive?: boolean;
+      showReasonInput?: boolean;
+      reasonLabel?: string;
+      placeholder?: string;
     }
   ) {}
 }

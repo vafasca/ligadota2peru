@@ -22,6 +22,7 @@
     border-radius: 50%;
     border: 2px solid #e4ae0d;
     box-shadow: 0 0 15px rgba(228, 174, 13, 0.3);
+    cursor: pointer;
   }
   
   h2 {

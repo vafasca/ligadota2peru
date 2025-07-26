@@ -1,10 +1,13 @@
 <div class="admin-panel-container">
   <!-- Sidebar -->
   <app-sidebar 
-    [activeTab]="activeTab" 
-    (tabChange)="activeTab = $event"
-    (openTournamentModal)="onOpenTournamentModal()">
-  </app-sidebar>
+  [activeTab]="activeTab" 
+  (tabChange)="activeTab = $event"
+  (openTournamentModal)="onOpenTournamentModal()"
+  [userAvatar]="currentUser?.avatar"
+  [userNick]="currentUser?.nick"
+  [userIdDota]="currentUser?.idDota">
+</app-sidebar>
   
   <!-- Main Content -->
   <div class="main-content">

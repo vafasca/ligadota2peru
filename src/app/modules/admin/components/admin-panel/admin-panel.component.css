@@ -92,6 +92,28 @@
   z-index: 1;
 }
 
+.logo-container {
+  /* Mantén los estilos existentes y agrega: */
+  .logo {
+    object-fit: cover; /* Para que el avatar se ajuste correctamente */
+    border: 2px solid #e4ae0d;
+    box-shadow: 0 0 15px rgba(228, 174, 13, 0.3);
+    transition: all 0.3s ease;
+    
+    &:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 25px rgba(228, 174, 13, 0.5);
+    }
+  }
+  
+  h2 {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+  }
+}
+
 /* Responsive Adjustments */
 @media (max-width: 768px) {
   .admin-panel-container {

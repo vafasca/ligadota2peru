@@ -5,6 +5,7 @@ import { catchError, debounceTime, distinctUntilChanged, Observable, of, Subject
 import { MatDialog } from '@angular/material/dialog';
 import { ConfirmationDialogUserComponent } from './confirmation-dialog-user/confirmation-dialog-user.component';
 import { EditUserDialogComponent } from './edit-user-dialog/edit-user-dialog.component';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-users',
@@ -19,6 +20,7 @@ export class UsersComponent {
   division2Players: Player[] = [];
   moderators: Player[] = [];
   subModerators: Player[] = [];
+  deletedPlayers: Player[] = [];
   searchResults: Player[] = [];
   isLoading: boolean = false;
   searchError: string | null = null;
@@ -27,7 +29,8 @@ export class UsersComponent {
 
   constructor(
     private userService: UserService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private snackBar: MatSnackBar
   ) {}
 
   ngOnInit(): void {
@@ -50,6 +53,10 @@ export class UsersComponent {
 
     this.userService.getSubModerators().subscribe(subModerators => {
       this.subModerators = subModerators;
+    });
+
+    this.userService.getDeletedPlayers().subscribe(players => {
+      this.deletedPlayers = players;
     });
   }
 
@@ -103,6 +110,7 @@ export class UsersComponent {
       case 'division2': return this.division2Players;
       case 'moderators': return this.moderators;
       case 'subModerators': return this.subModerators;
+      case 'deleted': return this.deletedPlayers;
       default: return [];
     }
   }
@@ -111,7 +119,10 @@ export class UsersComponent {
   editUser(user: Player): void {
   const dialogRef = this.dialog.open(EditUserDialogComponent, {
     width: '600px',
-    data: { user: { ...user } }
+    data: { 
+      user: { ...user },
+      showObservations: true
+    }
   });
 
   dialogRef.afterClosed().subscribe(async (result: Player) => {
@@ -142,68 +153,122 @@ export class UsersComponent {
         // Actualizar en la lista local
         this.updateUserInList({ ...user, ...updateData });
         
-        console.log('Usuario actualizado correctamente');
+        // Mostrar notificación de éxito
+        this.snackBar.open('Usuario actualizado correctamente', 'Cerrar', {
+          duration: 3000,
+          panelClass: ['success-snackbar']
+        });
+        
       } catch (error) {
         console.error('Error al actualizar usuario:', error);
+        // Mostrar notificación de error
+        this.snackBar.open('Error al actualizar usuario', 'Cerrar', {
+          duration: 3000,
+          panelClass: ['error-snackbar']
+        });
       }
     }
   });
 }
 
+
+
   // Método para suspender/activar usuario
   toggleUserStatus(user: Player): void {
-    const newStatus = user.status === PlayerStatus.Active ? PlayerStatus.Suspended : PlayerStatus.Active;
-    const action = newStatus === PlayerStatus.Suspended ? 'suspender' : 'activar';
-    
+  const newStatus = user.status === PlayerStatus.Active ? PlayerStatus.Suspended : PlayerStatus.Active;
+  const action = newStatus === PlayerStatus.Suspended ? 'suspender' : 'activar';
+  
+  const dialogRef = this.dialog.open(ConfirmationDialogUserComponent, {
+    width: '500px',
+    data: {
+      title: `Confirmar ${action}`,
+      message: `¿Estás seguro que deseas ${action} a ${user.nick}?`,
+      confirmText: action.charAt(0).toUpperCase() + action.slice(1),
+      cancelText: 'Cancelar',
+      showReasonInput: newStatus === PlayerStatus.Suspended,
+      reasonLabel: 'Motivo de la suspensión:',
+      placeholder: 'Ej: Comportamiento inapropiado en partida'
+    }
+  });
+
+  dialogRef.afterClosed().subscribe(result => {
+    if (result?.confirmed) {
+      const updateData: Partial<Player> = { status: newStatus };
+      
+      if (newStatus === PlayerStatus.Suspended && result.reason) {
+        const newObservation = `SUSPENSIÓN (${new Date().toLocaleDateString()}): ${result.reason}\n${user.observations || ''}`;
+        updateData.observations = newObservation.substring(0, 1000); // Limitar longitud
+      }
+
+      this.userService.updatePlayer(user.uid, updateData)
+        .then(() => {
+          this.updateUserInList({ ...user, ...updateData });
+        })
+        .catch(error => {
+          console.error(`Error al ${action} usuario:`, error);
+        });
+    }
+  });
+}
+
+  // Método para eliminar usuario (solo para moderadores/submoderadores)
+  deleteUser(user: Player): void {
+  const dialogRef = this.dialog.open(ConfirmationDialogUserComponent, {
+    width: '500px',
+    data: {
+      title: 'Eliminar usuario',
+      message: `¿Estás seguro que deseas eliminar a ${user.nick}? Esta acción no se puede deshacer.`,
+      confirmText: 'Eliminar',
+      cancelText: 'Cancelar',
+      isDestructive: true,
+      showReasonInput: true,
+      reasonLabel: 'Motivo de la eliminación:',
+      placeholder: 'Ej: Abandono repetido de partidas'
+    }
+  });
+
+  dialogRef.afterClosed().subscribe(result => {
+    if (result?.confirmed) {
+      const updateData: Partial<Player> = { 
+        status: PlayerStatus.Deleted 
+      };
+      
+      if (result.reason) {
+        const newObservation = `ELIMINACIÓN (${new Date().toLocaleDateString()}): ${result.reason}\n${user.observations || ''}`;
+        updateData.observations = newObservation.substring(0, 1000); // Limitar longitud
+      }
+
+      this.userService.updatePlayer(user.uid, updateData)
+        .then(() => {
+          this.updateUserInList({ ...user, ...updateData });
+        })
+        .catch(error => {
+          console.error('Error al eliminar usuario:', error);
+        });
+    }
+  });
+}
+
+  // Método para restaurar usuario
+  restoreUser(user: Player): void {
     const dialogRef = this.dialog.open(ConfirmationDialogUserComponent, {
       width: '400px',
       data: {
-        title: 'Confirmar acción',
-        message: `¿Estás seguro que deseas ${action} a ${user.nick}?`,
-        confirmText: action.charAt(0).toUpperCase() + action.slice(1),
+        title: 'Restaurar usuario',
+        message: `¿Estás seguro que deseas restaurar a ${user.nick}?`,
+        confirmText: 'Restaurar',
         cancelText: 'Cancelar'
       }
     });
 
     dialogRef.afterClosed().subscribe(confirmed => {
       if (confirmed) {
-        this.userService.updatePlayerStatus(user.uid, newStatus)
+        this.userService.updatePlayerStatus(user.uid, PlayerStatus.Active)
           .then(() => {
-            this.updateUserInList({ ...user, status: newStatus });
+            this.deletedPlayers = this.deletedPlayers.filter(p => p.uid !== user.uid);
           })
           .catch(error => {
-            console.error(`Error al ${action} usuario:`, error);
-          });
-      }
-    });
-  }
-
-  // Método para eliminar usuario (solo para moderadores/submoderadores)
-  deleteUser(user: Player): void {
-    const dialogRef = this.dialog.open(ConfirmationDialogUserComponent, {
-      width: '400px',
-      data: {
-        title: 'Eliminar usuario',
-        message: `¿Estás seguro que deseas eliminar a ${user.nick}? Esta acción no se puede deshacer.`,
-        confirmText: 'Eliminar',
-        cancelText: 'Cancelar',
-        isDestructive: true
-      }
-    });
-
-    dialogRef.afterClosed().subscribe(confirmed => {
-      if (confirmed) {
-        this.userService.deleteUser(user.uid)
-          .then(() => {
-            // Eliminar el usuario de la lista correspondiente
-            if (this.activeUserTab === 'moderators') {
-              this.moderators = this.moderators.filter(m => m.uid !== user.uid);
-            } else if (this.activeUserTab === 'subModerators') {
-              this.subModerators = this.subModerators.filter(sm => sm.uid !== user.uid);
-            }
-          })
-          .catch(error => {
-            console.error('Error al eliminar usuario:', error);
+            console.error('Error al restaurar usuario:', error);
           });
       }
     });

@@ -94,8 +94,6 @@ private showSizeError(fileSize: number): void {
       const updatedUser = {
         ...this.data.user,
         ...this.editForm.value,
-        // Si hay un nuevo archivo seleccionado, el avatar ya está en el form como Data URL
-        // Si no hay archivo pero previewUrl existe, es el avatar existente
         avatar: this.editForm.value.avatar || this.data.user.avatar || ''
       };
       this.dialogRef.close(updatedUser);

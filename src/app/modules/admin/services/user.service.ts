@@ -162,5 +162,25 @@ export class UserService {
 
     return of(results);
 }
+
+getDeletedPlayers(): Observable<Player[]> {
+  return new Observable(subscriber => {
+    const q = query(
+      collection(this.firestore, 'players'),
+      where('status', '==', PlayerStatus.Deleted)
+    );
+    
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      const players = snapshot.docs.map(doc => ({ 
+        uid: doc.id, 
+        ...doc.data(),
+        idDota: Number(doc.data()['idDota']) || 0
+      } as Player));
+      subscriber.next(players);
+    });
+    
+    return () => unsubscribe();
+  });
+}
   
 }

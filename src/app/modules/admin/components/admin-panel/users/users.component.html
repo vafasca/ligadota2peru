@@ -38,6 +38,10 @@
             (click)="setActiveTab('subModerators')">
       Sub-Moderadores
     </button>
+    <button [class.active]="activeUserTab === 'deleted'" 
+            (click)="setActiveTab('deleted')">
+      Eliminados
+    </button>
   </div>
 
   <!-- Resultados de búsqueda -->
@@ -51,43 +55,53 @@
       <i class="fas fa-info-circle"></i> No se encontraron resultados para "{{ searchTerm }}"
     </div>
     
-<div class="table-container" *ngIf="searchResults.length > 0">
-  <table class="data-table">
-    <thead>
-      <tr>
-        <th>#</th>
-        <th>Nick</th>
-        <th>ID Dota</th>
-        <th>MMR</th>
-        <th>División</th>
-        <th>Rol</th>
-        <th>Estado</th>
-        <th>Acciones</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let player of searchResults; let i = index">
-        <td>{{ i + 1 }}</td>
-        <td matTooltip="{{player.nick}}" [matTooltipDisabled]="player.nick.length <= 15">{{ player.nick }}</td>
-        <td>{{ player.idDota }}</td>
-        <td>{{ player.mmr }}</td>
-        <td>{{ player.playerDivision | titlecase }}</td>
-        <td>{{ player.rolUser | titlecase }}</td>
-        <td><span class="status-badge" [class]="getStatusClass(player.status)">{{ player.status | titlecase }}</span></td>
-        <td>
-          <button class="table-action" matTooltip="Editar" (click)="editUser(player)">
-            <i class="fas fa-edit"></i>
-          </button>
-          <button class="table-action warning" 
-                  matTooltip="Suspender/Activar" 
-                  (click)="toggleUserStatus(player)">
-            <i class="fas fa-ban"></i>
-          </button>
-        </td>
-      </tr>
-    </tbody>
-  </table>
-</div>
+    <div class="table-scroll-container" *ngIf="searchResults.length > 0">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Nick</th>
+            <th>ID Dota</th>
+            <th>MMR</th>
+            <th>División</th>
+            <th>Rol</th>
+            <th>Estado</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let player of searchResults; let i = index">
+            <td>{{ i + 1 }}</td>
+            <td matTooltip="{{player.nick}}" [matTooltipDisabled]="player.nick.length <= 15">{{ player.nick }}</td>
+            <td>{{ player.idDota }}</td>
+            <td>{{ player.mmr }}</td>
+            <td>{{ player.playerDivision | titlecase }}</td>
+            <td>{{ player.rolUser | titlecase }}</td>
+            <td><span class="status-badge" [class]="getStatusClass(player.status)">{{ player.status | titlecase }}</span></td>
+            <td>
+              <button class="table-action" matTooltip="Editar" (click)="editUser(player)" *ngIf="player.status !== 'Eliminado'">
+                <i class="fas fa-edit"></i>
+              </button>
+              <button class="table-action warning" 
+                      matTooltip="Suspender/Activar" 
+                      (click)="toggleUserStatus(player)" *ngIf="player.status !== 'Eliminado'">
+                <i class="fas fa-ban"></i>
+              </button>
+              <button class="table-action danger" 
+                      matTooltip="Eliminar" 
+                      (click)="deleteUser(player)" *ngIf="player.status !== 'Eliminado'">
+                <i class="fas fa-trash-alt"></i>
+              </button>
+              <button class="table-action success" 
+                      matTooltip="Restaurar" 
+                      (click)="restoreUser(player)" *ngIf="player.status === 'Eliminado'">
+                <i class="fas fa-undo"></i>
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
   </div>
 
   <!-- Contenido normal (sin búsqueda) -->
@@ -101,7 +115,7 @@
         </button>
       </div>
       
-      <div class="table-container">
+      <div class="table-scroll-container">
         <table class="data-table">
           <thead>
             <tr>
@@ -126,7 +140,12 @@
                 <button class="table-action" matTooltip="Editar" (click)="editUser(player)">
                   <i class="fas fa-edit"></i>
                 </button>
-                <button class="table-action warning" matTooltip="Suspender"><i class="fas fa-ban"></i></button>
+                <button class="table-action warning" matTooltip="Suspender/Activar" (click)="toggleUserStatus(player)">
+                  <i class="fas fa-ban"></i>
+                </button>
+                <button class="table-action danger" matTooltip="Eliminar" (click)="deleteUser(player)">
+                  <i class="fas fa-trash-alt"></i>
+                </button>
               </td>
             </tr>
           </tbody>
@@ -143,7 +162,7 @@
         </button>
       </div>
       
-      <div class="table-container">
+      <div class="table-scroll-container">
         <table class="data-table">
           <thead>
             <tr>
@@ -168,7 +187,12 @@
                 <button class="table-action" matTooltip="Editar" (click)="editUser(player)">
                   <i class="fas fa-edit"></i>
                 </button>
-                <button class="table-action warning" matTooltip="Suspender"><i class="fas fa-ban"></i></button>
+                <button class="table-action warning" matTooltip="Suspender/Activar" (click)="toggleUserStatus(player)">
+                  <i class="fas fa-ban"></i>
+                </button>
+                <button class="table-action danger" matTooltip="Eliminar" (click)="deleteUser(player)">
+                  <i class="fas fa-trash-alt"></i>
+                </button>
               </td>
             </tr>
           </tbody>
@@ -185,7 +209,7 @@
         </button>
       </div>
       
-      <div class="table-container">
+      <div class="table-scroll-container">
         <table class="data-table">
           <thead>
             <tr>
@@ -205,8 +229,12 @@
               <td>{{ mod.mmr }}</td>
               <td>{{ mod.rolUser | titlecase }}</td>
               <td>
-                <button class="table-action" matTooltip="Editar"><i class="fas fa-edit"></i></button>
-                <button class="table-action warning" matTooltip="Eliminar"><i class="fas fa-trash-alt"></i></button>
+                <button class="table-action" matTooltip="Editar" (click)="editUser(mod)">
+                  <i class="fas fa-edit"></i>
+                </button>
+                <button class="table-action danger" matTooltip="Eliminar" (click)="deleteUser(mod)">
+                  <i class="fas fa-trash-alt"></i>
+                </button>
               </td>
             </tr>
           </tbody>
@@ -223,7 +251,7 @@
         </button>
       </div>
       
-      <div class="table-container">
+      <div class="table-scroll-container">
         <table class="data-table">
           <thead>
             <tr>
@@ -246,8 +274,48 @@
                 <button class="table-action" matTooltip="Editar" (click)="editUser(subMod)">
                   <i class="fas fa-edit"></i>
                 </button>
-                <button class="table-action warning" matTooltip="Eliminar" (click)="deleteUser(subMod)">
+                <button class="table-action danger" matTooltip="Eliminar" (click)="deleteUser(subMod)">
                   <i class="fas fa-trash-alt"></i>
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Usuarios Eliminados -->
+    <div *ngIf="activeUserTab === 'deleted'" class="user-list">
+      <div class="section-header">
+        <h2><i class="fas fa-trash-alt"></i> Usuarios Eliminados ({{ deletedPlayers.length }})</h2>
+      </div>
+      
+      <div class="table-scroll-container">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Nick</th>
+              <th>ID Dota</th>
+              <th>MMR</th>
+              <th>División</th>
+              <th>Rol</th>
+              <th>Estado</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let player of deletedPlayers; let i = index">
+              <td>{{ i + 1 }}</td>
+              <td matTooltip="{{player.nick}}" [matTooltipDisabled]="player.nick.length <= 15">{{ player.nick }}</td>
+              <td>{{ player.idDota }}</td>
+              <td>{{ player.mmr }}</td>
+              <td>{{ player.playerDivision | titlecase }}</td>
+              <td>{{ player.rolUser | titlecase }}</td>
+              <td><span class="status-badge deleted">{{ player.status | titlecase }}</span></td>
+              <td>
+                <button class="table-action success" matTooltip="Restaurar" (click)="restoreUser(player)">
+                  <i class="fas fa-undo"></i>
                 </button>
               </td>
             </tr>

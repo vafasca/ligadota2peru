@@ -594,7 +594,14 @@ getPlayersByCategoryAndRole(category: string, role: string): Player[] {
 
   goToEditProfile(): void {}
 
-  goToAdmin(): void {}
+  goToAdmin(): void {
+  if (this.isAdminUser()) {
+    this.router.navigate(['/completar_registro/admin-panel']);//modificar luego
+  } else {
+    console.warn('Acceso no autorizado');
+    this.router.navigate(['/lobby'])
+  }
+}
 
   // En el componente LobbyComponent
 toggleCaptainStatus(): void {
@@ -753,7 +760,11 @@ getMMRClass(totalMMR: number): string {
 }
 
 goToTournaments() {
-  this.router.navigate(['/tournaments']);
+  this.router.navigate(['/tournament']);
+}
+
+isAdminUser(): boolean {
+  return this.player?.rolUser === PlayerRole.Admin || this.player?.rolUser === PlayerRole.SubAdmin;
 }
 
   ngOnDestroy(): void {

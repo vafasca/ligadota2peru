@@ -1,6 +1,22 @@
 mat-dialog-content {
-      padding: 16px 0;
-    }
-    mat-dialog-actions {
-      padding: 16px 0 0 0;
-    }
+  padding: 16px 0;
+}
+
+mat-dialog-actions {
+  padding: 16px 0 0 0;
+}
+
+.full-width {
+  width: 100%;
+  margin-top: 16px;
+}
+
+textarea {
+  min-height: 100px;
+  resize: vertical;
+}
+
+button[disabled] {
+  opacity: 0.6;
+  cursor: not-allowed;
+}

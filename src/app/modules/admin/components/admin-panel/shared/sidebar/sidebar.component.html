@@ -1,9 +1,14 @@
 <div class="sidebar">
   <div class="logo-container">
-    <img src="../../../../../assets/logo_tournament.jpg" alt="Tournament Platform Logo" class="logo">
-    <h2>Panel de Moderador</h2>
+    <img 
+    (click)="goToProfile()"
+      [src]="userAvatar || '../../../../../assets/add_icon.png'" 
+      [alt]="userNick ? 'Avatar de ' + userNick : 'Tournament Platform Logo'" 
+      class="logo"
+    >
+    <h2>{{ userNick ? userNick : 'Panel de Moderador' }}</h2>
   </div>
-  
+
   <nav class="admin-nav">
     <ul>
       <li [class.active]="activeTab === 'dashboard'" (click)="switchTab('dashboard')">

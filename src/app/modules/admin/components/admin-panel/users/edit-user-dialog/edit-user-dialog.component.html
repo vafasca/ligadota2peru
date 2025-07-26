@@ -57,7 +57,7 @@
         </div>
         
         <div class="form-group">
-          <label>Categoría</label>
+          <label>Categoría Principal</label>
           <select formControlName="category">
             <option *ngFor="let cat of categories" [value]="cat">{{ cat }}</option>
           </select>
@@ -103,12 +103,12 @@
           </select>
         </div>
         
-        <div class="form-group">
+        <!-- <div class="form-group">
           <label>Estado</label>
           <select formControlName="status">
             <option *ngFor="let status of statuses" [value]="status">{{ status | titlecase }}</option>
           </select>
-        </div>
+        </div> -->
       </div>
 
       <!-- Observaciones -->

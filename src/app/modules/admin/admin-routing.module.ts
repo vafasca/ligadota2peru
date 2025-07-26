@@ -6,6 +6,7 @@ import { emailVerifiedGuard } from '../auth/guards/email-verified.guard';
 import { PlayerRegistrationComponent } from './player-registration/player-registration.component';
 import { completeRegistrationGuard } from '../auth/guards/complete-registration.guard';
 import { AdminPanelComponent } from './components/admin-panel/admin-panel.component';
+import { adminGuard } from './guards/admin.guard';
 
 const routes: Routes = [
   {
@@ -21,6 +22,7 @@ const routes: Routes = [
   {
     path: 'admin-panel',
     component: AdminPanelComponent,
+    canActivate: [adminGuard]
   },
 ];
 

@@ -44,7 +44,10 @@
       </button>
     </div>
     <div class="button-row">
-      <button class="dota-button-middle admin-button" (click)="goToAdmin()">
+      <button 
+        *ngIf="isAdminUser()"
+        class="dota-button-middle admin-button"
+        (click)="goToAdmin()">
         <i class="fas fa-shield-alt"></i> Admin
       </button>
       <button class="dota-button-middle logout-button" (click)="logout()">
