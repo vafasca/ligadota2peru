@@ -1,0 +1,180 @@
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  backdrop-filter: blur(5px);
+}
+
+.modal-container {
+  background: linear-gradient(135deg, rgba(11, 20, 34, 0.95) 0%, rgba(0, 0, 0, 0.95) 100%);
+  border-radius: 10px;
+  width: 100%;
+  max-width: 800px;
+  max-height: 95vh;
+  overflow-y: auto;
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(228, 174, 13, 0.2);
+}
+
+.modal-header {
+  padding: 20px 25px;
+  border-bottom: 1px solid rgba(58, 80, 107, 0.5);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  
+  h2 {
+    margin: 0;
+    font-size: 22px;
+    color: #e4ae0d;
+  }
+  
+  .close-button {
+    background: none;
+    border: none;
+    color: #a0aec0;
+    cursor: pointer;
+    font-size: 22px;
+    transition: all 0.2s;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    
+    &:hover {
+      background: rgba(229, 62, 62, 0.1);
+      color: #e53e3e;
+    }
+  }
+}
+
+.tournament-form {
+  padding: 25px;
+  
+  .form-group {
+    margin-bottom: 20px;
+    
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 500;
+      color: #e4ae0d;
+      font-size: 14px;
+    }
+    
+    input, select, textarea {
+      width: 90%;
+      padding: 12px 15px;
+      background: rgba(16, 26, 42, 0.8);
+      border: 1px solid rgba(58, 80, 107, 0.8);
+      border-radius: 6px;
+      font-family: 'Inter', sans-serif;
+      color: #e0e0e0;
+      transition: all 0.3s ease;
+      
+      &:focus {
+        outline: none;
+        border-color: #e4ae0d;
+        box-shadow: 0 0 0 3px rgba(228, 174, 13, 0.1);
+      }
+      
+      &::placeholder {
+        color: #a0aec0;
+      }
+    }
+    
+    textarea {
+      resize: vertical;
+      min-height: 100px;
+    }
+  }
+  
+  .form-row {
+    display: flex;
+    gap: 20px;
+    
+    .form-group {
+      flex: 1;
+    }
+  }
+}
+
+#game {
+  width: 100%;
+}
+
+#entry-fee, #start-date {
+  width: 80%;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 15px;
+  margin-top: 25px;
+  padding-top: 20px;
+  border-top: 1px solid rgba(58, 80, 107, 0.5);
+  
+  .cancel-button {
+    background: rgba(229, 62, 62, 0.2);
+    color: #e53e3e;
+    border: 1px solid rgba(229, 62, 62, 0.3);
+    padding: 12px 20px;
+    border-radius: 6px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    
+    &:hover {
+      background: rgba(229, 62, 62, 0.3);
+    }
+  }
+  
+  .submit-button {
+    background: linear-gradient(135deg, rgba(122, 7, 7, 0.8) 0%, rgba(74, 85, 104, 0.8) 100%);
+    color: white;
+    border: none;
+    padding: 12px 25px;
+    border-radius: 6px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: 1px solid rgba(228, 174, 13, 0.3);
+    
+    &:hover:not(:disabled) {
+      background: linear-gradient(135deg, rgba(122, 7, 7, 1) 0%, rgba(74, 85, 104, 1) 100%);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 10px rgba(228, 174, 13, 0.3);
+    }
+    
+    &:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+  }
+}
+
+/* Responsive Adjustments */
+@media (max-width: 576px) {
+  .modal-container {
+    max-width: 95%;
+  }
+  
+  .form-actions {
+    flex-direction: column;
+    gap: 10px;
+    
+    button {
+      width: 100%;
+    }
+  }
+}

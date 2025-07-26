@@ -14,6 +14,15 @@ import { TeamsPerTournamentComponent } from './components/teams-per-tournament/t
 import { ConfirmationDialogComponent } from './components/confirmation-dialog/confirmation-dialog.component';
 import { TeamNotesDialogComponent } from './components/team-notes-dialog/team-notes-dialog.component';
 import { SharedModule } from 'src/app/shared-module/shared.module';
+import { DashboardComponent } from './components/admin-panel/dashboard/dashboard.component';
+import { TournamentsComponent } from './components/admin-panel/tournaments/tournaments.component';
+import { MatchesComponent } from './components/admin-panel/matches/matches.component';
+import { UsersComponent } from './components/admin-panel/users/users.component';
+import { ReportsComponent } from './components/admin-panel/reports/reports.component';
+import { CreateTournamentModalComponent } from './components/admin-panel/shared/create-tournament-modal/create-tournament-modal.component';
+import { SidebarComponent } from './components/admin-panel/shared/sidebar/sidebar.component';
+import { EditUserDialogComponent } from './components/admin-panel/users/edit-user-dialog/edit-user-dialog.component';
+import { ConfirmationDialogUserComponent } from './components/admin-panel/users/confirmation-dialog-user/confirmation-dialog-user.component';
 
 @NgModule({
   declarations: [
@@ -23,7 +32,16 @@ import { SharedModule } from 'src/app/shared-module/shared.module';
     AdminPanelComponent,
     TeamsPerTournamentComponent,
     ConfirmationDialogComponent,
-    TeamNotesDialogComponent
+    TeamNotesDialogComponent,
+    DashboardComponent,
+    TournamentsComponent,
+    MatchesComponent,
+    UsersComponent,
+    ReportsComponent,
+    CreateTournamentModalComponent,
+    SidebarComponent,
+    EditUserDialogComponent,
+    ConfirmationDialogUserComponent
   ],
   imports: [
     CommonModule,

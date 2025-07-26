@@ -77,15 +77,39 @@ export class PlayerRegistrationComponent {
   }
 
   onFileSelected(event: Event): void {
-    const input = event.target as HTMLInputElement;
-    if (input.files && input.files[0]) {
-      const reader = new FileReader();
-      reader.onload = () => {
-        this.selectedAvatar = reader.result!;
-      };
-      reader.readAsDataURL(input.files[0]);
+  const input = event.target as HTMLInputElement;
+  if (input.files && input.files[0]) {
+    const file = input.files[0];
+    
+    // Validar tamaño máximo (500KB)
+    const MAX_SIZE = 500 * 1024; // 500KB
+    if (file.size > MAX_SIZE) {
+      this.showImageSizeError(file.size);
+      input.value = ''; // Limpiar el input
+      return;
     }
+
+    const reader = new FileReader();
+    reader.onload = () => {
+      this.selectedAvatar = reader.result!;
+    };
+    reader.readAsDataURL(file);
   }
+}
+
+private showImageSizeError(fileSize: number): void {
+  const sizeInKB = Math.round(fileSize / 1024);
+  this.snackBar.open(
+    `🛑 La imagen es demasiado grande (${sizeInKB}KB). Máximo permitido: 500KB`,
+    'Cerrar', 
+    {
+      duration: 5000,
+      panelClass: ['dota-snackbar', 'error-snackbar'],
+      horizontalPosition: 'right',
+      verticalPosition: 'top'
+    }
+  );
+}
 
   async onSubmit(form: NgForm): Promise<void> {
   if (form.valid && this.currentUserUid) {

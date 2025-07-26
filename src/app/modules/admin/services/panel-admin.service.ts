@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { addDoc, collection, CollectionReference, deleteDoc, doc, DocumentData, Firestore, FirestoreError, getDoc, getDocs, onSnapshot, orderBy, query, setDoc, updateDoc, where } from '@angular/fire/firestore';
+import { addDoc, collection, CollectionReference, deleteDoc, doc, DocumentData, Firestore, FirestoreError, getDoc, getDocs, onSnapshot, orderBy, query, serverTimestamp, setDoc, updateDoc, where } from '@angular/fire/firestore';
 import { catchError, from, map, Observable, throwError } from 'rxjs';
 import { Tournament, TournamentStatus } from '../models/tournament.model';
 
@@ -19,14 +19,16 @@ private tournamentsCollection: CollectionReference<DocumentData>;
    * @returns Observable with the tournament ID when created
    */
   createTournament(tournament: Tournament): Observable<string> {
-    return from(addDoc(this.tournamentsCollection, tournament)).pipe(
-      map(docRef => docRef.id),
-      catchError((error: FirestoreError) => {
-        console.error('Error creating tournament:', error);
-        return throwError(() => new Error(this.getFirestoreErrorMessage(error)));
-      })
-    );
-  }
+  const tournamentWithServerTimestamps = {
+    ...tournament,
+    createdAt: serverTimestamp(), // Fecha/hora del servidor
+    updatedAt: serverTimestamp()
+  };
+  
+  return from(addDoc(this.tournamentsCollection, tournamentWithServerTimestamps)).pipe(
+    map(docRef => docRef.id)
+  );
+}
 
   /**
    * Updates tournament data
@@ -67,34 +69,38 @@ private tournamentsCollection: CollectionReference<DocumentData>;
    * @returns Observable with array of Tournaments
    */
   // En tu servicio (tournament.service.ts)
+// En tu servicio al obtener torneos
+
+
+// Usa este método al mapear los datos:
 getTournaments(): Observable<Tournament[]> {
   return new Observable<Tournament[]>(observer => {
     const q = query(this.tournamentsCollection, orderBy('startDate', 'desc'));
-    const unsubscribe = onSnapshot(
-      q,
-      (snapshot) => {
-        const tournaments = snapshot.docs.map(doc => {
-          const data = doc.data();
-          return {
-            id: doc.id,
-            ...data,
-            // Convertir Timestamps a Dates
-            startDate: data['startDate']?.toDate() || null,
-            endDate: data['endDate']?.toDate() || null,
-            createdAt: data['createdAt']?.toDate() || null,
-            updatedAt: data['updatedAt']?.toDate() || null
-          } as Tournament;
-        });
-        observer.next(tournaments);
-      },
-      (error) => {
-        console.error('Error listening to tournaments:', error);
-        observer.error(error);
-      }
-    );
-
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      const tournaments = snapshot.docs.map(doc => {
+        const data = doc.data();
+        return {
+          id: doc.id,
+          ...data,
+          startDate: data['startDate']?.toDate() || null, // Simple conversión
+          endDate: data['endDate']?.toDate() || null,
+          createdAt: data['createdAt']?.toDate() || null,
+          updatedAt: data['updatedAt']?.toDate() || null
+        } as Tournament;
+      });
+      observer.next(tournaments);
+    });
     return () => unsubscribe();
   });
+}
+
+// Método para convertir a hora local (Cochabamba UTC-4)
+private convertToLocalTime(utcDate: Date | null): Date | null {
+  if (!utcDate) return null;
+  
+  // Cochabamba es UTC-4 (no usa horario de verano)
+  const offset = -4 * 60 * 60 * 1000; // UTC-4 en milisegundos
+  return new Date(utcDate.getTime() + offset);
 }
 
   /**

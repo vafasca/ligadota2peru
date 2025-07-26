@@ -1,0 +1,130 @@
+<div class="dialog-container">
+  <div class="dialog-header">
+    <h2 class="dialog-title">Editar Jugador: <span class="highlight">{{data.user.nick}}</span></h2>
+    <div class="dialog-close" (click)="onCancel()">
+      <i class="fas fa-times"></i>
+    </div>
+  </div>
+  
+  <div class="dialog-content">
+    <form [formGroup]="editForm" class="edit-form">
+      <!-- Sección Avatar -->
+      <div class="avatar-section">
+        <div class="avatar-upload">
+          <div class="avatar-preview" [class.empty]="!previewUrl">
+            <img *ngIf="previewUrl" [src]="previewUrl" alt="Avatar Preview">
+            <i *ngIf="!previewUrl" class="fas fa-user"></i>
+          </div>
+          <div class="avatar-actions">
+            <label class="upload-btn">
+              <i class="fas fa-cloud-upload-alt"></i> Seleccionar Imagen
+              <input type="file" accept="image/*" (change)="onFileSelected($event)" hidden>
+            </label>
+            <button *ngIf="previewUrl" type="button" class="remove-btn" (click)="removeAvatar()">
+              <i class="fas fa-trash"></i> Eliminar
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sección Información Básica -->
+      <div class="section-title">
+        <i class="fas fa-id-card"></i> Información Básica
+      </div>
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Nickname</label>
+          <input type="text" formControlName="nick" placeholder="Ingrese el nickname">
+          <div class="error-message" *ngIf="editForm.get('nick')?.invalid && editForm.get('nick')?.touched">
+            Nickname requerido (mín. 3 caracteres)
+          </div>
+        </div>
+        
+        <div class="form-group">
+          <label>ID de Dota 2</label>
+          <input type="number" formControlName="idDota" placeholder="Ingrese el ID">
+          <div class="error-message" *ngIf="editForm.get('idDota')?.invalid && editForm.get('idDota')?.touched">
+            ID válido requerido
+          </div>
+        </div>
+        
+        <div class="form-group">
+          <label>MMR</label>
+          <input type="number" formControlName="mmr" placeholder="Ingrese el MMR">
+          <div class="error-message" *ngIf="editForm.get('mmr')?.invalid && editForm.get('mmr')?.touched">
+            MMR válido requerido
+          </div>
+        </div>
+        
+        <div class="form-group">
+          <label>Categoría</label>
+          <select formControlName="category">
+            <option *ngFor="let cat of categories" [value]="cat">{{ cat }}</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Sección Roles -->
+      <div class="section-title">
+        <i class="fas fa-chess"></i> Roles en el Juego
+      </div>
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Rol Principal</label>
+          <select formControlName="role">
+            <option *ngFor="let role of mainRoles" [value]="role">{{ role }}</option>
+          </select>
+        </div>
+        
+        <div class="form-group">
+          <label>Rol Secundario</label>
+          <select formControlName="secondaryRole">
+            <option *ngFor="let role of secondaryRoles" [value]="role">{{ role }}</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Sección Administración -->
+      <div class="section-title">
+        <i class="fas fa-cog"></i> Configuración de Cuenta
+      </div>
+      <div class="form-grid">
+        <div class="form-group">
+          <label>División</label>
+          <select formControlName="playerDivision">
+            <option *ngFor="let div of divisions" [value]="div">{{ div | titlecase }}</option>
+          </select>
+        </div>
+        
+        <div class="form-group">
+          <label>Rol de Usuario</label>
+          <select formControlName="rolUser">
+            <option *ngFor="let role of roles" [value]="role">{{ role | titlecase }}</option>
+          </select>
+        </div>
+        
+        <div class="form-group">
+          <label>Estado</label>
+          <select formControlName="status">
+            <option *ngFor="let status of statuses" [value]="status">{{ status | titlecase }}</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Observaciones -->
+      <div class="form-group full-width">
+        <label>Observaciones</label>
+        <textarea formControlName="observations" rows="3" placeholder="Notas adicionales sobre el jugador..."></textarea>
+      </div>
+    </form>
+  </div>
+  
+  <div class="dialog-footer">
+    <button class="btn cancel-btn" (click)="onCancel()">
+      <i class="fas fa-times"></i> Cancelar
+    </button>
+    <button class="btn save-btn" (click)="onSave()" [disabled]="!editForm.valid">
+      <i class="fas fa-save"></i> Guardar Cambios
+    </button>
+  </div>
+</div>

@@ -1,0 +1,259 @@
+<div class="users-tab">
+  <!-- Buscador mejorado -->
+  <div class="search-container">
+    <input type="text" [(ngModel)]="searchTerm" 
+           (ngModelChange)="onSearchChange()"
+           placeholder="Buscar por nick o ID Dota"
+           [class.loading]="isLoading">
+    
+    <button (click)="clearSearch()" class="clear-btn" [disabled]="!searchTerm">
+      <i class="fas fa-times"></i>
+    </button>
+    
+    <div *ngIf="isLoading" class="spinner">
+      <i class="fas fa-spinner fa-spin"></i>
+    </div>
+  </div>
+
+  <!-- Mensaje de error -->
+  <div *ngIf="searchError" class="error-message">
+    <i class="fas fa-exclamation-circle"></i> {{ searchError }}
+  </div>
+
+  <!-- Pestañas -->
+  <div class="user-division-tabs">
+    <button [class.active]="activeUserTab === 'division1'" 
+            (click)="setActiveTab('division1')">
+      División 1
+    </button>
+    <button [class.active]="activeUserTab === 'division2'" 
+            (click)="setActiveTab('division2')">
+      División 2
+    </button>
+    <button [class.active]="activeUserTab === 'moderators'" 
+            (click)="setActiveTab('moderators')">
+      Moderadores
+    </button>
+    <button [class.active]="activeUserTab === 'subModerators'" 
+            (click)="setActiveTab('subModerators')">
+      Sub-Moderadores
+    </button>
+  </div>
+
+  <!-- Resultados de búsqueda -->
+  <div *ngIf="searchTerm.trim()" class="search-results">
+    <h3>
+      <i class="fas fa-search"></i> Resultados de búsqueda 
+      <span *ngIf="searchResults.length > 0">({{ searchResults.length }})</span>
+    </h3>
+    
+    <div *ngIf="!isLoading && searchResults.length === 0" class="no-results">
+      <i class="fas fa-info-circle"></i> No se encontraron resultados para "{{ searchTerm }}"
+    </div>
+    
+<div class="table-container" *ngIf="searchResults.length > 0">
+  <table class="data-table">
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Nick</th>
+        <th>ID Dota</th>
+        <th>MMR</th>
+        <th>División</th>
+        <th>Rol</th>
+        <th>Estado</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let player of searchResults; let i = index">
+        <td>{{ i + 1 }}</td>
+        <td matTooltip="{{player.nick}}" [matTooltipDisabled]="player.nick.length <= 15">{{ player.nick }}</td>
+        <td>{{ player.idDota }}</td>
+        <td>{{ player.mmr }}</td>
+        <td>{{ player.playerDivision | titlecase }}</td>
+        <td>{{ player.rolUser | titlecase }}</td>
+        <td><span class="status-badge" [class]="getStatusClass(player.status)">{{ player.status | titlecase }}</span></td>
+        <td>
+          <button class="table-action" matTooltip="Editar" (click)="editUser(player)">
+            <i class="fas fa-edit"></i>
+          </button>
+          <button class="table-action warning" 
+                  matTooltip="Suspender/Activar" 
+                  (click)="toggleUserStatus(player)">
+            <i class="fas fa-ban"></i>
+          </button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+  </div>
+
+  <!-- Contenido normal (sin búsqueda) -->
+  <div *ngIf="!searchTerm.trim()">
+    <!-- División 1 -->
+    <div *ngIf="activeUserTab === 'division1'" class="user-list">
+      <div class="section-header">
+        <h2><i class="fas fa-users"></i> Jugadores División 1 ({{ division1Players.length }})</h2>
+        <button class="action-button">
+          <i class="fas fa-plus"></i> Agregar Jugador
+        </button>
+      </div>
+      
+      <div class="table-container">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Nick</th>
+              <th>ID Dota</th>
+              <th>MMR</th>
+              <th>Estado</th>
+              <th>Rol Principal</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let player of division1Players; let i = index">
+              <td>{{ i + 1 }}</td>
+              <td matTooltip="{{player.nick}}" [matTooltipDisabled]="player.nick.length <= 15">{{ player.nick }}</td>
+              <td>{{ player.idDota }}</td>
+              <td>{{ player.mmr }}</td>
+              <td><span class="status-badge" [class]="getStatusClass(player.status)">{{ player.status | titlecase }}</span></td>
+              <td>{{ player.role | titlecase }}</td>
+              <td>
+                <button class="table-action" matTooltip="Editar" (click)="editUser(player)">
+                  <i class="fas fa-edit"></i>
+                </button>
+                <button class="table-action warning" matTooltip="Suspender"><i class="fas fa-ban"></i></button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    
+    <!-- División 2 -->
+    <div *ngIf="activeUserTab === 'division2'" class="user-list">
+      <div class="section-header">
+        <h2><i class="fas fa-users"></i> Jugadores División 2 ({{ division2Players.length }})</h2>
+        <button class="action-button">
+          <i class="fas fa-plus"></i> Agregar Jugador
+        </button>
+      </div>
+      
+      <div class="table-container">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Nick</th>
+              <th>ID Dota</th>
+              <th>MMR</th>
+              <th>Estado</th>
+              <th>Rol Principal</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let player of division2Players; let i = index">
+              <td>{{ i + 1 }}</td>
+              <td matTooltip="{{player.nick}}" [matTooltipDisabled]="player.nick.length <= 15">{{ player.nick }}</td>
+              <td>{{ player.idDota }}</td>
+              <td>{{ player.mmr }}</td>
+              <td><span class="status-badge" [class]="getStatusClass(player.status)">{{ player.status | titlecase }}</span></td>
+              <td>{{ player.role | titlecase }}</td>
+              <td>
+                <button class="table-action" matTooltip="Editar" (click)="editUser(player)">
+                  <i class="fas fa-edit"></i>
+                </button>
+                <button class="table-action warning" matTooltip="Suspender"><i class="fas fa-ban"></i></button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    
+    <!-- Moderadores -->
+    <div *ngIf="activeUserTab === 'moderators'" class="user-list">
+      <div class="section-header">
+        <h2><i class="fas fa-user-shield"></i> Moderadores ({{ moderators.length }})</h2>
+        <button class="action-button">
+          <i class="fas fa-plus"></i> Agregar Moderador
+        </button>
+      </div>
+      
+      <div class="table-container">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Nick</th>
+              <th>ID Dota</th>
+              <th>MMR</th>
+              <th>Rol</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let mod of moderators; let i = index">
+              <td>{{ i + 1 }}</td>
+              <td matTooltip="{{mod.nick}}" [matTooltipDisabled]="mod.nick.length <= 15">{{ mod.nick }}</td>
+              <td>{{ mod.idDota }}</td>
+              <td>{{ mod.mmr }}</td>
+              <td>{{ mod.rolUser | titlecase }}</td>
+              <td>
+                <button class="table-action" matTooltip="Editar"><i class="fas fa-edit"></i></button>
+                <button class="table-action warning" matTooltip="Eliminar"><i class="fas fa-trash-alt"></i></button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Sub-Moderadores -->
+    <div *ngIf="activeUserTab === 'subModerators'" class="user-list">
+      <div class="section-header">
+        <h2><i class="fas fa-user-cog"></i> Sub-Moderadores ({{ subModerators.length }})</h2>
+        <button class="action-button" (click)="openAddSubModeratorModal()">
+          <i class="fas fa-plus"></i> Agregar Sub-Moderador
+        </button>
+      </div>
+      
+      <div class="table-container">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Nick</th>
+              <th>ID Dota</th>
+              <th>MMR</th>
+              <th>Rol</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let subMod of subModerators; let i = index">
+              <td>{{ i + 1 }}</td>
+              <td>{{ subMod.nick }}</td>
+              <td>{{ subMod.idDota }}</td>
+              <td>{{ subMod.mmr }}</td>
+              <td>Sub-Moderador</td>
+              <td>
+                <button class="table-action" matTooltip="Editar" (click)="editUser(subMod)">
+                  <i class="fas fa-edit"></i>
+                </button>
+                <button class="table-action warning" matTooltip="Eliminar" (click)="deleteUser(subMod)">
+                  <i class="fas fa-trash-alt"></i>
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>

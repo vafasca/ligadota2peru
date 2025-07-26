@@ -1,0 +1,35 @@
+<div class="matches-tab">
+  <div class="section-header">
+    <h2>Partidos Pendientes</h2>
+    <button class="action-button">
+      <i class="fas fa-plus"></i> Programar Partido
+    </button>
+  </div>
+  
+  <div class="matches-grid">
+    <div *ngFor="let match of pendingMatches" class="match-card">
+      <div class="match-teams">
+        <div class="team">
+          <div class="team-logo">
+            <i class="fas fa-users"></i>
+          </div>
+          <span class="team-name" matTooltip="{{match.teamA}}" [matTooltipDisabled]="match.teamA.length <= 15">{{ match.teamA }}</span>
+        </div>
+        <div class="vs-circle">VS</div>
+        <div class="team">
+          <div class="team-logo">
+            <i class="fas fa-users"></i>
+          </div>
+          <span class="team-name" matTooltip="{{match.teamB}}" [matTooltipDisabled]="match.teamB.length <= 15">{{ match.teamB }}</span>
+        </div>
+      </div>
+      <div class="match-details">
+        <p><i class="fas fa-trophy"></i> {{ match.tournament }}</p>
+        <p><i class="far fa-clock"></i> {{ match.scheduledTime | date:'medium' }}</p>
+      </div>
+      <div class="match-actions">
+        <button class="action-button small" matTooltip="Administrar partido">Administrar</button>
+      </div>
+    </div>
+  </div>
+</div>

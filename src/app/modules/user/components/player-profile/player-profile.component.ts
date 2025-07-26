@@ -1,7 +1,7 @@
 import { Component, ElementRef, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
-import { Player, PlayerDivision, PlayerRole } from 'src/app/modules/admin/models/jugador.model';
+import { Player, PlayerDivision, PlayerRole, PlayerStatus } from 'src/app/modules/admin/models/jugador.model';
 import { Match } from 'src/app/modules/admin/models/match2.model';
 import { PlayerService } from 'src/app/modules/admin/services/player.service';
 import { AuthService } from 'src/app/modules/auth/services/auth.service';
@@ -30,7 +30,7 @@ export class PlayerProfileComponent {
     medal: '',
     medalImage: '',
     rating: 0,
-    status: 'Activo', // Valor por defecto
+    status: PlayerStatus.Active, // Valor por defecto
     role: '',
     secondaryRole: '',
     secondaryCategory: '',
@@ -161,7 +161,7 @@ private loadProfileData(): void {
   toggleStatus(): void {
     if (!this.player.uid) return;
     
-    const newStatus = this.player.status === 'Activo' ? 'Inactivo' : 'Activo';
+    const newStatus = this.player.status === PlayerStatus.Active ? PlayerStatus.Inactive : PlayerStatus.Active;
     const updateSub = this.playerService.updatePlayer(this.player.uid, { status: newStatus }).subscribe({
       next: () => {
         this.player.status = newStatus;
@@ -203,7 +203,7 @@ private loadProfileData(): void {
       // Actualizar el estado a "Inactivo" antes de cerrar sesión
       if (this.player.uid) {
         await new Promise<void>((resolve, reject) => {
-          const updateSub = this.playerService.updatePlayer(this.player.uid, { status: 'Inactivo' })
+          const updateSub = this.playerService.updatePlayer(this.player.uid, { status: PlayerStatus.Inactive })
             .subscribe({
               next: () => {
                 updateSub.unsubscribe();

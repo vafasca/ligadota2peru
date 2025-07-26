@@ -1,0 +1,30 @@
+<div class="sidebar">
+  <div class="logo-container">
+    <img src="../../../../../assets/logo_tournament.jpg" alt="Tournament Platform Logo" class="logo">
+    <h2>Panel de Moderador</h2>
+  </div>
+  
+  <nav class="admin-nav">
+    <ul>
+      <li [class.active]="activeTab === 'dashboard'" (click)="switchTab('dashboard')">
+        <i class="fas fa-tachometer-alt"></i> Dashboard
+      </li>
+      <li [class.active]="activeTab === 'tournaments'" (click)="switchTab('tournaments')">
+        <i class="fas fa-trophy"></i> Torneos
+      </li>
+      <li [class.active]="activeTab === 'matches'" (click)="switchTab('matches')">
+        <i class="fas fa-gamepad"></i> Partidos
+      </li>
+      <li [class.active]="activeTab === 'users'" (click)="switchTab('users')">
+        <i class="fas fa-users"></i> Usuarios
+      </li>
+      <li [class.active]="activeTab === 'reports'" (click)="switchTab('reports')">
+        <i class="fas fa-flag"></i> Reportes
+      </li>
+    </ul>
+    
+    <button class="create-tournament-btn" (click)="handleOpenTournamentModal()">
+      <i class="fas fa-plus-circle"></i> Crear Torneo
+    </button>
+  </nav>
+</div>

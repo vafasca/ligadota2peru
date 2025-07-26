@@ -10,7 +10,7 @@ export interface Player {
   mmr: number;
   medal: string;
   medalImage: string;
-  status: string;
+  status: PlayerStatus;
   rating: number;
   role: string;
   secondaryRole: string;
@@ -52,4 +52,27 @@ export enum PlayerDivision {
   Division1 = 'division1',
   Division2 = 'division2',
   PorDefinir = 'por_definir'
+}
+
+export enum PlayerStatus {
+  Active = 'Activo',
+  Inactive = 'Inactivo',
+  Suspended = 'Suspendido',
+  Deleted = 'Eliminado'
+}
+
+export enum PlayerRoleGame {
+  Offlane = 'Offlane',
+  MidLane = 'Mid Lane',
+  HardSupport = 'Hard Support',
+  SoftSupport = 'Soft Support',
+  Carry = 'Carry (Safe Lane)'
+}
+
+export enum PlayerCategory {
+  Tier1 = 'Tier1',
+  Tier2 = 'Tier2',
+  Tier3 = 'Tier3',
+  Tier4 = 'Tier4',
+  Tier5 = 'Tier5'
 }

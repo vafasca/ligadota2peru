@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 import { BehaviorSubject, from, Observable, of } from 'rxjs';
 import { map, catchError, switchMap, distinctUntilChanged, shareReplay } from 'rxjs/operators';
 import { Firestore, doc, getDoc } from '@angular/fire/firestore';
-import { Player } from '../../admin/models/jugador.model';
+import { Player, PlayerStatus } from '../../admin/models/jugador.model';
 import { PlayerService } from '../../admin/services/player.service';
 
 @Injectable({
@@ -56,7 +56,7 @@ async setOnlineStatus(): Promise<void> {
     const playerSnap = await getDoc(playerDocRef);
     
     if (playerSnap.exists()) {
-      await this.playerService.updatePlayer(userId, { status: 'Activo' }).toPromise();
+      await this.playerService.updatePlayer(userId, { status: PlayerStatus.Active }).toPromise();
     }
   } catch (error) {
     console.error('Error al actualizar estado a activo:', error);
@@ -67,7 +67,7 @@ async setOfflineStatus(): Promise<void> {
   const userId = this.getCurrentUserId();
   if (userId) {
     try {
-      await this.playerService.updatePlayer(userId, { status: 'Inactivo' }).toPromise();
+      await this.playerService.updatePlayer(userId, { status: PlayerStatus.Inactive }).toPromise();
     } catch (error) {
       console.error('Error al actualizar estado a inactivo:', error);
     }

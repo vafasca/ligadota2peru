@@ -1,0 +1,28 @@
+<div class="dashboard-tab">
+  <div class="stats-cards">
+    <div class="stat-card" *ngFor="let stat of stats" [ngClass]="'stat-' + stat.id">
+      <div class="stat-icon">
+        <i [class]="stat.icon"></i>
+      </div>
+      <div class="stat-info">
+        <h3>{{ stat.title }}</h3>
+        <p class="stat-value">{{ stat.value }}</p>
+      </div>
+    </div>
+  </div>
+  
+  <div class="recent-activity">
+    <h2>Actividad Reciente</h2>
+    <div class="activity-list">
+      <div class="activity-item" *ngFor="let activity of recentActivities">
+        <div class="activity-icon" [ngClass]="'bg-' + activity.type">
+          <i [class]="activity.icon"></i>
+        </div>
+        <div class="activity-details">
+          <p matTooltip="{{activity.description}}" [matTooltipDisabled]="activity.description.length <= 60">{{activity.description}}</p>
+          <span class="activity-time">{{activity.time}}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

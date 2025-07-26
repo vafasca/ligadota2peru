@@ -1,0 +1,34 @@
+<div class="tournaments-tab">
+  <div class="section-header">
+    <h2>Torneos Recientes</h2>
+    <button class="action-button" (click)="openTournamentModal()">
+      <i class="fas fa-plus"></i> Nuevo Torneo
+    </button>
+  </div>
+  
+  <div class="table-container">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Nombre</th>
+          <th>Estado</th>
+          <th>Equipos</th>
+          <th>Fecha de Inicio</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let tournament of recentTournaments">
+          <td matTooltip="{{tournament.name}}" [matTooltipDisabled]="tournament.name.length <= 20">{{ tournament.name }}</td>
+          <td><span class="status-badge" [class]="getStatusClass(tournament.status)">{{ tournament.status }}</span></td>
+          <td>{{ tournament.currentTeams }}</td>
+          <td>{{ tournament.startDate | date:'mediumDate' }}</td>
+          <td>
+            <button class="table-action" matTooltip="Editar"><i class="fas fa-edit"></i></button>
+            <button class="table-action" matTooltip="Configurar"><i class="fas fa-cog"></i></button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

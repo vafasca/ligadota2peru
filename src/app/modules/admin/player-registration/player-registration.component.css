@@ -73,6 +73,26 @@
     display: none;
   }
 
+  /* Añade al final del archivo */
+.error-snackbar {
+  background: linear-gradient(135deg, rgba(122, 7, 7, 0.9) 0%, rgba(74, 10, 10, 0.9) 100%) !important;
+  color: #fff !important;
+  font-family: 'Radiance', sans-serif;
+  font-weight: bold;
+  border-left: 4px solid #e4ae0d;
+  border-radius: 4px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+}
+
+.error-snackbar .mat-simple-snackbar-action {
+  color: #e4ae0d !important;
+  font-weight: bold;
+  background: rgba(228, 174, 13, 0.2);
+  border-radius: 4px;
+  padding: 0 12px;
+  margin-left: 15px;
+}
+
   /* Form Grid */
   .form-grid {
     display: grid;

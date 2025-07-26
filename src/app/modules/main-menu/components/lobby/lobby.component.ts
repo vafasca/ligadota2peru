@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { map, Observable, Subscription, throwError } from 'rxjs';
-import { Player, PlayerAvailability, PlayerDivision, PlayerRole } from 'src/app/modules/admin/models/jugador.model';
+import { Player, PlayerAvailability, PlayerDivision, PlayerRole, PlayerStatus } from 'src/app/modules/admin/models/jugador.model';
 import { Auth, onAuthStateChanged, signOut } from '@angular/fire/auth';
 import { PlayerService } from 'src/app/modules/admin/services/player.service';
 import { Team, TeamAvailability } from 'src/app/modules/admin/models/equipos.model';
@@ -45,7 +45,7 @@ export class LobbyComponent {
     medal: '',
     medalImage: '',
     rating: 0,
-    status: 'Activo',
+    status: PlayerStatus.Active,
     role: '',
     secondaryRole: '',
     secondaryCategory: '',
@@ -483,7 +483,7 @@ getDivisionName(division: PlayerDivision): string {
   toggleStatus(): void {
     if (!this.player.uid) return;
 
-    const newStatus = this.player.status === 'Activo' ? 'Inactivo' : 'Activo';
+    const newStatus = this.player.status === PlayerStatus.Active ? PlayerStatus.Inactive : PlayerStatus.Active;
     const updateSub = this.playerService.updatePlayer(this.player.uid, { status: newStatus }).subscribe({
       next: () => {
         this.player.status = newStatus;
@@ -511,7 +511,7 @@ getDivisionName(division: PlayerDivision): string {
 
       if (this.player.uid) {
         await new Promise<void>((resolve, reject) => {
-          const updateSub = this.playerService.updatePlayer(this.player.uid, { status: 'Inactivo' })
+          const updateSub = this.playerService.updatePlayer(this.player.uid, { status: PlayerStatus.Inactive })
             .subscribe({
               next: () => {
                 updateSub.unsubscribe();

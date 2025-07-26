@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { PlayerService } from '../../admin/services/player.service';
 import { AuthService } from './auth.service';
 import { take } from 'rxjs';
+import { PlayerStatus } from '../../admin/models/jugador.model';
 
 @Injectable({
   providedIn: 'root'
@@ -26,7 +27,7 @@ constructor(
     const userId = this.authService.getCurrentUserId();
     if (userId) {
       try {
-        await this.playerService.updatePlayer(userId, { status: 'Inactivo' }).pipe(take(1)).toPromise();
+        await this.playerService.updatePlayer(userId, { status: PlayerStatus.Inactive }).pipe(take(1)).toPromise();
       } catch (error) {
         console.error('Error al actualizar estado a inactivo:', error);
       }
