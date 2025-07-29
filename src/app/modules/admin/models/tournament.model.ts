@@ -1,8 +1,10 @@
+import { TournamentFormat } from "../../tournament/models/tournament-format.enum";
+
 export interface Tournament {
   id?: string; // Opcional porque se asigna al crear
   name: string;
   game: string;
-  format: 'Single Elimination' | 'Double Elimination' | 'Round Robin';
+  format: TournamentFormat;
   maxTeams: number;
   currentTeams: number;
   startDate: Date | string;

@@ -1,0 +1,33 @@
+<div class="rules-container">
+  <h3><i class="fas fa-scroll"></i> Reglas Generales del Torneo</h3>
+  <div class="rules-content">
+    <!-- Sección de reglas personalizadas del administrador -->
+    <div class="custom-rules-section" *ngIf="customRules.length > 0">
+      <h4><i class="fas fa-user-shield"></i> Reglas del Administrador:</h4>
+      <ul>
+        <li *ngFor="let rule of customRules">{{ rule }}</li>
+      </ul>
+    </div>
+
+    <!-- Sección de reglas por defecto -->
+    <div class="default-rules-section">
+      <h4><i class="fas fa-info-circle"></i> Reglas Estándar:</h4>
+      <ul>
+        <li>Todos los participantes deben respetar el código de conducta</li>
+        <li>Los horarios de los partidos son estrictos</li>
+        <li>Cualquier problema debe ser reportado inmediatamente a los organizadores</li>
+        <li>Las decisiones de los administradores son finales</li>
+      </ul>
+    </div>
+    
+    <!-- Sección de reglas específicas del formato -->
+    <div class="format-specific-rules" *ngIf="tournament?.format">
+    <h4><i class="fas fa-trophy"></i> Reglas específicas del formato {{ tournament?.format }}:</h4>
+    <ul>
+        <li *ngFor="let rule of formatDescriptions[tournament!.format].rules">
+        {{ rule }}
+        </li>
+    </ul>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,64 @@
+.rules-container {
+  background: rgba(16, 30, 54, 0.5);
+  border-radius: 8px;
+  padding: 20px;
+}
+
+.rules-container h3 {
+  color: #f8d45a;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 0;
+}
+
+.rules-content {
+  color: #b8d1f1;
+}
+
+.custom-rules-section {
+  margin-bottom: 25px;
+  padding-bottom: 20px;
+  border-bottom: 1px dashed #2a4766;
+}
+
+.custom-rules-section h4 i {
+  color: #e8311a;
+}
+
+.default-rules-section {
+  margin: 25px 0;
+  padding: 20px 0;
+  border-bottom: 1px dashed #2a4766;
+}
+
+.default-rules-section h4 i {
+  color: #1a73e8;
+}
+
+.format-specific-rules {
+  margin-top: 25px;
+  padding-top: 20px;
+}
+
+.format-specific-rules h4 i {
+  color: #f8d45a;
+}
+
+.rules-content h4 {
+  color: #b8d1f1;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+.rules-content ul {
+  padding-left: 20px;
+}
+
+.rules-content li {
+  margin-bottom: 10px;
+  line-height: 1.5;
+  color: #b8d1f1;
+}

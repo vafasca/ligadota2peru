@@ -14,7 +14,6 @@ import { environment } from '../environments/environment';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import {MatButtonModule} from '@angular/material/button';
 import {MatSnackBarModule} from '@angular/material/snack-bar';
-import { ElevatorLoadingComponent } from './shared-components/elevator-loading/elevator-loading.component';
 import { UserRoutingModule } from './modules/user/user-routing.module';
 import { NotificationsComponent } from './shared-components/notifications/notifications.component';
 import { ChallengeResponseDialogComponent } from './shared-components/challenge-response-dialog/challenge-response-dialog.component';
@@ -24,7 +23,6 @@ import { ConfirmChallengeDialogComponent } from './shared-components/confirm-cha
 @NgModule({
   declarations: [
     AppComponent,
-    ElevatorLoadingComponent,
     ConfirmChallengeDialogComponent
   ],
   imports: [

@@ -1,85 +1,109 @@
 <div class="tournament-view-container" *ngIf="!loading && tournament">
-  <div class="tournament-header">
-    <div class="tournament-banner">
-      <div class="banner-overlay"></div>
-      <div class="tournament-info">
-        <h1>{{ tournament.name }}</h1>
-        <div class="meta-info">
-          <span class="game-badge">{{ tournament.game }}</span>
-          <span class="format-badge">{{ tournament.format }}</span>
-          <span class="status-badge" [class]="getStatusClass(tournament.status)">{{ tournament.status }}</span>
+  <!-- Hero Section -->
+  <div class="tournament-hero">
+    <div class="hero-overlay"></div>
+    <div class="hero-content">
+      <h1 class="tournament-title">{{ tournament.name }}</h1>
+      <div class="tournament-meta">
+        <span class="meta-badge game">{{ tournament.game }}</span>
+        <span class="meta-badge format">{{ tournament.format }}</span>
+        <span class="meta-badge status" [class]="getStatusClass(tournament.status)">{{ tournament.status }}</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tournament Grid -->
+  <div class="tournament-grid">
+    <!-- Info Card -->
+    <div class="info-card">
+      <div class="card-icon"><i class="far fa-calendar-alt"></i></div>
+      <div class="card-content">
+        <h3>Fechas</h3>
+        <p><strong>Inicio:</strong> {{ tournament.startDate | date:'mediumDate' }}</p>
+        <p *ngIf="tournament.endDate"><strong>Fin:</strong> {{ tournament.endDate | date:'mediumDate' }}</p>
+      </div>
+    </div>
+
+    <!-- Stats Cards -->
+    <div class="stats-grid">
+      <div class="stat-card" *ngFor="let stat of stats">
+        <div class="card-icon"><i [class]="stat.icon"></i></div>
+        <div class="card-content">
+          <h3>{{ stat.value }}</h3>
+          <p>{{ stat.label }}</p>
         </div>
       </div>
     </div>
-    
-    <div class="tournament-details">
-      <div class="dates">
-        <div class="date-item">
-          <i class="fas fa-hourglass-start"></i>
-          <span>Inicio: {{ tournament.startDate | date:'mediumDate' }}</span>
-        </div>
-        <div class="date-item" *ngIf="tournament.endDate">
-          <i class="fas fa-flag-checkered"></i>
-          <span>Fin: {{ tournament.endDate | date:'mediumDate' }}</span>
-        </div>
-      </div>
+  </div>
+
+  <!-- Format Explanation -->
+  <div class="format-explanation" *ngIf="tournament && tournament.format">
+    <div class="section-header">
+      <i class="fas fa-info-circle"></i>
+      <h2>Formato: {{ formatDescriptions[tournament.format].title || tournament.format }}</h2>
+    </div>
+    <div class="format-content">
+      <p>{{ formatDescriptions[tournament.format].description }}</p>
       
-      <div class="tournament-stats">
-        <div class="stat-card">
-          <div class="stat-icon"><i class="fas fa-users"></i></div>
-          <div class="stat-content">
-            <div class="stat-value">{{ tournament.currentTeams }}/{{ tournament.maxTeams }}</div>
-            <div class="stat-label">EQUIPOS</div>
-          </div>
-        </div>
-        <div class="stat-card" *ngIf="tournament.prizePool">
-          <div class="stat-icon"><i class="fas fa-coins"></i></div>
-          <div class="stat-content">
-            <div class="stat-value">{{ tournament.prizePool }}</div>
-            <div class="stat-label">PREMIO</div>
-          </div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-icon"><i class="fas fa-ticket-alt"></i></div>
-          <div class="stat-content">
-            <div class="stat-value">{{ tournament.entryFee || 'Gratis' }}</div>
-            <div class="stat-label">INSCRIPCIÓN</div>
-          </div>
-        </div>
+      <div class="rules-section">
+        <h3><i class="fas fa-gavel"></i> Reglas del Formato:</h3>
+        <ul class="rules-list">
+          <li *ngFor="let rule of formatDescriptions[tournament.format].rules">
+            <i class="fas fa-chevron-right"></i> {{ rule }}
+          </li>
+        </ul>
       </div>
     </div>
   </div>
 
-  <div class="tournament-tabs">
-    <button 
-      class="tab-button" 
-      [class.active]="activeTab === 'teams'"
-      (click)="changeTab('teams')"
-    >
-      <i class="fas fa-users"></i> EQUIPOS
-    </button>
-    <button 
-      class="tab-button" 
-      [class.active]="activeTab === 'bracket'"
-      (click)="changeTab('bracket')"
-    >
-      <i class="fas fa-trophy"></i> BRACKET
-    </button>
-  </div>
-
-  <div class="tab-content">
-    <app-tournament-teams *ngIf="activeTab === 'teams'" [teams]="tournamentTeams"></app-tournament-teams>
+  <!-- Tournament Tabs -->
+  <div class="tabs-container">
+    <div class="tabs">
+      <button 
+        class="tab-button" 
+        [class.active]="activeTab === 'teams'"
+        (click)="changeTab('teams')"
+      >
+        <i class="fas fa-users"></i>
+        <span>EQUIPOS</span>
+      </button>
+      <button 
+        class="tab-button" 
+        [class.active]="activeTab === 'bracket'"
+        (click)="changeTab('bracket')"
+      >
+        <i class="fas fa-trophy"></i>
+        <span>BRACKET</span>
+      </button>
+      <button 
+        class="tab-button" 
+        [class.active]="activeTab === 'rules'"
+        (click)="changeTab('rules')"
+      >
+        <i class="fas fa-book"></i>
+        <span>REGLAS</span>
+      </button>
+    </div>
     
-    <div *ngIf="activeTab === 'bracket'">
-      <app-single-elimination [tournamentId]="tournamentId" *ngIf="tournament?.format === 'Single Elimination'"></app-single-elimination>
+    <div class="tab-content">
+      <app-tournament-teams *ngIf="activeTab === 'teams'" [teams]="tournamentTeams"></app-tournament-teams>
+      
+      <div *ngIf="activeTab === 'bracket'">
+  <app-single-elimination 
+    [tournamentId]="tournamentId" 
+    [maxTeams]="tournament.maxTeams"
+    *ngIf="tournament?.format === 'Single Elimination'"> <!-- Aquí sí necesitas ?. para tournament -->
+  </app-single-elimination>
+</div>
+      
+      <div *ngIf="activeTab === 'rules'" class="rules-tab">
+        <app-format-rules 
+          [tournament]="tournament" 
+          [customRules]="customRules">
+        </app-format-rules>
+      </div>
     </div>
   </div>
 </div>
 
-<div class="loading-overlay" *ngIf="loading">
-  <div class="loading-content">
-    <div class="radiant-spinner"></div>
-    <div class="dire-spinner"></div>
-    <div class="loading-text">CARGANDO TORNEO...</div>
-  </div>
-</div>
+<app-elevator-loading *ngIf="loading"></app-elevator-loading>

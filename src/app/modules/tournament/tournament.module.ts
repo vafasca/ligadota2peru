@@ -8,6 +8,8 @@ import { SingleEliminationComponent } from './components/single-elimination/sing
 import { CreateTounamentComponent } from './components/create-tounament/create-tounament.component';
 import { TournamentViewComponent } from './components/tournament-view/tournament-view.component';
 import { TournamentTeamsComponent } from './components/tournament-teams/tournament-teams.component';
+import { SharedModule } from 'src/app/shared-module/shared.module';
+import { FormatRulesComponent } from './components/format-rules/format-rules.component';
 
 
 @NgModule({
@@ -17,11 +19,13 @@ import { TournamentTeamsComponent } from './components/tournament-teams/tourname
     CreateTounamentComponent,
     TournamentViewComponent,
     TournamentTeamsComponent,
+    FormatRulesComponent,
   ],
   imports: [
     CommonModule,
     TournamentRoutingModule,
     FormsModule,
+    SharedModule
   ]
 })
 export class TournamentModule { }

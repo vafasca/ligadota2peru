@@ -4,6 +4,7 @@ import { Match } from '../../models/match.model';
 import { TournamentTeam } from '../../models/team.model';
 import { TournamentService } from '../../services/tournament.service';
 import { ActivatedRoute } from '@angular/router';
+import { PlayerDivision } from 'src/app/modules/admin/models/jugador.model';
 
 @Component({
   selector: 'app-single-elimination',
@@ -19,6 +20,7 @@ export class SingleEliminationComponent {
   rounds: number[] = [];
   champion?: TournamentTeam;
   isLoading = true;
+  @Input() maxTeams?: number;
 
   constructor(
     private tournamentService: TournamentService,
@@ -29,47 +31,126 @@ export class SingleEliminationComponent {
     if (!this.tournamentId) {
       this.tournamentId = this.route.snapshot.paramMap.get('tournamentId') || undefined;
     }
-
+    console.log('Tournament ID:', this.tournamentId);
+    // Generar bracket vacío basado en maxTeams
+    this.generateEmptyBracket();
+    
     if (this.tournamentId) {
       await this.loadTournamentTeams();
       this.generateBracket();
     } else {
       console.error('No se proporcionó ID de torneo');
-    }
-  }
-
-  async loadTournamentTeams() {
-    this.isLoading = true;
-    try {
-      this.teams = await this.tournamentService.getTournamentTeams(this.tournamentId!);
-      // Ordenar equipos por MMR total o algún criterio para el seeding
-      this.teams.sort((a, b) => {
-        const aMMR = a.players.reduce((sum, p) => sum + (p.mmr || 0), 0);
-        const bMMR = b.players.reduce((sum, p) => sum + (p.mmr || 0), 0);
-        return bMMR - aMMR;
-      });
-    } catch (error) {
-      console.error('Error loading tournament teams:', error);
-    } finally {
       this.isLoading = false;
     }
   }
 
-  generateBracket() {
-    if (this.teams.length < 2) {
-      console.error('Se necesitan al menos 2 equipos para generar un bracket');
-      return;
+  generateEmptyBracket() {
+    console.log('this.maxTeams:', this.maxTeams);
+    const teamCount = this.getNearestPowerOfTwo(this.maxTeams || 8);
+    this.selectedTeamCount = teamCount;
+    this.matches = this.generateEmptySingleEliminationBracket(teamCount);
+    const totalRounds = Math.max(...this.matches.map(m => m.round));
+    this.rounds = Array.from({length: totalRounds}, (_, i) => i + 1);
+  }
+
+  private generateEmptySingleEliminationBracket(teamCount: number): Match[] {
+    const matches: Match[] = [];
+    const totalRounds = Math.ceil(Math.log2(teamCount));
+    const firstRoundMatches = teamCount / 2;
+    
+    // Generar partidas vacías de la primera ronda
+    for (let i = 0; i < firstRoundMatches; i++) {
+      matches.push({
+        id: `round-1-match-${i}`,
+        round: 1,
+        team1: this.createEmptyTeam(),
+        team2: this.createEmptyTeam(),
+        isCompleted: false
+      });
     }
+    
+    // Generar rondas posteriores vacías
+    for (let round = 2; round <= totalRounds; round++) {
+      const matchesInRound = Math.pow(2, totalRounds - round);
+      for (let i = 0; i < matchesInRound; i++) {
+        matches.push({
+          id: `round-${round}-match-${i}`,
+          round,
+          team1: this.createEmptyTeam(),
+          team2: this.createEmptyTeam(),
+          isCompleted: false
+        });
+      }
+    }
+    
+    return matches;
+  }
 
-    // Asegurarse de que el número de equipos sea potencia de 2
-    const teamCount = this.getNearestPowerOfTwo(this.teams.length);
-    const teamsForBracket = [...this.teams].slice(0, teamCount);
+  private createEmptyTeam(): TournamentTeam {
+    return {
+        id: 'empty-' + Math.random().toString(36).substr(2, 9),
+        name: 'TBD',
+        icon: '❓',
+        players: [],
+        division: PlayerDivision.PorDefinir,
+        tournamentId: this.tournamentId || '',
+        originalTeamId: '',
+        captainId: '',
+        isActive: false,
+        createdAt: new Date(),
+        stats: {
+            wins: 0,
+            losses: 0,
+            pointsFor: 0,
+            pointsAgainst: 0
+        }
+    };
+}
 
+  async loadTournamentTeams() {
+    this.isLoading = true;
+    try {
+        this.teams = await this.tournamentService.getTournamentTeams(this.tournamentId!);
+        // Ordenar equipos por MMR total o algún criterio para el seeding
+        this.teams.sort((a, b) => {
+            const aMMR = a.players.reduce((sum, p) => sum + (p.mmr || 0), 0);
+            const bMMR = b.players.reduce((sum, p) => sum + (p.mmr || 0), 0);
+            return bMMR - aMMR;
+        });
+        
+        // Generar el bracket con los equipos cargados
+        this.generateBracket();
+    } catch (error) {
+        console.error('Error loading tournament teams:', error);
+        // Generar bracket vacío incluso si hay error
+        this.generateBracket();
+    } finally {
+        this.isLoading = false;
+    }
+}
+
+  generateBracket() {
+    // Siempre genera el bracket basado en maxTeams, incluso si no hay equipos
+    const teamCount = this.getNearestPowerOfTwo(this.maxTeams || 8);
+    
+    // Crear un array de equipos que combine los reales con los vacíos
+    const teamsForBracket: TournamentTeam[] = [];
+    
+    // Agregar equipos reales primero
+    for (let i = 0; i < this.teams.length && i < teamCount; i++) {
+        teamsForBracket.push(this.teams[i]);
+    }
+    
+    // Completar con equipos vacíos si es necesario
+    while (teamsForBracket.length < teamCount) {
+        teamsForBracket.push(this.createEmptyTeam());
+    }
+    
     this.matches = this.generateSingleEliminationBracket(teamsForBracket);
     const totalRounds = Math.max(...this.matches.map(m => m.round));
     this.rounds = Array.from({length: totalRounds}, (_, i) => i + 1);
     this.champion = undefined;
-  }
+}
 
   private getNearestPowerOfTwo(num: number): number {
     return Math.pow(2, Math.ceil(Math.log2(num)));
@@ -83,29 +164,34 @@ export class SingleEliminationComponent {
     
     // Generar partidas de la primera ronda
     for (let i = 0; i < firstRoundMatches; i++) {
-      matches.push({
-        id: `round-1-match-${i}`,
-        round: 1,
-        team1: teams[i * 2],
-        team2: teams[i * 2 + 1],
-        isCompleted: false
-      });
+        const team1 = teams[i * 2] || this.createEmptyTeam();
+        const team2 = teams[i * 2 + 1] || this.createEmptyTeam();
+        
+        matches.push({
+            id: `round-1-match-${i}`,
+            round: 1,
+            team1: team1,
+            team2: team2,
+            isCompleted: false
+        });
     }
     
-    // Generar rondas posteriores
+    // Generar rondas posteriores con equipos vacíos
     for (let round = 2; round <= totalRounds; round++) {
-      const matchesInRound = Math.pow(2, totalRounds - round);
-      for (let i = 0; i < matchesInRound; i++) {
-        matches.push({
-          id: `round-${round}-match-${i}`,
-          round,
-          isCompleted: false
-        });
-      }
+        const matchesInRound = Math.pow(2, totalRounds - round);
+        for (let i = 0; i < matchesInRound; i++) {
+            matches.push({
+                id: `round-${round}-match-${i}`,
+                round,
+                team1: this.createEmptyTeam(),
+                team2: this.createEmptyTeam(),
+                isCompleted: false
+            });
+        }
     }
     
     return matches;
-  }
+}
 
 
 

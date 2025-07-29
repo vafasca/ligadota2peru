@@ -1,18 +1,8 @@
 <!-- tournament.component.html -->
 <div class="tournament-container">
   <div class="header">
-    <h1>Tournament Bracket Generator</h1>
-    <div class="controls">
-      <div class="input-group">
-        <label for="teamCount">Number of Teams:</label>
-        <select id="teamCount" [(ngModel)]="selectedTeamCount" (change)="generateBracket()">
-          <option value="4">4 Teams</option>
-          <option value="8">8 Teams</option>
-          <option value="16">16 Teams</option>
-          <option value="32">32 Teams</option>
-        </select>
-      </div>
-      <button (click)="generateBracket()" class="generate-btn">Generate Bracket</button>
+    <h1>Tournament Bracket</h1>
+    <div class="controls" *ngIf="teams.length > 0">
       <button (click)="randomizeAllMatches()" class="randomize-btn">Simulate Results</button>
     </div>
   </div>
@@ -27,24 +17,22 @@
           class="match" 
           *ngFor="let match of getMatchesForRound(round)"
           [class.completed]="match.isCompleted"
-          (click)="simulateMatch(match)"
+          (click)="teams.length > 0 && simulateMatch(match)"
         >
           <div class="match-header">
             <span class="match-label">PARTIDA {{ match.id.split('-')[3] }}</span>
           </div>
           <div class="teams">
             <div class="team" [class.winner]="match.winner === match.team1">
-            <div class="team-info">
-              <img [src]="match.team1?.icon || 'assets/default-team-logo.png'" class="team-logo" *ngIf="match.team1?.icon">
-              <span class="team-icon" *ngIf="!match.team1?.icon">{{ match.team1?.icon || '❓' }}</span>
-              <span class="team-name">{{ match.team1?.name || 'TBD' }}</span>
+              <div class="team-info">
+                <span class="team-icon">{{ match.team1?.icon || '❓' }}</span>
+                <span class="team-name">{{ match.team1?.name || 'TBD' }}</span>
+              </div>
+              <span class="score">{{ match.score1 ?? '' }}</span>
             </div>
-            <span class="score">{{ match.score1 ?? '' }}</span>
-          </div>
             <div class="team" [class.winner]="match.winner === match.team2">
               <div class="team-info">
-                <img [src]="match.team2?.icon || 'assets/default-team-logo.png'" class="team-logo" *ngIf="match.team2?.icon">
-                <span class="team-icon" *ngIf="!match.team2?.icon">{{ match.team2?.icon || '❓' }}</span>
+                <span class="team-icon">{{ match.team2?.icon || '❓' }}</span>
                 <span class="team-name">{{ match.team2?.name || 'TBD' }}</span>
               </div>
               <span class="score">{{ match.score2 ?? '' }}</span>
@@ -55,7 +43,7 @@
     </div>
   </div>
 
-  <div class="champion" *ngIf="champion">
+  <div class="champion" *ngIf="champion && champion.id !== 'empty'">
     <div class="champion-container">
       <h2>🏆 CHAMPION</h2>
       <div class="champion-team">
