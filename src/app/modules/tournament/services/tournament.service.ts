@@ -1,8 +1,9 @@
 import { Injectable } from '@angular/core';
-import { collection, Firestore, getDocs } from '@angular/fire/firestore';
+import { collection, Firestore, getDocs, query, where } from '@angular/fire/firestore';
 import { TournamentTeam } from '../models/team.model';
 import { Match } from '../models/match.model';
 import { Team } from '../../admin/models/equipos.model';
+import { PlayerDivision } from '../../admin/models/jugador.model';
 
 @Injectable({
   providedIn: 'root'
@@ -11,33 +12,46 @@ export class TournamentService {
   constructor(private firestore: Firestore) {}
 
   async getTeams(count: number): Promise<TournamentTeam[]> {
-    const teamsCollection = collection(this.firestore, 'teams');
-    const querySnapshot = await getDocs(teamsCollection);
-    
-    const teams: TournamentTeam[] = [];
-    querySnapshot.forEach((doc) => {
-      const teamData = doc.data() as Team;
-      if (teamData.status === 'active' && teamData.players?.length >= 5) {
-        teams.push({
-          id: doc.id,
-          name: teamData.name,
-          icon: teamData.logo || '🏆', // Usa el logo del equipo o un ícono por defecto
-          stats: {
-            wins: 0,
-            losses: 0,
-            pointsFor: 0,
-            pointsAgainst: 0
-          },
-          players: teamData.players // Opcional: incluir información de jugadores
-        });
-      }
-    });
+  const teamsCollection = collection(this.firestore, 'teams');
+  const querySnapshot = await getDocs(teamsCollection);
+  
+  const teams: TournamentTeam[] = [];
+  querySnapshot.forEach((doc) => {
+    const teamData = doc.data() as Team;
+    if (teamData.status === 'active' && teamData.players?.length >= 5) {
+      teams.push({
+        id: doc.id,
+        name: teamData.name,
+        tournamentId: '',
+        originalTeamId: doc.id,
+        captainId: teamData.captainId,
+        icon: teamData.logo || '🏆',
+        players: teamData.players.map(p => ({
+          uid: p.uid,
+          nick: p.nick,
+          role: p.role,
+          avatar: p.avatar,
+          mmr: p.mmr,
+          medalImage: p.medalImage,
+          idDota: p.idDota
+        })),
+        division: teamData.division || PlayerDivision.PorDefinir,
+        createdAt: new Date(),
+        isActive: true,
+        stats: {
+          wins: 0,
+          losses: 0,
+          pointsFor: 0,
+          pointsAgainst: 0
+        }
+      });
+    }
+  });
 
-    // Limitar al número solicitado y mezclar
-    return teams
-      .sort(() => Math.random() - 0.5)
-      .slice(0, count);
-  }
+  return teams
+    .sort(() => Math.random() - 0.5)
+    .slice(0, count);
+}
 
   generateSingleEliminationBracket(teams: TournamentTeam[]): Match[] {
     // El resto del método permanece igual
@@ -74,4 +88,16 @@ export class TournamentService {
     
     return matches;
   }
+
+  getTournamentTeams(tournamentId: string): Promise<TournamentTeam[]> {
+  const q = query(
+    collection(this.firestore, 'tournament_teams'),
+    where('tournamentId', '==', tournamentId),
+    where('isActive', '==', true)
+  );
+
+  return getDocs(q).then(snapshot => 
+    snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as TournamentTeam))
+  );
+}
 }

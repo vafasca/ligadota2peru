@@ -1,15 +1,31 @@
 import { TeamPlayer } from '../../admin/models/equipos.model';
+import { PlayerDivision } from '../../admin/models/jugador.model';
 
 export interface TournamentTeam {
   id: string;
+  tournamentId: string;
+  originalTeamId: string;
   name: string;
-  seed?: number;
+  captainId: string;
+  players: TournamentPlayer[];
+  division: PlayerDivision;
+  createdAt: Date;
+  isActive: boolean;
+  icon?: string;
   stats?: {
     wins: number;
     losses: number;
     pointsFor: number;
     pointsAgainst: number;
   };
-  icon?: string;
-  players?: TeamPlayer[]; // Opcional: incluir jugadores
+}
+
+export interface TournamentPlayer {
+  uid: string;
+  nick: string;
+  role: string;
+  avatar: string;
+  mmr: number;
+  medalImage: string;
+  idDota?: number;
 }

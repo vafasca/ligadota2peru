@@ -773,24 +773,41 @@ isAdminUser(): boolean {
 }
 
 openTournamentDialog(): void {
-  if (!this.userTeam || !this.isTeamCaptain || this.teamPlayers.length < 5) return;
+  if (!this.userTeam || !this.isTeamCaptain || this.teamPlayers.length < 5) {
+    this.notificationService.showError('Requieres ser capitán con equipo completo (5 jugadores)');
+    return;
+  }
 
   const dialogRef = this.dialog.open(RegisterTeamDialogComponent, {
     width: '500px',
-    data: { team: this.userTeam }
+    data: { 
+      team: {
+        id: this.userTeam.id,
+        name: this.userTeam.name,
+        captainId: this.userTeam.captainId,
+        players: this.teamPlayers.map(p => ({
+          uid: p.uid,
+          nick: p.nick,
+          role: p.role,
+          avatar: p.avatar,
+          mmr: p.mmr,
+          medalImage: p.medalImage,
+          idDota: p.idDota
+        })),
+        division: this.userTeam.division || this.currentUserDivision
+      }
+    }
   });
 
-  dialogRef.afterClosed().subscribe((tournamentId: string | undefined) => {
-    if (tournamentId && this.userTeam) {
-      this.registerToTournament(tournamentId);
+  dialogRef.afterClosed().subscribe((teamId: string | undefined) => {
+    if (teamId) {
+      this.notificationService.showSuccess('Inscripción exitosa!');
     }
   });
 }
 
-registerToTournament(tournamentId: string): void {
-  if (!this.userTeam) return;
-
-  this.tournamentService.registerTeamToTournament(tournamentId, this.userTeam.id).subscribe({
+registerToTournament(tournamentData: { tournamentId: string, team: Team }): void {
+  this.tournamentService.registerTeamToTournament(tournamentData.tournamentId, tournamentData.team).subscribe({
     next: () => {
       this.notificationService.showSuccess('Equipo inscrito al torneo exitosamente');
     },

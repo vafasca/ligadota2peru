@@ -4,6 +4,7 @@ import { Team } from 'src/app/modules/admin/models/equipos.model';
 import { Tournament } from 'src/app/modules/admin/models/tournament.model';
 import { TournamentService } from 'src/app/modules/tournament/services/tournament.service';
 import { TournamentRegisterService } from '../../services/tournament-register.service';
+import { NotificationService } from 'src/app/shared-services/notification.service';
 
 @Component({
   selector: 'app-register-team-dialog',
@@ -18,7 +19,8 @@ export class RegisterTeamDialogComponent {
   constructor(
     public dialogRef: MatDialogRef<RegisterTeamDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: { team: Team },
-    private tournamentService: TournamentRegisterService
+    private tournamentService: TournamentRegisterService,
+    private notificationService: NotificationService,
   ) {}
 
   ngOnInit(): void {
@@ -42,10 +44,27 @@ export class RegisterTeamDialogComponent {
   }
 
   onRegister(): void {
-    if (this.selectedTournament) {
-      this.dialogRef.close(this.selectedTournament);
-    }
+  if (!this.selectedTournament || !this.data.team) {
+    this.notificationService.showError('Selecciona un torneo válido');
+    return;
   }
+
+  this.isLoading = true;
+  this.tournamentService.registerTeamToTournament(
+    this.selectedTournament, 
+    this.data.team
+  ).subscribe({
+    next: (teamId) => {
+      this.notificationService.showSuccess('Equipo registrado en el torneo');
+      this.dialogRef.close(teamId);
+    },
+    error: (err) => {
+      console.error('Registration error:', err);
+      this.notificationService.showError(err.message || 'Error al registrar equipo');
+      this.isLoading = false;
+    }
+  });
+}
 
   onCancel(): void {
     this.dialogRef.close();

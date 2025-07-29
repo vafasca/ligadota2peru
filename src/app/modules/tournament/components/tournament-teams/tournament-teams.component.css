@@ -185,6 +185,26 @@
   font-size: 1.2rem;
 }
 
+/* Añadir al final del archivo CSS existente */
+
+.team-stats {
+  font-size: 0.8rem;
+  color: #f8d45a;
+  font-weight: 600;
+}
+
+.team-category {
+  /* Cambiamos el estilo para mostrar la división */
+  display: inline-block;
+  padding: 3px 10px;
+  background: rgba(42, 71, 102, 0.8);
+  color: #b8d1f1;
+  border-radius: 15px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: capitalize;
+}
+
 /* Responsive adjustments */
 @media (max-width: 768px) {
   .teams-grid {

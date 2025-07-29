@@ -1,13 +1,12 @@
-<!-- tournament-teams.component.html -->
 <div class="teams-container">
   <div class="teams-grid">
     <div class="team-card" *ngFor="let team of teams">
       <div class="team-header">
         <div class="team-logo-container">
-          <img [src]="team.logo || 'assets/default-team-logo.png'" class="team-logo">
+          <img [src]="team.icon || 'assets/default-team-logo.png'" class="team-logo">
         </div>
         <h3 class="team-name">{{ team.name }}</h3>
-        <span class="team-category">{{ team.category }}</span>
+        <span class="team-category">{{ team.division }}</span>
       </div>
       
       <div class="team-players">
@@ -27,10 +26,12 @@
       </div>
       
       <div class="team-footer">
-        <span class="team-status" [class.active]="team.status === 'active'">
-          {{ team.status === 'active' ? 'Activo' : 'Inactivo' }}
+        <span class="team-status" [class.active]="team.isActive">
+          {{ team.isActive ? 'Activo' : 'Inactivo' }}
         </span>
-        <span class="team-division">{{ team.division }}</span>
+        <span class="team-stats">
+          {{ team.stats?.wins || 0 }}W - {{ team.stats?.losses || 0 }}L
+        </span>
       </div>
     </div>
   </div>

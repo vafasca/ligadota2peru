@@ -1,5 +1,6 @@
 import { Component, Input } from '@angular/core';
 import { Team } from 'src/app/modules/admin/models/equipos.model';
+import { TournamentTeam } from '../../models/team.model';
 
 @Component({
   selector: 'app-tournament-teams',
@@ -7,5 +8,5 @@ import { Team } from 'src/app/modules/admin/models/equipos.model';
   styleUrls: ['./tournament-teams.component.css']
 })
 export class TournamentTeamsComponent {
-  @Input() teams: Team[] = [];
+  @Input() teams: TournamentTeam[] = [];
 }

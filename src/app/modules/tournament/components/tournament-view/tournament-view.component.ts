@@ -4,6 +4,8 @@ import { Tournament } from 'src/app/modules/admin/models/tournament.model';
 import { TournamentFormat } from '../../models/tournament-format.enum';
 import { ActivatedRoute } from '@angular/router';
 import { PanelAdminService } from 'src/app/modules/admin/services/panel-admin.service';
+import { TournamentTeam } from '../../models/team.model';
+import { TournamentRegisterService } from 'src/app/modules/main-menu/services/tournament-register.service';
 
 @Component({
   selector: 'app-tournament-view',
@@ -13,7 +15,8 @@ import { PanelAdminService } from 'src/app/modules/admin/services/panel-admin.se
 export class TournamentViewComponent {
   tournamentId: string = '';
   tournament: Tournament | null = null;
-  teams: Team[] = [];
+  tournamentTeams: TournamentTeam[] = [];
+  teams: TournamentTeam[] = [];
   loading: boolean = true;
   activeTab: 'teams' | 'bracket' = 'teams';
   TournamentFormat = TournamentFormat;
@@ -21,27 +24,25 @@ export class TournamentViewComponent {
 
   constructor(
     private route: ActivatedRoute,
-    private tournamentService: PanelAdminService
+    private tournamentService: PanelAdminService,
+    private tournamentRegisterService: TournamentRegisterService
   ) {}
 
   ngOnInit(): void {
     this.tournamentId = this.route.snapshot.paramMap.get('id') || '';
     this.loadTournament();
-    this.loadTeams();
   }
 
   loadTournament(): void {
     this.tournamentService.getTournament(this.tournamentId).subscribe({
       next: (tournament) => {
         if (!tournament) {
-          console.log('Tournament not found');
           this.errorMessage = 'Torneo no encontrado';
           this.loading = false;
           return;
         }
         this.tournament = tournament;
-        this.loadTeams();
-        this.loading = false;
+        this.loadTournamentTeams();
       },
       error: (err) => {
         this.errorMessage = 'Error al cargar el torneo';
@@ -51,19 +52,20 @@ export class TournamentViewComponent {
     });
   }
 
-  loadTeams(): void {
-    if (!this.tournamentId) return;
-    console.log('Loading teams for tournament:', this.tournamentId);
-    this.tournamentService.getTournamentTeams(this.tournamentId).subscribe({
+  loadTournamentTeams(): void {
+    this.tournamentRegisterService.getTournamentTeams(this.tournamentId).subscribe({
       next: (teams) => {
-        this.teams = teams;
+        this.tournamentTeams = teams;
+        this.loading = false;
       },
       error: (err) => {
-        console.error('Error loading teams:', err);
+        this.errorMessage = 'Error al cargar los equipos del torneo';
+        console.error('Error loading tournament teams:', err);
+        this.loading = false;
       }
     });
   }
-
+  
   getStatusClass(status: string): string {
     return status.toLowerCase().replace(/\s+/g, '-');
   }

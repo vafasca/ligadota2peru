@@ -1,197 +1,334 @@
-/* tournament-view.component.css */
+/* Fuentes y colores base */
+@import url('https://fonts.googleapis.com/css2?family=Revalia&family=Radley&display=swap');
+
+:root {
+  --dota-red: #e8311a;
+  --dota-blue: #1a73e8;
+  --dota-gold: #f8d45a;
+  --dota-dark: #0f1923;
+  --dota-dark-secondary: #1e2a3a;
+  --dota-text: #d9e3ea;
+  --dota-text-secondary: #b8d1f1;
+}
+
 .tournament-view-container {
-  background: #0f1923;
-  color: #fff;
+  background: linear-gradient(135deg, #0a121a 0%, #0f1923 100%);
+  color: var(--dota-text);
   min-height: 100vh;
-  padding: 20px;
-  font-family: 'Radiance', 'Arial', sans-serif;
+  font-family: 'Radley', serif;
 }
 
+/* Banner superior con efecto de degradado */
 .tournament-header {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 30px;
+  position: relative;
   margin-bottom: 30px;
-  background: linear-gradient(135deg, rgba(23, 43, 77, 0.8) 0%, rgba(16, 30, 54, 0.9) 100%);
-  padding: 25px;
-  border-radius: 10px;
-  border: 1px solid #2a4766;
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
 }
 
-.tournament-info {
-  flex: 1;
-  min-width: 300px;
+.tournament-banner {
+  background: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.7)), 
+              url('https://cdn.cloudflare.steamstatic.com/apps/dota2/images/dota_react//home/heroes_full.jpg');
+  background-size: cover;
+  background-position: center;
+  padding: 40px 30px;
+  position: relative;
+}
+
+.banner-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, rgba(16, 30, 54, 0.9) 0%, rgba(16, 30, 54, 0.6) 100%);
 }
 
 .tournament-info h1 {
-  color: #f8d45a;
-  font-size: 2.5rem;
+  font-family: 'Revalia', cursive;
+  color: var(--dota-gold);
+  font-size: 2.8rem;
   margin-bottom: 15px;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+  letter-spacing: 1px;
+  position: relative;
+  z-index: 2;
 }
 
 .meta-info {
   display: flex;
-  gap: 10px;
-  margin-bottom: 15px;
+  gap: 12px;
+  margin-bottom: 10px;
   flex-wrap: wrap;
+  position: relative;
+  z-index: 2;
 }
 
 .game-badge, .format-badge, .status-badge {
-  padding: 5px 12px;
-  border-radius: 20px;
+  padding: 6px 15px;
+  border-radius: 4px;
   font-size: 0.9rem;
   font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
 .game-badge {
-  background: rgba(113, 19, 19, 0.8);
-  color: #fff;
-  border: 1px solid #d9534f;
+  background: linear-gradient(135deg, #8b0000 0%, #e8311a 100%);
+  color: white;
 }
 
 .format-badge {
-  background: rgba(42, 71, 102, 0.8);
-  color: #b8d1f1;
-  border: 1px solid #4a90e2;
+  background: linear-gradient(135deg, #1a3e72 0%, #1a73e8 100%);
+  color: white;
 }
 
 .status-badge {
   &.programado {
-    background: rgba(66, 153, 225, 0.2);
-    color: #4299e1;
-    border: 1px solid rgba(66, 153, 225, 0.3);
+    background: linear-gradient(135deg, #1a3e72 0%, #4299e1 100%);
   }
   
   &.en-progreso {
-    background: rgba(237, 137, 54, 0.2);
-    color: #ed8936;
-    border: 1px solid rgba(237, 137, 54, 0.3);
+    background: linear-gradient(135deg, #a35709 0%, #ed8936 100%);
   }
   
   &.finalizado {
-    background: rgba(56, 161, 105, 0.2);
-    color: #38a169;
-    border: 1px solid rgba(56, 161, 105, 0.3);
+    background: linear-gradient(135deg, #1a5a3e 0%, #38a169 100%);
   }
   
   &.cancelado {
-    background: rgba(229, 62, 62, 0.2);
-    color: #e53e3e;
-    border: 1px solid rgba(229, 62, 62, 0.3);
+    background: linear-gradient(135deg, #5a1a1a 0%, #e53e3e 100%);
   }
+}
+
+.tournament-details {
+  background: var(--dota-dark-secondary);
+  padding: 20px 30px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
 }
 
 .dates {
   display: flex;
-  gap: 20px;
-  color: #b8d1f1;
-  font-size: 0.95rem;
+  gap: 30px;
 }
 
-.dates i {
-  margin-right: 5px;
-  color: #f8d45a;
+.date-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.95rem;
+  color: var(--dota-text-secondary);
+}
+
+.date-item i {
+  color: var(--dota-gold);
+  font-size: 1.1rem;
 }
 
 .tournament-stats {
   display: flex;
-  gap: 15px;
-  min-width: 300px;
+  gap: 20px;
 }
 
 .stat-card {
   background: rgba(16, 30, 54, 0.7);
   border: 1px solid #2a4766;
-  border-radius: 8px;
+  border-radius: 6px;
   padding: 15px;
-  text-align: center;
-  flex: 1;
-  min-width: 100px;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  min-width: 180px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.stat-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+.stat-icon {
+  font-size: 1.8rem;
+  color: var(--dota-gold);
+}
+
+.stat-content {
+  display: flex;
+  flex-direction: column;
 }
 
 .stat-value {
   font-size: 1.5rem;
   font-weight: 700;
-  color: #f8d45a;
-  margin-bottom: 5px;
+  color: white;
+  line-height: 1;
 }
 
 .stat-label {
-  font-size: 0.85rem;
-  color: #b8d1f1;
+  font-size: 0.75rem;
+  color: var(--dota-text-secondary);
   text-transform: uppercase;
   letter-spacing: 1px;
+  margin-top: 5px;
 }
 
+/* Pestañas estilo Dota */
 .tournament-tabs {
   display: flex;
-  border-bottom: 1px solid #2a4766;
-  margin-bottom: 20px;
+  border-bottom: 2px solid #2a4766;
+  margin: 0 30px 30px;
 }
 
 .tab-button {
   background: none;
   border: none;
-  color: #b8d1f1;
-  padding: 12px 25px;
+  color: var(--dota-text-secondary);
+  padding: 15px 30px;
   font-size: 1rem;
   cursor: pointer;
   position: relative;
   transition: all 0.3s ease;
   font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-family: 'Revalia', cursive;
 }
 
 .tab-button i {
-  margin-right: 8px;
+  margin-right: 10px;
+  color: var(--dota-text-secondary);
 }
 
 .tab-button.active {
-  color: #f8d45a;
+  color: var(--dota-gold);
 }
 
 .tab-button.active::after {
   content: '';
   position: absolute;
-  bottom: -1px;
+  bottom: -2px;
   left: 0;
   width: 100%;
-  height: 3px;
-  background: #f8d45a;
+  height: 4px;
+  background: var(--dota-gold);
+  box-shadow: 0 0 10px var(--dota-gold);
 }
 
 .tab-button:hover:not(.active) {
-  color: #fff;
+  color: white;
   background: rgba(42, 71, 102, 0.3);
 }
 
-.loading-spinner {
+.tab-content {
+  padding: 0 30px 30px;
+}
+
+/* Loading screen estilo Dota */
+.loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(15, 25, 35, 0.9);
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 200px;
-  color: #f8d45a;
-  font-size: 1.2rem;
+  z-index: 1000;
 }
 
-.loading-spinner i {
-  margin-right: 10px;
+.loading-content {
+  position: relative;
+  text-align: center;
+}
+
+.radiant-spinner, .dire-spinner {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  border: 4px solid transparent;
+  border-top-color: var(--dota-blue);
+  border-bottom-color: var(--dota-blue);
+  animation: spin 1.5s linear infinite;
+}
+
+.dire-spinner {
+  width: 60px;
+  height: 60px;
+  border-top-color: var(--dota-red);
+  border-bottom-color: var(--dota-red);
+  animation-direction: reverse;
+}
+
+.loading-text {
+  margin-top: 120px;
+  color: var(--dota-gold);
+  font-family: 'Revalia', cursive;
   font-size: 1.5rem;
+  letter-spacing: 2px;
+  text-shadow: 0 0 10px rgba(248, 212, 90, 0.5);
 }
 
-/* Responsive adjustments */
-@media (max-width: 768px) {
-  .tournament-header {
+@keyframes spin {
+  0% { transform: translate(-50%, -50%) rotate(0deg); }
+  100% { transform: translate(-50%, -50%) rotate(360deg); }
+}
+
+/* Efectos responsivos */
+@media (max-width: 992px) {
+  .tournament-details {
     flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .dates {
+    width: 100%;
+    margin-bottom: 20px;
+  }
+}
+
+@media (max-width: 768px) {
+  .tournament-info h1 {
+    font-size: 2rem;
   }
   
   .tournament-stats {
-    justify-content: space-between;
+    flex-wrap: wrap;
+    width: 100%;
+  }
+  
+  .stat-card {
+    min-width: calc(50% - 10px);
   }
   
   .tab-button {
-    padding: 10px 15px;
+    padding: 12px 20px;
     font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .tournament-banner {
+    padding: 30px 20px;
+  }
+  
+  .stat-card {
+    min-width: 100%;
+  }
+  
+  .tab-content {
+    padding: 0 15px 30px;
+  }
+  
+  .tournament-tabs {
+    margin: 0 15px 20px;
   }
 }
