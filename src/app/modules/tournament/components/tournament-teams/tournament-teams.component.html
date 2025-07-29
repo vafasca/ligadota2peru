@@ -1,0 +1,42 @@
+<!-- tournament-teams.component.html -->
+<div class="teams-container">
+  <div class="teams-grid">
+    <div class="team-card" *ngFor="let team of teams">
+      <div class="team-header">
+        <div class="team-logo-container">
+          <img [src]="team.logo || 'assets/default-team-logo.png'" class="team-logo">
+        </div>
+        <h3 class="team-name">{{ team.name }}</h3>
+        <span class="team-category">{{ team.category }}</span>
+      </div>
+      
+      <div class="team-players">
+        <h4 class="players-title">Jugadores</h4>
+        <div class="player-list">
+          <div class="player-item" *ngFor="let player of team.players">
+            <img [src]="player.avatar || 'assets/default-avatar.png'" class="player-avatar">
+            <div class="player-info">
+              <span class="player-nick">{{ player.nick }}</span>
+              <div class="player-details">
+                <span class="player-role">{{ player.role }}</span>
+                <span class="player-mmr">{{ player.mmr }} MMR</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="team-footer">
+        <span class="team-status" [class.active]="team.status === 'active'">
+          {{ team.status === 'active' ? 'Activo' : 'Inactivo' }}
+        </span>
+        <span class="team-division">{{ team.division }}</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="no-teams" *ngIf="teams.length === 0">
+  <i class="fas fa-users-slash"></i>
+  <p>No hay equipos registrados en este torneo</p>
+</div>

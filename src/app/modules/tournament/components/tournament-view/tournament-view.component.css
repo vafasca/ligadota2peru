@@ -1,0 +1,197 @@
+/* tournament-view.component.css */
+.tournament-view-container {
+  background: #0f1923;
+  color: #fff;
+  min-height: 100vh;
+  padding: 20px;
+  font-family: 'Radiance', 'Arial', sans-serif;
+}
+
+.tournament-header {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 30px;
+  margin-bottom: 30px;
+  background: linear-gradient(135deg, rgba(23, 43, 77, 0.8) 0%, rgba(16, 30, 54, 0.9) 100%);
+  padding: 25px;
+  border-radius: 10px;
+  border: 1px solid #2a4766;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+}
+
+.tournament-info {
+  flex: 1;
+  min-width: 300px;
+}
+
+.tournament-info h1 {
+  color: #f8d45a;
+  font-size: 2.5rem;
+  margin-bottom: 15px;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.meta-info {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 15px;
+  flex-wrap: wrap;
+}
+
+.game-badge, .format-badge, .status-badge {
+  padding: 5px 12px;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.game-badge {
+  background: rgba(113, 19, 19, 0.8);
+  color: #fff;
+  border: 1px solid #d9534f;
+}
+
+.format-badge {
+  background: rgba(42, 71, 102, 0.8);
+  color: #b8d1f1;
+  border: 1px solid #4a90e2;
+}
+
+.status-badge {
+  &.programado {
+    background: rgba(66, 153, 225, 0.2);
+    color: #4299e1;
+    border: 1px solid rgba(66, 153, 225, 0.3);
+  }
+  
+  &.en-progreso {
+    background: rgba(237, 137, 54, 0.2);
+    color: #ed8936;
+    border: 1px solid rgba(237, 137, 54, 0.3);
+  }
+  
+  &.finalizado {
+    background: rgba(56, 161, 105, 0.2);
+    color: #38a169;
+    border: 1px solid rgba(56, 161, 105, 0.3);
+  }
+  
+  &.cancelado {
+    background: rgba(229, 62, 62, 0.2);
+    color: #e53e3e;
+    border: 1px solid rgba(229, 62, 62, 0.3);
+  }
+}
+
+.dates {
+  display: flex;
+  gap: 20px;
+  color: #b8d1f1;
+  font-size: 0.95rem;
+}
+
+.dates i {
+  margin-right: 5px;
+  color: #f8d45a;
+}
+
+.tournament-stats {
+  display: flex;
+  gap: 15px;
+  min-width: 300px;
+}
+
+.stat-card {
+  background: rgba(16, 30, 54, 0.7);
+  border: 1px solid #2a4766;
+  border-radius: 8px;
+  padding: 15px;
+  text-align: center;
+  flex: 1;
+  min-width: 100px;
+}
+
+.stat-value {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #f8d45a;
+  margin-bottom: 5px;
+}
+
+.stat-label {
+  font-size: 0.85rem;
+  color: #b8d1f1;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.tournament-tabs {
+  display: flex;
+  border-bottom: 1px solid #2a4766;
+  margin-bottom: 20px;
+}
+
+.tab-button {
+  background: none;
+  border: none;
+  color: #b8d1f1;
+  padding: 12px 25px;
+  font-size: 1rem;
+  cursor: pointer;
+  position: relative;
+  transition: all 0.3s ease;
+  font-weight: 600;
+}
+
+.tab-button i {
+  margin-right: 8px;
+}
+
+.tab-button.active {
+  color: #f8d45a;
+}
+
+.tab-button.active::after {
+  content: '';
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  background: #f8d45a;
+}
+
+.tab-button:hover:not(.active) {
+  color: #fff;
+  background: rgba(42, 71, 102, 0.3);
+}
+
+.loading-spinner {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 200px;
+  color: #f8d45a;
+  font-size: 1.2rem;
+}
+
+.loading-spinner i {
+  margin-right: 10px;
+  font-size: 1.5rem;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .tournament-header {
+    flex-direction: column;
+  }
+  
+  .tournament-stats {
+    justify-content: space-between;
+  }
+  
+  .tab-button {
+    padding: 10px 15px;
+    font-size: 0.9rem;
+  }
+}

@@ -1,0 +1,63 @@
+<!-- tournament-view.component.html -->
+<div class="tournament-view-container" *ngIf="!loading && tournament">
+  <div class="tournament-header">
+    <div class="tournament-info">
+      <h1>{{ tournament.name }}</h1>
+      <div class="meta-info">
+        <span class="game-badge">{{ tournament.game }}</span>
+        <span class="format-badge">{{ tournament.format }}</span>
+        <span class="status-badge" [class]="getStatusClass(tournament.status)">{{ tournament.status }}</span>
+      </div>
+      <div class="dates">
+        <span><i class="fas fa-calendar-alt"></i> Inicio: {{ tournament.startDate | date:'mediumDate' }}</span>
+        <span *ngIf="tournament.endDate"><i class="fas fa-calendar-check"></i> Fin: {{ tournament.endDate | date:'mediumDate' }}</span>
+      </div>
+    </div>
+    <div class="tournament-stats">
+      <div class="stat-card">
+        <div class="stat-value">{{ tournament.currentTeams }}/{{ tournament.maxTeams }}</div>
+        <div class="stat-label">Equipos</div>
+      </div>
+      <div class="stat-card" *ngIf="tournament.prizePool">
+        <div class="stat-value">{{ tournament.prizePool }}</div>
+        <div class="stat-label">Premio</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value">{{ tournament.entryFee || 'Gratis' }}</div>
+        <div class="stat-label">Inscripción</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="tournament-tabs">
+    <button 
+      class="tab-button" 
+      [class.active]="activeTab === 'teams'"
+      (click)="changeTab('teams')"
+    >
+      <i class="fas fa-users"></i> Equipos
+    </button>
+    <button 
+      class="tab-button" 
+      [class.active]="activeTab === 'bracket'"
+      (click)="changeTab('bracket')"
+    >
+      <i class="fas fa-trophy"></i> Bracket
+    </button>
+  </div>
+
+  <div class="tab-content">
+    <app-tournament-teams *ngIf="activeTab === 'teams'" [teams]="teams"></app-tournament-teams>
+    
+    <div *ngIf="activeTab === 'bracket'">
+      <app-single-elimination *ngIf="tournament.format === 'Single Elimination'"></app-single-elimination>
+      <!-- Agregar los otros formatos cuando estén implementados -->
+      <!-- <app-double-elimination *ngIf="tournament.format === 'Double Elimination'"></app-double-elimination>
+      <app-round-robin *ngIf="tournament.format === 'Round Robin'"></app-round-robin> -->
+    </div>
+  </div>
+</div>
+
+<div class="loading-spinner" *ngIf="loading">
+  <i class="fas fa-spinner fa-spin"></i> Cargando torneo...
+</div>

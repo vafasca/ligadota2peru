@@ -212,6 +212,15 @@
         </div>
 
         <div class="team-actions" *ngIf="userTeam">
+
+          <button class="dota-button register-tournament-button" 
+                  (click)="openTournamentDialog()"
+                  [disabled]="!isTeamCaptain || teamPlayers.length < 5"
+                  matTooltip="Inscribirse a un torneo disponible"
+                  matTooltipPosition="above">
+            <i class="fas fa-trophy"></i> Inscribirse a Torneo
+          </button>
+
           <button class="dota-button leave-team-button" (click)="leaveTeam()">
             <i class="fas fa-door-open"></i>
             {{ isTeamCaptain ? "Disolver Equipo" : "Abandonar Equipo" }}

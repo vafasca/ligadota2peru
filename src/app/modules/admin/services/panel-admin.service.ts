@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { addDoc, collection, CollectionReference, deleteDoc, doc, DocumentData, Firestore, FirestoreError, getDoc, getDocs, onSnapshot, orderBy, query, serverTimestamp, setDoc, updateDoc, where } from '@angular/fire/firestore';
 import { catchError, from, map, Observable, throwError } from 'rxjs';
 import { Tournament, TournamentStatus } from '../models/tournament.model';
+import { Team } from '../models/equipos.model';
 
 @Injectable({
   providedIn: 'root'
@@ -52,17 +53,27 @@ private tournamentsCollection: CollectionReference<DocumentData>;
    * @returns Observable with Tournament or null if not found
    */
   getTournament(tournamentId: string): Observable<Tournament | null> {
-    const tournamentDocRef = doc(this.firestore, `tournaments/${tournamentId}`);
-    return from(getDoc(tournamentDocRef)).pipe(
-      map(snapshot => {
-        return snapshot.exists() ? { id: snapshot.id, ...snapshot.data() } as Tournament : null;
-      }),
-      catchError((error: FirestoreError) => {
-        console.error('Error getting tournament:', error);
-        return throwError(() => new Error(this.getFirestoreErrorMessage(error)));
-      })
-    );
-  }
+  const tournamentDocRef = doc(this.firestore, `tournaments/${tournamentId}`);
+  return from(getDoc(tournamentDocRef)).pipe(
+    map(snapshot => {
+      if (!snapshot.exists()) return null;
+      
+      const data = snapshot.data();
+      return {
+        id: snapshot.id,
+        ...data,
+        startDate: data['startDate']?.toDate() || null,
+        endDate: data['endDate']?.toDate() || null,
+        createdAt: data['createdAt']?.toDate() || null,
+        updatedAt: data['updatedAt']?.toDate() || null
+      } as Tournament;
+    }),
+    catchError((error: FirestoreError) => {
+      console.error('Error getting tournament:', error);
+      return throwError(() => new Error(this.getFirestoreErrorMessage(error)));
+    })
+  );
+}
 
   /**
    * Gets all tournaments with real-time updates
@@ -236,6 +247,39 @@ private convertToLocalTime(utcDate: Date | null): Date | null {
       return () => unsubscribe();
     });
   }
+
+  getTournamentTeams(tournamentId: string): Observable<Team[]> {
+  return new Observable<Team[]>(observer => {
+    // Primero obtenemos el torneo para sacar los IDs de los equipos
+    this.getTournament(tournamentId).subscribe({
+      next: (tournament) => {
+        if (!tournament || !tournament.teams || tournament.teams.length === 0) {
+          observer.next([]);
+          return;
+        }
+
+        // Obtenemos los detalles de cada equipo
+        const teamsCollection = collection(this.firestore, 'teams');
+        const teamPromises = tournament.teams.map(teamId => 
+          getDoc(doc(teamsCollection, teamId)).then(doc => {
+            if (doc.exists()) {
+              return { id: doc.id, ...doc.data() } as Team;
+            }
+            return null;
+          })
+        );
+
+        Promise.all(teamPromises).then(teams => {
+          observer.next(teams.filter(team => team !== null) as Team[]);
+        });
+      },
+      error: (err) => {
+        console.error('Error loading tournament teams:', err);
+        observer.next([]);
+      }
+    });
+  });
+}
 
   /**
    * Translates Firestore error codes to user-friendly messages

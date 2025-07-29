@@ -10,7 +10,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatSelectModule } from '@angular/material/select';
-
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 
 @NgModule({
@@ -27,6 +27,7 @@ import { MatSelectModule } from '@angular/material/select';
     MatInputModule,
     MatTooltipModule,
     MatSelectModule,
+    MatProgressSpinnerModule,
   ],
   exports: [
     CommonModule,
@@ -39,7 +40,8 @@ import { MatSelectModule } from '@angular/material/select';
     MatFormFieldModule,
     MatInputModule,
     MatTooltipModule,
-    MatSelectModule
+    MatSelectModule,
+    MatProgressSpinnerModule,
   ]
 })
 export class MaterialModule { }

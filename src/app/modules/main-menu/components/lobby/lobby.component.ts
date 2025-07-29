@@ -11,6 +11,9 @@ import { AddPlayerDialogComponent } from '../add-player-dialog/add-player-dialog
 import { CdkDragDrop, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
 import { TeamService } from '../../services/team.service';
 import { NotificationService } from 'src/app/shared-services/notification.service';
+import { RegisterTeamDialogComponent } from '../register-team-dialog/register-team-dialog.component';
+import { TournamentRegisterService } from '../../services/tournament-register.service';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 
 @Component({
@@ -91,7 +94,9 @@ export class LobbyComponent {
     private playerService: PlayerService,
     private dialog: MatDialog,
     private teamService: TeamService,
-    private notificationService: NotificationService
+    private notificationService: NotificationService,
+    private tournamentService: TournamentRegisterService,
+    private snackBar: MatSnackBar
   ) {}
 
   ngOnInit(): void {
@@ -765,6 +770,35 @@ goToTournaments() {
 
 isAdminUser(): boolean {
   return this.player?.rolUser === PlayerRole.Admin || this.player?.rolUser === PlayerRole.SubAdmin;
+}
+
+openTournamentDialog(): void {
+  if (!this.userTeam || !this.isTeamCaptain || this.teamPlayers.length < 5) return;
+
+  const dialogRef = this.dialog.open(RegisterTeamDialogComponent, {
+    width: '500px',
+    data: { team: this.userTeam }
+  });
+
+  dialogRef.afterClosed().subscribe((tournamentId: string | undefined) => {
+    if (tournamentId && this.userTeam) {
+      this.registerToTournament(tournamentId);
+    }
+  });
+}
+
+registerToTournament(tournamentId: string): void {
+  if (!this.userTeam) return;
+
+  this.tournamentService.registerTeamToTournament(tournamentId, this.userTeam.id).subscribe({
+    next: () => {
+      this.notificationService.showSuccess('Equipo inscrito al torneo exitosamente');
+    },
+    error: (err) => {
+      console.error('Error registering to tournament:', err);
+      this.notificationService.showError('Error al inscribirse al torneo');
+    }
+  });
 }
 
   ngOnDestroy(): void {

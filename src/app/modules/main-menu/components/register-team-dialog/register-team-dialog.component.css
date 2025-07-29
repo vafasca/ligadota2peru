@@ -1,0 +1,16 @@
+.tournament-dialog-container {
+  min-width: 400px;
+  padding: 20px;
+}
+
+.full-width {
+  width: 100%;
+  margin-bottom: 20px;
+}
+
+.no-tournaments {
+  padding: 20px;
+  text-align: center;
+  color: #666;
+  font-style: italic;
+}

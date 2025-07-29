@@ -17,6 +17,7 @@ import { FilterByRolePipePipe } from './pipes/filter-by-role-pipe.pipe';
 import { AddPlayerDialogComponent } from './components/add-player-dialog/add-player-dialog.component';
 import { MatListModule } from '@angular/material/list';
 import { SharedModule } from 'src/app/shared-module/shared.module';
+import { RegisterTeamDialogComponent } from './components/register-team-dialog/register-team-dialog.component';
 
 @NgModule({
   declarations: [
@@ -24,7 +25,8 @@ import { SharedModule } from 'src/app/shared-module/shared.module';
     LobbyComponent,
     CreateTeamDialogComponent,
     FilterByRolePipePipe,
-    AddPlayerDialogComponent
+    AddPlayerDialogComponent,
+    RegisterTeamDialogComponent
   ],
   imports: [
     CommonModule,

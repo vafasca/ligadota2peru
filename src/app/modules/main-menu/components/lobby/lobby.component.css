@@ -1746,6 +1746,35 @@
   animation: pulse-glow 2s infinite;
 }
 
+.register-tournament-button {
+  background: linear-gradient(135deg, #f8d64e 0%, #e4ae0d 50%, #7a0707 100%);
+  color: #000;
+  border: 1px solid #f8d64e;
+  margin-right: 10px;
+}
+
+.register-tournament-button:hover {
+  background: linear-gradient(135deg, #7a0707 0%, #e4ae0d 50%, #f8d64e 100%);
+  color: #fff;
+}
+
+.register-tournament-button:disabled {
+  background: #666;
+  color: #ccc;
+  cursor: not-allowed;
+  border: 1px solid #999;
+}
+
+.success-snackbar {
+  background-color: #4CAF50 !important;
+  color: white !important;
+}
+
+.error-snackbar {
+  background-color: #F44336 !important;
+  color: white !important;
+}
+
 /* RESPONSIVE */
 @media (max-width: 1200px) {
 

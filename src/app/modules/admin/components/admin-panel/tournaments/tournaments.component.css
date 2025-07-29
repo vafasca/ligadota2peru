@@ -150,6 +150,15 @@
   }
 }
 
+/* Agregar al CSS de tournaments.component.css */
+.table-action i.fa-eye {
+  color: #4a90e2;
+}
+
+.table-action:hover i.fa-eye {
+  color: #6ba8ff;
+}
+
 /* Responsive Adjustments */
 @media (max-width: 768px) {
   .section-header {

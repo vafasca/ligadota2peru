@@ -1,0 +1,29 @@
+<h2 mat-dialog-title>Inscribir equipo a torneo</h2>
+<mat-dialog-content>
+  <div class="tournament-dialog-container">
+    <mat-spinner *ngIf="isLoading" diameter="40"></mat-spinner>
+    
+    <div *ngIf="!isLoading">
+      <mat-form-field appearance="fill" class="full-width">
+        <mat-label>Seleccionar torneo</mat-label>
+        <mat-select [(value)]="selectedTournament">
+          <mat-option *ngFor="let tournament of tournaments" [value]="tournament.id">
+            {{ tournament.name }} - {{ tournament.game }} ({{ tournament.currentTeams }}/{{ tournament.maxTeams }} equipos)
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <div *ngIf="tournaments.length === 0" class="no-tournaments">
+        No hay torneos disponibles para inscribirse
+      </div>
+    </div>
+  </div>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-button (click)="onCancel()">Cancelar</button>
+  <button mat-raised-button color="primary" 
+          (click)="onRegister()" 
+          [disabled]="!selectedTournament || tournaments.length === 0">
+    Inscribir
+  </button>
+</mat-dialog-actions>

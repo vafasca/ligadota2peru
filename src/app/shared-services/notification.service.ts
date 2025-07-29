@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { Firestore, collection, addDoc, doc, updateDoc, onSnapshot, query, where, getDocs } from '@angular/fire/firestore';
 import { from, map, Observable, switchMap } from 'rxjs';
 import { Notification } from '../modules/admin/models/notification.model'; // Adjust the import path as necessary
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Injectable({
   providedIn: 'root'
@@ -9,7 +10,10 @@ import { Notification } from '../modules/admin/models/notification.model'; // Ad
 export class NotificationService {
 private notificationsCollection = collection(this.firestore, 'notifications');
 
-  constructor(private firestore: Firestore) {}
+  constructor(
+    private firestore: Firestore,
+    private snackBar: MatSnackBar
+  ) {}
 
   getNotifications(userId: string): Observable<Notification[]> {
     const q = query(
@@ -59,4 +63,20 @@ markAllAsReadForChallenge(teamId: string): Observable<void> {
     map(() => undefined)
   );
 }
+
+//errores
+
+showSuccess(message: string): void {
+    this.snackBar.open(message, 'Cerrar', {
+      duration: 3000,
+      panelClass: ['success-snackbar']
+    });
+  }
+
+  showError(message: string): void {
+    this.snackBar.open(message, 'Cerrar', {
+      duration: 5000,
+      panelClass: ['error-snackbar']
+    });
+  }
 }
