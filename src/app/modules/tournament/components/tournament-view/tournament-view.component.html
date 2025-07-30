@@ -1,74 +1,113 @@
 <!-- tournament-view.component.html -->
 <div class="tournament-view-container" *ngIf="!loading && tournament">
-  <!-- Hero Section -->
-  <div class="tournament-hero">
-    <div class="hero-overlay"></div>
-    
-    <!-- Nueva sección de banner de estado de registro -->
-    <div class="registration-status-banner" [class]="registrationStatus">
-      <div class="status-content">
-        <div class="status-text">
-          <i class="fas" [ngClass]="{
-            'fa-clock': registrationStatus === 'upcoming',
-            'fa-user-plus': registrationStatus === 'open',
-            'fa-lock': registrationStatus === 'closed'
-          }"></i>
-          <span>{{ getRegistrationStatusMessage() }}</span>
-        </div>
-        
-        <div class="countdown" *ngIf="countdown">
-          <span *ngIf="registrationStatus === 'upcoming'">Inicia en:</span>
-          <span *ngIf="registrationStatus === 'open'">Cierra en:</span>
-          <span class="countdown-timer">
-            <span *ngIf="countdown.days > 0">{{ countdown.days }}d </span>
-            {{ countdown.hours }}h {{ countdown.minutes }}m {{ countdown.seconds }}s
+  <!-- Tournament Header -->
+  <div class="tournament-header">
+    <div class="tournament-banner">
+      <img [src]="tournament.bannerImage || '../../../../assets/banner_vann.png'" alt="Tournament banner">
+      <div class="tournament-overlay">
+        <h1>{{ tournament.name }}</h1>
+        <div class="tournament-meta">
+          <span class="tournament-game">{{ tournament.game }}</span>
+          <span class="tournament-format">{{ tournament.format }}</span>
+          <span class="tournament-prize" *ngIf="tournament.prizePool">
+            <i class="fas fa-trophy"></i> {{ tournament.prizePool }}
           </span>
         </div>
-        
-        <button class="register-button" 
-                *ngIf="canRegister"
-                (click)="registerToTournament()">
-          <i class="fas fa-user-plus"></i> Inscribir Equipo
-        </button>
       </div>
     </div>
-    
-    <div class="hero-content">
-      <div class="hero-text">
-        <span class="hero-subtitle">{{ tournament.game }}</span>
-        <h1 class="tournament-title">{{ tournament.name }}</h1>
-        
-        <div class="hero-meta">
-          <div class="meta-item">
-            <i class="fas fa-calendar-alt"></i>
-            <span>{{ formatDate(tournament.startDate) }}</span>
-          </div>
-          <div class="meta-item">
-            <i class="fas fa-users"></i>
-            <span>{{ tournament.currentTeams }}/{{ tournament.maxTeams }} Equipos</span>
-          </div>
-          <div class="meta-item" [class]="getStatusClass(tournament.status)">
-            <i class="fas fa-circle"></i>
-            <span>{{ tournament.status }}</span>
+
+    <div class="tournament-details">
+      <div class="detail-card">
+        <div class="detail-icon">
+          <i class="fas fa-calendar-alt"></i>
+        </div>
+        <div class="detail-content">
+          <h3>Fecha del Torneo</h3>
+          <p>{{ formatDate(tournament.startDate) }}</p>
+        </div>
+      </div>
+
+      <div class="detail-card">
+        <div class="detail-icon">
+          <i class="fas fa-users"></i>
+        </div>
+        <div class="detail-content">
+          <h3>Equipos Inscritos</h3>
+          <p>{{ tournament.currentTeams }} / {{ tournament.maxTeams }}</p>
+          <div class="progress-bar">
+            <div class="progress" [style.width]="(tournament.currentTeams / tournament.maxTeams) * 100 + '%'"></div>
           </div>
         </div>
       </div>
-      
-      <div class="hero-actions">
-        <div class="registration-status" [class]="registrationStatus">
-          <i class="fas fa-user-plus"></i>
-          <div class="status-text">
-            <strong>{{ 
-              registrationStatus === 'open' ? 'INSCRIPCIONES ABIERTAS' : 
-              registrationStatus === 'upcoming' ? 'INSCRIPCIONES PRÓXIMAS' : 'INSCRIPCIONES CERRADAS'
-            }}</strong>
-            <small>{{ getRegistrationStatusMessage() }}</small>
-          </div>
+
+      <div class="detail-card">
+        <div class="detail-icon">
+          <i class="fas fa-sign-in-alt"></i>
         </div>
-        
-        <button class="action-button" *ngIf="registrationStatus === 'open'">
-          <i class="fas fa-user-plus"></i> Inscribir Equipo
-        </button>
+        <div class="detail-content">
+          <h3>Inscripciones</h3>
+          <div class="registration-status" [ngClass]="registrationStatus">
+            {{ registrationStatus === 'open' ? 'Abiertas' : 
+               registrationStatus === 'closed' ? 'Cerradas' : 
+               'Próximas' }}
+          </div>
+          
+          <div *ngIf="registrationStatus === 'pending'" class="countdown">
+            <p class="countdown-label">Inscripciones abren en:</p>
+            <div class="dota-countdown" [class.urgent]="isCountdownUrgent()">
+              <div class="time-block">
+                <span class="time-value">{{ daysToStart }}</span>
+                <span class="time-label">DÍAS</span>
+              </div>
+              <div class="time-separator">:</div>
+              <div class="time-block">
+                <span class="time-value">{{ hoursToStart | number:'2.0-0' }}</span>
+                <span class="time-label">HORAS</span>
+              </div>
+              <div class="time-separator">:</div>
+              <div class="time-block">
+                <span class="time-value">{{ minutesToStart | number:'2.0-0' }}</span>
+                <span class="time-label">MIN</span>
+              </div>
+              <div class="time-separator">:</div>
+              <div class="time-block">
+                <span class="time-value">{{ secondsToStart | number:'2.0-0' }}</span>
+                <span class="time-label">SEG</span>
+              </div>
+            </div>
+          </div>
+          
+          <div *ngIf="registrationStatus === 'open'" class="countdown">
+            <p class="countdown-label">Inscripciones cierran en:</p>
+            <div class="dota-countdown" [class.urgent]="isCountdownUrgent()">
+              <div class="time-block">
+                <span class="time-value">{{ daysToEnd }}</span>
+                <span class="time-label">DÍAS</span>
+              </div>
+              <div class="time-separator">:</div>
+              <div class="time-block">
+                <span class="time-value">{{ hoursToEnd | number:'2.0-0' }}</span>
+                <span class="time-label">HORAS</span>
+              </div>
+              <div class="time-separator">:</div>
+              <div class="time-block">
+                <span class="time-value">{{ minutesToEnd | number:'2.0-0' }}</span>
+                <span class="time-label">MIN</span>
+              </div>
+              <div class="time-separator">:</div>
+              <div class="time-block">
+                <span class="time-value">{{ secondsToEnd | number:'2.0-0' }}</span>
+                <span class="time-label">SEG</span>
+              </div>
+            </div>
+          </div>
+          
+          <button class="register-button" 
+                  *ngIf="canRegister"
+                  (click)="registerToTournament()">
+            <i class="fas fa-user-plus"></i> Inscribir Equipo
+          </button>
+        </div>
       </div>
     </div>
   </div>
@@ -116,7 +155,7 @@
         <!-- Details Tab -->
         <div *ngIf="activeTab === 'details'" class="details-tab">
           <div class="details-grid">
-            <!-- Nueva tarjeta de fechas de inscripción -->
+            <!-- Registration Dates Card -->
             <div class="registration-dates-card">
               <h3><i class="fas fa-calendar-alt"></i> Fechas de Inscripción</h3>
               <div class="date-row">
@@ -127,7 +166,7 @@
                 <span class="date-label">Fin:</span>
                 <span class="date-value">{{ formatDate(tournament.registrationEndDate) }}</span>
               </div>
-              <div class="date-row" *ngIf="tournament.currentTeams !== undefined && tournament.maxTeams !== undefined">
+              <div class="date-row">
                 <span class="date-label">Equipos:</span>
                 <span class="date-value">{{ tournament.currentTeams }}/{{ tournament.maxTeams }}</span>
                 <mat-progress-bar mode="determinate" 

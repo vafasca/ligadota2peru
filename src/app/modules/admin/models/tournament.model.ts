@@ -20,6 +20,7 @@ export interface Tournament {
   updatedAt?: Date | string;
   teams?: string[];
   isRegistrationOpen?: boolean;
+  bannerImage?: string;
 }
 
 export type TournamentStatus = 'Programado' | 'En progreso' | 'Finalizado' | 'Cancelado';

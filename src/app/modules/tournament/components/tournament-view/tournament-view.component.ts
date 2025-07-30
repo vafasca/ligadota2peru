@@ -24,10 +24,20 @@ export class TournamentViewComponent {
   errorMessage: string | null = null;
   stats: any[] = [];
   customRules: string[] = [];
-  registrationStatus: 'open' | 'closed' | 'upcoming' = 'closed';
+  registrationStatus: 'open' | 'closed' | 'pending' = 'closed';
 
-  countdown: { days: number, hours: number, minutes: number, seconds: number } | null = null;
-  countdownSubscription: Subscription | null = null;
+  // Contadores para inicio y fin de inscripciones
+  daysToStart: number = 0;
+  hoursToStart: number = 0;
+  minutesToStart: number = 0;
+  secondsToStart: number = 0;
+  
+  daysToEnd: number = 0;
+  hoursToEnd: number = 0;
+  minutesToEnd: number = 0;
+  secondsToEnd: number = 0;
+
+  countdownInterval: Subscription | null = null;
   canRegister: boolean = false;
 
   formatDescriptions: Record<string, {title: string, description: string, rules: string[]}> = {
@@ -84,7 +94,7 @@ export class TournamentViewComponent {
         }
         this.tournament = tournament;
         this.updateRegistrationStatus();
-        this.startCountdown();
+        this.startCountdowns();
         this.prepareStats();
         this.prepareCustomRules();
         this.loadTournamentTeams();
@@ -105,7 +115,7 @@ export class TournamentViewComponent {
     const regEnd = new Date(this.tournament.registrationEndDate);
     
     if (now < regStart) {
-      this.registrationStatus = 'upcoming';
+      this.registrationStatus = 'pending';
     } else if (now >= regStart && now <= regEnd) {
       this.registrationStatus = 'open';
     } else {
@@ -115,36 +125,47 @@ export class TournamentViewComponent {
     this.checkRegistrationEligibility();
   }
 
-  startCountdown(): void {
-    if (!this.tournament) return;
-    
-    // Detener cualquier contador existente
-    if (this.countdownSubscription) {
-      this.countdownSubscription.unsubscribe();
-    }
-
-    const targetDate = this.registrationStatus === 'open' 
-      ? new Date(this.tournament.registrationEndDate) 
-      : new Date(this.tournament.registrationStartDate);
-
-    this.countdownSubscription = interval(1000).subscribe(() => {
-      const now = new Date();
-      const diff = targetDate.getTime() - now.getTime();
-
-      if (diff <= 0) {
-        this.countdown = null;
-        this.updateRegistrationStatus();
-        return;
-      }
-
-      this.countdown = {
-        days: Math.floor(diff / (1000 * 60 * 60 * 24)),
-        hours: Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)),
-        minutes: Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60)),
-        seconds: Math.floor((diff % (1000 * 60)) / 1000)
-      };
-    });
+  startCountdowns(): void {
+  // Detener cualquier contador existente
+  if (this.countdownInterval) {
+    this.countdownInterval.unsubscribe();
   }
+
+  // Actualizar contadores inmediatamente
+  this.updateCountdowns();
+
+  // Actualizar contadores cada segundo (1000 ms)
+  this.countdownInterval = interval(1000).subscribe(() => {
+    this.updateCountdowns();
+  });
+}
+
+  updateCountdowns(): void {
+  if (!this.tournament) return;
+
+  const now = new Date();
+  const regStart = new Date(this.tournament.registrationStartDate);
+  const regEnd = new Date(this.tournament.registrationEndDate);
+
+  // Contador para inicio de inscripciones
+  const diffStart = regStart.getTime() - now.getTime();
+  this.daysToStart = Math.max(0, Math.floor(diffStart / (1000 * 60 * 60 * 24)));
+  this.hoursToStart = Math.max(0, Math.floor((diffStart % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)));
+  this.minutesToStart = Math.max(0, Math.floor((diffStart % (1000 * 60 * 60)) / (1000 * 60)));
+  this.secondsToStart = Math.max(0, Math.floor((diffStart % (1000 * 60)) / 1000));
+
+  // Contador para fin de inscripciones
+  const diffEnd = regEnd.getTime() - now.getTime();
+  this.daysToEnd = Math.max(0, Math.floor(diffEnd / (1000 * 60 * 60 * 24)));
+  this.hoursToEnd = Math.max(0, Math.floor((diffEnd % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)));
+  this.minutesToEnd = Math.max(0, Math.floor((diffEnd % (1000 * 60 * 60)) / (1000 * 60)));
+  this.secondsToEnd = Math.max(0, Math.floor((diffEnd % (1000 * 60)) / 1000));
+
+  // Si el tiempo ha expirado, actualizar el estado
+  if (diffStart <= 0 || diffEnd <= 0) {
+    this.updateRegistrationStatus();
+  }
+}
 
   checkRegistrationEligibility(): void {
     // Implementa aquí tu lógica para verificar si el usuario puede registrarse
@@ -173,14 +194,7 @@ export class TournamentViewComponent {
     this.stats = [
       { icon: 'fas fa-users', value: `${this.tournament.currentTeams}/${this.tournament.maxTeams}`, label: 'Equipos' },
       { icon: 'fas fa-coins', value: this.tournament.prizePool || 'N/A', label: 'Premio' },
-      { icon: 'fas fa-ticket-alt', value: this.tournament.entryFee ? `$${this.tournament.entryFee}` : 'Gratis', label: 'Inscripción' },
-      { 
-        icon: 'fas fa-hourglass-half', 
-        value: this.registrationStatus === 'open' ? 'Abiertas' : 
-               this.registrationStatus === 'upcoming' ? 'Próximas' : 'Cerradas', 
-        label: 'Inscripciones',
-        status: this.registrationStatus
-      }
+      { icon: 'fas fa-ticket-alt', value: this.tournament.entryFee ? `$${this.tournament.entryFee}` : 'Gratis', label: 'Inscripción' }
     ];
   }
 
@@ -225,7 +239,7 @@ export class TournamentViewComponent {
     switch (this.registrationStatus) {
       case 'open':
         return `Inscripciones abiertas hasta ${this.formatDate(this.tournament.registrationEndDate)}`;
-      case 'upcoming':
+      case 'pending':
         return `Inscripciones abren el ${this.formatDate(this.tournament.registrationStartDate)}`;
       case 'closed':
         return `Inscripciones cerradas desde el ${this.formatDate(this.tournament.registrationEndDate)}`;
@@ -242,9 +256,18 @@ export class TournamentViewComponent {
     console.log('Registrando equipo en el torneo...');
   }
 
+  isCountdownUrgent(): boolean {
+  if (this.registrationStatus === 'pending') {
+    return this.daysToStart === 0 && this.hoursToStart < 24;
+  } else if (this.registrationStatus === 'open') {
+    return this.daysToEnd === 0 && this.hoursToEnd < 24;
+  }
+  return false;
+}
+
   ngOnDestroy(): void {
-    if (this.countdownSubscription) {
-      this.countdownSubscription.unsubscribe();
+    if (this.countdownInterval) {
+      this.countdownInterval.unsubscribe();
     }
   }
 }
