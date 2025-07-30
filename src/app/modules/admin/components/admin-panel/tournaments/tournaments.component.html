@@ -13,25 +13,48 @@
           <th>Nombre</th>
           <th>Estado</th>
           <th>Equipos</th>
-          <th>Fecha de Inicio</th>
+          <th>Inicio Torneo</th>
+          <th>Inscripciones</th>
           <th>Acciones</th>
         </tr>
       </thead>
       <tbody>
         <tr *ngFor="let tournament of recentTournaments">
-          <td matTooltip="{{tournament.name}}" [matTooltipDisabled]="tournament.name.length <= 20">{{ tournament.name }}</td>
-          <td><span class="status-badge" [class]="getStatusClass(tournament.status)">{{ tournament.status }}</span></td>
-          <td>{{ tournament.currentTeams }}</td>
-          <td>{{ tournament.startDate | localDate:'dd/MM/yyyy' }}</td>
-          <!-- <td>{{ tournament.startDate | localDate:'dd/MM/yyyy HH:mm' : 'America/La_Paz' }}</td> sin hora -->
+          <td matTooltip="{{tournament.name}}" [matTooltipDisabled]="tournament.name.length <= 20">
+            {{ tournament.name }}
+          </td>
           <td>
-            <button class="table-action" matTooltip="Editar"><i class="fas fa-edit"></i></button>
-            <button class="table-action" matTooltip="Configurar"><i class="fas fa-cog"></i></button>
-            <button 
-              class="table-action" 
-              matTooltip="Ver torneo"
-              [routerLink]="['/tournament/tournament', tournament.id]"
-            >
+            <span class="status-badge" [class]="getStatusClass(tournament.status)">
+              {{ tournament.status }}
+            </span>
+          </td>
+          <td>
+            <div class="teams-progress">
+              <span>{{ tournament.currentTeams }} / {{ tournament.maxTeams }}</span>
+              <progress [value]="tournament.currentTeams" [max]="tournament.maxTeams"></progress>
+            </div>
+          </td>
+          <td>
+            <div class="date-cell">
+              {{ tournament.startDate | localDate:'dd/MM/yyyy HH:mm' : 'America/La_Paz' }}
+            </div>
+          </td>
+          <td>
+            <div class="date-range">
+              {{ tournament.registrationStartDate | localDate:'dd/MM HH:mm' : 'America/La_Paz' }} 
+              <span class="date-separator">→</span> 
+              {{ tournament.registrationEndDate | localDate:'dd/MM HH:mm' : 'America/La_Paz' }}
+            </div>
+          </td>
+          <td class="actions-cell">
+            <button class="table-action edit" matTooltip="Editar">
+              <i class="fas fa-edit"></i>
+            </button>
+            <button class="table-action config" matTooltip="Configurar">
+              <i class="fas fa-cog"></i>
+            </button>
+            <button class="table-action view" matTooltip="Ver torneo"
+              [routerLink]="['/tournament/tournament', tournament.id]">
               <i class="fas fa-eye"></i>
             </button>
           </td>

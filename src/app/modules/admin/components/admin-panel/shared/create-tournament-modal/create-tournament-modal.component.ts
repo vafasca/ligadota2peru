@@ -18,15 +18,22 @@ export class CreateTournamentModalComponent {
 
   constructor(private fb: FormBuilder) {
     this.tournamentForm = this.fb.group({
-      name: ['', [Validators.required, Validators.minLength(4)]],
-      game: ['Dota 2', Validators.required],
-      format: ['Single Elimination', Validators.required],
-      maxTeams: [16, [Validators.required, Validators.min(4), Validators.max(32)]],
-      startDate: ['', Validators.required], // ahora será datetime-local
-      prizePool: [''],
-      entryFee: [0, [Validators.min(0)]],
-      rules: ['']
-    });
+  name: ['', [Validators.required, Validators.minLength(4)]],
+  game: ['Dota 2', Validators.required],
+  format: ['Single Elimination', Validators.required],
+  maxTeams: [16, [Validators.required, Validators.min(4), Validators.max(32)]],
+
+  // ✅ Cambiado a datetime-local
+  startDate: ['', Validators.required],
+
+  // 🔽 Nuevos controles
+  registrationStartDate: ['', Validators.required],
+  registrationEndDate: ['', Validators.required],
+
+  prizePool: [''],
+  entryFee: [0, [Validators.min(0)]],
+  rules: ['']
+});
   }
 
   onClose(): void {
@@ -34,22 +41,17 @@ export class CreateTournamentModalComponent {
   }
 
   onSubmit(): void {
-    if (this.tournamentForm.invalid) return;
+  if (this.tournamentForm.invalid) return;
 
-    const formValue = this.tournamentForm.value;
+  const formValue = this.tournamentForm.value;
 
-    let startDateUTC: Date;
-    try {
-      // ✅ Interpretar la fecha local como si fuera en America/La_Paz y obtener su equivalente UTC
-      startDateUTC = toZonedTime(formValue.startDate, this.timeZone);
-    } catch (e) {
-      console.error('Fecha inválida:', formValue.startDate);
-      return;
-    }
-
+  try {
     const tournamentData: Tournament = {
       ...formValue,
-      startDate: startDateUTC,
+      // ✅ Convierte todas las fechas usando toZonedTime
+      startDate: toZonedTime(formValue.startDate, this.timeZone),
+      registrationStartDate: toZonedTime(formValue.registrationStartDate, this.timeZone),
+      registrationEndDate: toZonedTime(formValue.registrationEndDate, this.timeZone),
       currentTeams: 0,
       status: 'Programado',
       createdBy: 'moderator-id',
@@ -59,5 +61,8 @@ export class CreateTournamentModalComponent {
 
     this.tournamentCreated.emit(tournamentData);
     this.onClose();
+  } catch (error) {
+    console.error('Error al procesar fechas:', error);
   }
+}
 }

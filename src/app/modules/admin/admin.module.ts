@@ -23,6 +23,7 @@ import { CreateTournamentModalComponent } from './components/admin-panel/shared/
 import { SidebarComponent } from './components/admin-panel/shared/sidebar/sidebar.component';
 import { EditUserDialogComponent } from './components/admin-panel/users/edit-user-dialog/edit-user-dialog.component';
 import { ConfirmationDialogUserComponent } from './components/admin-panel/users/confirmation-dialog-user/confirmation-dialog-user.component';
+import { TruncatePipe } from './pipes/truncate.pipe';
 
 @NgModule({
   declarations: [
@@ -41,7 +42,8 @@ import { ConfirmationDialogUserComponent } from './components/admin-panel/users/
     CreateTournamentModalComponent,
     SidebarComponent,
     EditUserDialogComponent,
-    ConfirmationDialogUserComponent
+    ConfirmationDialogUserComponent,
+    TruncatePipe
   ],
   imports: [
     CommonModule,

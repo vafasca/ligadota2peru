@@ -57,13 +57,14 @@ private tournamentsCollection: CollectionReference<DocumentData>;
   return from(getDoc(tournamentDocRef)).pipe(
     map(snapshot => {
       if (!snapshot.exists()) return null;
-      
       const data = snapshot.data();
       return {
         id: snapshot.id,
         ...data,
         startDate: data['startDate']?.toDate() || null,
         endDate: data['endDate']?.toDate() || null,
+        registrationStartDate: data['registrationStartDate']?.toDate() || null,
+        registrationEndDate: data['registrationEndDate']?.toDate() || null,
         createdAt: data['createdAt']?.toDate() || null,
         updatedAt: data['updatedAt']?.toDate() || null
       } as Tournament;
@@ -93,8 +94,11 @@ getTournaments(): Observable<Tournament[]> {
         return {
           id: doc.id,
           ...data,
-          startDate: data['startDate']?.toDate() || null, // Simple conversión
+          // ✅ Convierte TODAS las fechas
+          startDate: data['startDate']?.toDate() || null,
           endDate: data['endDate']?.toDate() || null,
+          registrationStartDate: data['registrationStartDate']?.toDate() || null,
+          registrationEndDate: data['registrationEndDate']?.toDate() || null,
           createdAt: data['createdAt']?.toDate() || null,
           updatedAt: data['updatedAt']?.toDate() || null
         } as Tournament;

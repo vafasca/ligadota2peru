@@ -33,9 +33,19 @@
           <input type="number" id="max-teams" formControlName="maxTeams" min="4" max="32">
         </div>
         <div class="form-group">
-          <label for="start-date">Fecha y Hora de Inicio</label>
+          <label for="start-date">Fecha de Inicio Torneo</label>
           <!-- CAMBIO: type="datetime-local" -->
           <input type="datetime-local" id="start-date" formControlName="startDate">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label for="reg-start">Inicio de Inscripciones</label>
+          <input type="datetime-local" id="reg-start" formControlName="registrationStartDate" required>
+        </div>
+        <div class="form-group">
+          <label for="reg-end">Fin de Inscripciones</label>
+          <input type="datetime-local" id="reg-end" formControlName="registrationEndDate" required>
         </div>
       </div>
       <div class="form-row">

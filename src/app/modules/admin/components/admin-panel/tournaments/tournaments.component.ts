@@ -30,4 +30,8 @@ export class TournamentsComponent {
   openTournamentModal(): void {
     this.openModal.emit();
   }
+
+  formatDateRange(start: string, end: string): string {
+    return `${start} - ${end}`;
+  }
 }
