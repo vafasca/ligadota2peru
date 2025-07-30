@@ -14,3 +14,36 @@
   color: #666;
   font-style: italic;
 }
+
+.registration-status {
+  margin-top: 15px;
+  padding: 10px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.checking-status {
+  color: #a0aec0;
+}
+
+.can-register {
+  background-color: rgba(56, 161, 105, 0.1);
+  color: #38a169;
+  border: 1px solid rgba(56, 161, 105, 0.3);
+}
+
+.cannot-register {
+  background-color: rgba(229, 62, 62, 0.1);
+  color: #e53e3e;
+  border: 1px solid rgba(229, 62, 62, 0.3);
+}
+
+.success-icon {
+  color: #38a169;
+}
+
+.error-icon {
+  color: #e53e3e;
+}

@@ -1,10 +1,11 @@
 import { Injectable } from '@angular/core';
-import { addDoc, arrayUnion, collection, doc, Firestore, increment, onSnapshot, query, updateDoc, where } from '@angular/fire/firestore';
+import { addDoc, arrayUnion, collection, doc, Firestore, getDoc, increment, onSnapshot, query, updateDoc, where } from '@angular/fire/firestore';
 import { Tournament } from '../../admin/models/tournament.model';
-import { catchError, from, map, Observable, switchMap, throwError } from 'rxjs';
+import { catchError, forkJoin, from, map, Observable, of, switchMap, throwError } from 'rxjs';
 import { TournamentTeam } from '../../tournament/models/team.model';
 import { Team } from '../../admin/models/equipos.model';
 import { PlayerDivision } from '../../admin/models/jugador.model';
+import { TeamService } from './team.service';
 
 @Injectable({
   providedIn: 'root'
@@ -13,9 +14,36 @@ export class TournamentRegisterService {
 private tournamentsCollection;
 private tournamentTeamsCollection;
 
-  constructor(private firestore: Firestore) {
+  constructor(
+    private firestore: Firestore,
+    private teamService: TeamService
+  ) {
     this.tournamentsCollection = collection(this.firestore, 'tournaments');
     this.tournamentTeamsCollection = collection(this.firestore, 'tournament_teams');
+  }
+
+  getTournament(tournamentId: string): Observable<Tournament | null> {
+    const tournamentDocRef = doc(this.firestore, `tournaments/${tournamentId}`);
+    return from(getDoc(tournamentDocRef)).pipe(
+      map(snapshot => {
+        if (!snapshot.exists()) return null;
+        const data = snapshot.data();
+        return {
+          id: snapshot.id,
+          ...data,
+          startDate: data['startDate']?.toDate() || null,
+          endDate: data['endDate']?.toDate() || null,
+          registrationStartDate: data['registrationStartDate']?.toDate() || null,
+          registrationEndDate: data['registrationEndDate']?.toDate() || null,
+          createdAt: data['createdAt']?.toDate() || null,
+          updatedAt: data['updatedAt']?.toDate() || null
+        } as Tournament;
+      }),
+      catchError(error => {
+        console.error('Error getting tournament:', error);
+        return throwError(() => new Error('Error al obtener torneo'));
+      })
+    );
   }
 
   getActiveTournaments(): Observable<Tournament[]> {
@@ -122,4 +150,61 @@ private tournamentTeamsCollection;
     return () => unsubscribe();
   });
 }
+
+canRegisterToTournament(teamId: string, tournamentId: string): Observable<{ canRegister: boolean; message?: string }> {
+    return forkJoin([
+      this.getTournament(tournamentId),
+      this.teamService.getTeam(teamId)
+    ]).pipe(
+      map(([tournament, team]) => {
+        if (!tournament) {
+          return { canRegister: false, message: 'Torneo no encontrado' };
+        }
+
+        if (tournament.status !== 'Programado') {
+          return { canRegister: false, message: 'El torneo no está aceptando inscripciones' };
+        }
+
+        const now = new Date();
+        const startDate = new Date(tournament.registrationStartDate);
+        const endDate = new Date(tournament.registrationEndDate);
+
+        if (now < startDate) {
+          return { canRegister: false, message: `Las inscripciones comienzan el ${this.formatDate(startDate)}` };
+        }
+
+        if (now > endDate) {
+          return { canRegister: false, message: 'El período de inscripciones ha finalizado' };
+        }
+
+        if (!team || team.players.length !== 5) {
+          return { canRegister: false, message: 'El equipo debe tener exactamente 5 jugadores' };
+        }
+
+        if (tournament.teams && tournament.teams.includes(teamId)) {
+          return { canRegister: false, message: 'El equipo ya está inscrito en este torneo' };
+        }
+
+        if (tournament.currentTeams >= tournament.maxTeams) {
+          return { canRegister: false, message: 'No hay cupos disponibles en este torneo' };
+        }
+
+        return { canRegister: true };
+      }),
+      catchError(error => {
+        console.error('Error checking registration:', error);
+        return of({ canRegister: false, message: 'Error al verificar inscripción' });
+      })
+    );
+  }
+
+private formatDate(date: Date): string {
+    return date.toLocaleDateString('es-ES', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+  }
 }

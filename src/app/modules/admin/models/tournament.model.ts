@@ -19,6 +19,18 @@ export interface Tournament {
   createdAt: Date | string;
   updatedAt?: Date | string;
   teams?: string[];
+  isRegistrationOpen?: boolean;
 }
 
 export type TournamentStatus = 'Programado' | 'En progreso' | 'Finalizado' | 'Cancelado';
+
+export function isRegistrationOpen(tournament: Tournament): boolean {
+  const now = new Date();
+  const start = new Date(tournament.registrationStartDate);
+  const end = new Date(tournament.registrationEndDate);
+  
+  return tournament.status === 'Programado' && 
+         now >= start && 
+         now <= end &&
+         (tournament.currentTeams < tournament.maxTeams);
+}

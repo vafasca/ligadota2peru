@@ -773,8 +773,13 @@ isAdminUser(): boolean {
 }
 
 openTournamentDialog(): void {
-  if (!this.userTeam || !this.isTeamCaptain || this.teamPlayers.length < 5) {
-    this.notificationService.showError('Requieres ser capitán con equipo completo (5 jugadores)');
+  if (!this.userTeam || !this.isTeamCaptain) {
+    this.notificationService.showError('Solo el capitán puede inscribir equipos');
+    return;
+  }
+
+  if (this.teamPlayers.length !== 5) {
+    this.notificationService.showError('El equipo debe tener exactamente 5 jugadores para inscribirse');
     return;
   }
 

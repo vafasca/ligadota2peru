@@ -6,12 +6,29 @@
     <div *ngIf="!isLoading">
       <mat-form-field appearance="fill" class="full-width">
         <mat-label>Seleccionar torneo</mat-label>
-        <mat-select [(value)]="selectedTournament">
+        <mat-select [(value)]="selectedTournament" (selectionChange)="onTournamentSelect()">
           <mat-option *ngFor="let tournament of tournaments" [value]="tournament.id">
             {{ tournament.name }} - {{ tournament.game }} ({{ tournament.currentTeams }}/{{ tournament.maxTeams }} equipos)
           </mat-option>
         </mat-select>
       </mat-form-field>
+
+      <div *ngIf="selectedTournament" class="registration-status">
+        <div *ngIf="isChecking" class="checking-status">
+          <mat-spinner diameter="20"></mat-spinner>
+          <span>Verificando requisitos...</span>
+        </div>
+        
+        <div *ngIf="!isChecking && canRegister" class="can-register">
+          <mat-icon class="success-icon">check_circle</mat-icon>
+          <span>Puedes inscribirte a este torneo</span>
+        </div>
+        
+        <div *ngIf="!isChecking && !canRegister && registrationMessage" class="cannot-register">
+          <mat-icon class="error-icon">error</mat-icon>
+          <span>{{ registrationMessage }}</span>
+        </div>
+      </div>
 
       <div *ngIf="tournaments.length === 0" class="no-tournaments">
         No hay torneos disponibles para inscribirse
@@ -23,7 +40,7 @@
   <button mat-button (click)="onCancel()">Cancelar</button>
   <button mat-raised-button color="primary" 
           (click)="onRegister()" 
-          [disabled]="!selectedTournament || tournaments.length === 0">
+          [disabled]="!selectedTournament || !canRegister">
     Inscribir
   </button>
 </mat-dialog-actions>

@@ -15,6 +15,9 @@ export class RegisterTeamDialogComponent {
   tournaments: Tournament[] = [];
   isLoading = true;
   selectedTournament: string | null = null;
+  isChecking = false;
+  canRegister = false;
+  registrationMessage = '';
 
   constructor(
     public dialogRef: MatDialogRef<RegisterTeamDialogComponent>,
@@ -25,6 +28,7 @@ export class RegisterTeamDialogComponent {
 
   ngOnInit(): void {
     this.loadAvailableTournaments();
+    this.checkRegistrationStatus();
   }
 
   loadAvailableTournaments(): void {
@@ -43,28 +47,54 @@ export class RegisterTeamDialogComponent {
     });
   }
 
-  onRegister(): void {
-  if (!this.selectedTournament || !this.data.team) {
-    this.notificationService.showError('Selecciona un torneo válido');
-    return;
+  checkRegistrationStatus(): void {
+    if (!this.selectedTournament) return;
+    
+    this.isChecking = true;
+    this.tournamentService.canRegisterToTournament(this.data.team.id, this.selectedTournament)
+      .subscribe({
+        next: (result) => {
+          this.canRegister = result.canRegister;
+          this.registrationMessage = result.message || '';
+          this.isChecking = false;
+        },
+        error: (err) => {
+          this.canRegister = false;
+          this.registrationMessage = 'Error al verificar inscripción';
+          this.isChecking = false;
+        }
+      });
   }
 
-  this.isLoading = true;
-  this.tournamentService.registerTeamToTournament(
-    this.selectedTournament, 
-    this.data.team
-  ).subscribe({
-    next: (teamId) => {
-      this.notificationService.showSuccess('Equipo registrado en el torneo');
-      this.dialogRef.close(teamId);
-    },
-    error: (err) => {
-      console.error('Registration error:', err);
-      this.notificationService.showError(err.message || 'Error al registrar equipo');
-      this.isLoading = false;
-    }
-  });
+
+onTournamentSelect(): void {
+  if (this.selectedTournament) {
+    this.checkRegistrationStatus();
+  }
 }
+
+  onRegister(): void {
+    if (!this.selectedTournament || !this.data.team || !this.canRegister) {
+      this.notificationService.showError('No se puede completar la inscripción');
+      return;
+    }
+
+    this.isLoading = true;
+    this.tournamentService.registerTeamToTournament(
+      this.selectedTournament, 
+      this.data.team
+    ).subscribe({
+      next: (teamId) => {
+        this.notificationService.showSuccess('Equipo registrado en el torneo');
+        this.dialogRef.close(teamId);
+      },
+      error: (err) => {
+        console.error('Registration error:', err);
+        this.notificationService.showError(err.message || 'Error al registrar equipo');
+        this.isLoading = false;
+      }
+    });
+  }
 
   onCancel(): void {
     this.dialogRef.close();

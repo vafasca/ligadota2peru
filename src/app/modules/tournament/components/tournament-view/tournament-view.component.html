@@ -1,106 +1,248 @@
+<!-- tournament-view.component.html -->
 <div class="tournament-view-container" *ngIf="!loading && tournament">
   <!-- Hero Section -->
   <div class="tournament-hero">
     <div class="hero-overlay"></div>
-    <div class="hero-content">
-      <h1 class="tournament-title">{{ tournament.name }}</h1>
-      <div class="tournament-meta">
-        <span class="meta-badge game">{{ tournament.game }}</span>
-        <span class="meta-badge format">{{ tournament.format }}</span>
-        <span class="meta-badge status" [class]="getStatusClass(tournament.status)">{{ tournament.status }}</span>
-      </div>
-    </div>
-  </div>
-
-  <!-- Tournament Grid -->
-  <div class="tournament-grid">
-    <!-- Info Card -->
-    <div class="info-card">
-      <div class="card-icon"><i class="far fa-calendar-alt"></i></div>
-      <div class="card-content">
-        <h3>Fechas</h3>
-        <p><strong>Inicio:</strong> {{ tournament.startDate | date:'mediumDate' }}</p>
-        <p *ngIf="tournament.endDate"><strong>Fin:</strong> {{ tournament.endDate | date:'mediumDate' }}</p>
-      </div>
-    </div>
-
-    <!-- Stats Cards -->
-    <div class="stats-grid">
-      <div class="stat-card" *ngFor="let stat of stats">
-        <div class="card-icon"><i [class]="stat.icon"></i></div>
-        <div class="card-content">
-          <h3>{{ stat.value }}</h3>
-          <p>{{ stat.label }}</p>
+    
+    <!-- Nueva sección de banner de estado de registro -->
+    <div class="registration-status-banner" [class]="registrationStatus">
+      <div class="status-content">
+        <div class="status-text">
+          <i class="fas" [ngClass]="{
+            'fa-clock': registrationStatus === 'upcoming',
+            'fa-user-plus': registrationStatus === 'open',
+            'fa-lock': registrationStatus === 'closed'
+          }"></i>
+          <span>{{ getRegistrationStatusMessage() }}</span>
         </div>
+        
+        <div class="countdown" *ngIf="countdown">
+          <span *ngIf="registrationStatus === 'upcoming'">Inicia en:</span>
+          <span *ngIf="registrationStatus === 'open'">Cierra en:</span>
+          <span class="countdown-timer">
+            <span *ngIf="countdown.days > 0">{{ countdown.days }}d </span>
+            {{ countdown.hours }}h {{ countdown.minutes }}m {{ countdown.seconds }}s
+          </span>
+        </div>
+        
+        <button class="register-button" 
+                *ngIf="canRegister"
+                (click)="registerToTournament()">
+          <i class="fas fa-user-plus"></i> Inscribir Equipo
+        </button>
       </div>
-    </div>
-  </div>
-
-  <!-- Format Explanation -->
-  <div class="format-explanation" *ngIf="tournament && tournament.format">
-    <div class="section-header">
-      <i class="fas fa-info-circle"></i>
-      <h2>Formato: {{ formatDescriptions[tournament.format].title || tournament.format }}</h2>
-    </div>
-    <div class="format-content">
-      <p>{{ formatDescriptions[tournament.format].description }}</p>
-      
-      <div class="rules-section">
-        <h3><i class="fas fa-gavel"></i> Reglas del Formato:</h3>
-        <ul class="rules-list">
-          <li *ngFor="let rule of formatDescriptions[tournament.format].rules">
-            <i class="fas fa-chevron-right"></i> {{ rule }}
-          </li>
-        </ul>
-      </div>
-    </div>
-  </div>
-
-  <!-- Tournament Tabs -->
-  <div class="tabs-container">
-    <div class="tabs">
-      <button 
-        class="tab-button" 
-        [class.active]="activeTab === 'teams'"
-        (click)="changeTab('teams')"
-      >
-        <i class="fas fa-users"></i>
-        <span>EQUIPOS</span>
-      </button>
-      <button 
-        class="tab-button" 
-        [class.active]="activeTab === 'bracket'"
-        (click)="changeTab('bracket')"
-      >
-        <i class="fas fa-trophy"></i>
-        <span>BRACKET</span>
-      </button>
-      <button 
-        class="tab-button" 
-        [class.active]="activeTab === 'rules'"
-        (click)="changeTab('rules')"
-      >
-        <i class="fas fa-book"></i>
-        <span>REGLAS</span>
-      </button>
     </div>
     
-    <div class="tab-content">
-      <app-tournament-teams *ngIf="activeTab === 'teams'" [teams]="tournamentTeams"></app-tournament-teams>
+    <div class="hero-content">
+      <div class="hero-text">
+        <span class="hero-subtitle">{{ tournament.game }}</span>
+        <h1 class="tournament-title">{{ tournament.name }}</h1>
+        
+        <div class="hero-meta">
+          <div class="meta-item">
+            <i class="fas fa-calendar-alt"></i>
+            <span>{{ formatDate(tournament.startDate) }}</span>
+          </div>
+          <div class="meta-item">
+            <i class="fas fa-users"></i>
+            <span>{{ tournament.currentTeams }}/{{ tournament.maxTeams }} Equipos</span>
+          </div>
+          <div class="meta-item" [class]="getStatusClass(tournament.status)">
+            <i class="fas fa-circle"></i>
+            <span>{{ tournament.status }}</span>
+          </div>
+        </div>
+      </div>
       
-      <div *ngIf="activeTab === 'bracket'">
-  <app-single-elimination 
-    [tournamentId]="tournamentId" 
-    [maxTeams]="tournament.maxTeams"
-    *ngIf="tournament?.format === 'Single Elimination'"> <!-- Aquí sí necesitas ?. para tournament -->
-  </app-single-elimination>
-</div>
+      <div class="hero-actions">
+        <div class="registration-status" [class]="registrationStatus">
+          <i class="fas fa-user-plus"></i>
+          <div class="status-text">
+            <strong>{{ 
+              registrationStatus === 'open' ? 'INSCRIPCIONES ABIERTAS' : 
+              registrationStatus === 'upcoming' ? 'INSCRIPCIONES PRÓXIMAS' : 'INSCRIPCIONES CERRADAS'
+            }}</strong>
+            <small>{{ getRegistrationStatusMessage() }}</small>
+          </div>
+        </div>
+        
+        <button class="action-button" *ngIf="registrationStatus === 'open'">
+          <i class="fas fa-user-plus"></i> Inscribir Equipo
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <div class="tournament-main">
+    <!-- Tournament Tabs -->
+    <div class="tabs-container">
+      <div class="tabs">
+        <button 
+          class="tab-button" 
+          [class.active]="activeTab === 'details'"
+          (click)="changeTab('details')"
+        >
+          <i class="fas fa-info-circle"></i>
+          <span>DETALLES</span>
+        </button>
+        <button 
+          class="tab-button" 
+          [class.active]="activeTab === 'teams'"
+          (click)="changeTab('teams')"
+        >
+          <i class="fas fa-users"></i>
+          <span>EQUIPOS</span>
+        </button>
+        <button 
+          class="tab-button" 
+          [class.active]="activeTab === 'bracket'"
+          (click)="changeTab('bracket')"
+        >
+          <i class="fas fa-trophy"></i>
+          <span>BRACKET</span>
+        </button>
+        <button 
+          class="tab-button" 
+          [class.active]="activeTab === 'rules'"
+          (click)="changeTab('rules')"
+        >
+          <i class="fas fa-book"></i>
+          <span>REGLAS</span>
+        </button>
+      </div>
       
-      <div *ngIf="activeTab === 'rules'" class="rules-tab">
-        <app-format-rules 
-          [tournament]="tournament" 
-          [customRules]="customRules">
-        </app-format-rules>
+      <div class="tab-content">
+        <!-- Details Tab -->
+        <div *ngIf="activeTab === 'details'" class="details-tab">
+          <div class="details-grid">
+            <!-- Nueva tarjeta de fechas de inscripción -->
+            <div class="registration-dates-card">
+              <h3><i class="fas fa-calendar-alt"></i> Fechas de Inscripción</h3>
+              <div class="date-row">
+                <span class="date-label">Inicio:</span>
+                <span class="date-value">{{ formatDate(tournament.registrationStartDate) }}</span>
+              </div>
+              <div class="date-row">
+                <span class="date-label">Fin:</span>
+                <span class="date-value">{{ formatDate(tournament.registrationEndDate) }}</span>
+              </div>
+              <div class="date-row" *ngIf="tournament.currentTeams !== undefined && tournament.maxTeams !== undefined">
+                <span class="date-label">Equipos:</span>
+                <span class="date-value">{{ tournament.currentTeams }}/{{ tournament.maxTeams }}</span>
+                <mat-progress-bar mode="determinate" 
+                                 [value]="(tournament.currentTeams / tournament.maxTeams) * 100"
+                                 class="teams-progress"></mat-progress-bar>
+              </div>
+            </div>
+            
+            <!-- Tournament Info Card -->
+            <div class="info-card">
+              <div class="card-header">
+                <i class="fas fa-info-circle"></i>
+                <h3>Información del Torneo</h3>
+              </div>
+              <div class="card-body">
+                <div class="info-row">
+                  <span class="info-label">Formato:</span>
+                  <span class="info-value">{{ tournament.format }}</span>
+                </div>
+                <div class="info-row">
+                  <span class="info-label">Juego:</span>
+                  <span class="info-value">{{ tournament.game }}</span>
+                </div>
+                <div class="info-row">
+                  <span class="info-label">Estado:</span>
+                  <span class="info-value badge" [class]="getStatusClass(tournament.status)">
+                    {{ tournament.status }}
+                  </span>
+                </div>
+                <div class="info-row">
+                  <span class="info-label">Equipos:</span>
+                  <span class="info-value">{{ tournament.currentTeams }}/{{ tournament.maxTeams }}</span>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Dates Card -->
+            <div class="info-card">
+              <div class="card-header">
+                <i class="fas fa-calendar-alt"></i>
+                <h3>Fechas Importantes</h3>
+              </div>
+              <div class="card-body">
+                <div class="info-row">
+                  <span class="info-label">Inicio Torneo:</span>
+                  <span class="info-value">{{ formatDate(tournament.startDate) }}</span>
+                </div>
+                <div class="info-row">
+                  <span class="info-label">Inicio Inscripciones:</span>
+                  <span class="info-value">{{ formatDate(tournament.registrationStartDate) }}</span>
+                </div>
+                <div class="info-row">
+                  <span class="info-label">Fin Inscripciones:</span>
+                  <span class="info-value">{{ formatDate(tournament.registrationEndDate) }}</span>
+                </div>
+                <div class="info-row" *ngIf="tournament.endDate">
+                  <span class="info-label">Fin Torneo:</span>
+                  <span class="info-value">{{ formatDate(tournament.endDate) }}</span>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Prize & Fees Card -->
+            <div class="info-card">
+              <div class="card-header">
+                <i class="fas fa-award"></i>
+                <h3>Premios y Costos</h3>
+              </div>
+              <div class="card-body">
+                <div class="info-row">
+                  <span class="info-label">Premio:</span>
+                  <span class="info-value">{{ tournament.prizePool || 'No especificado' }}</span>
+                </div>
+                <div class="info-row">
+                  <span class="info-label">Costo de Inscripción:</span>
+                  <span class="info-value">{{ tournament.entryFee ? '$' + tournament.entryFee : 'Gratis' }}</span>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Format Explanation -->
+            <div class="info-card format-card">
+              <div class="card-header">
+                <i class="fas fa-chess-board"></i>
+                <h3>Formato: {{ formatDescriptions[tournament.format].title || tournament.format }}</h3>
+              </div>
+              <div class="card-body">
+                <p>{{ formatDescriptions[tournament.format].description || 'Descripción no disponible' }}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Teams Tab -->
+        <app-tournament-teams 
+          *ngIf="activeTab === 'teams'" 
+          [teams]="tournamentTeams"
+        ></app-tournament-teams>
+        
+        <!-- Bracket Tab -->
+        <div *ngIf="activeTab === 'bracket'">
+          <app-single-elimination 
+            [tournamentId]="tournamentId" 
+            [maxTeams]="tournament.maxTeams"
+            *ngIf="tournament?.format === 'Single Elimination'">
+          </app-single-elimination>
+        </div>
+        
+        <!-- Rules Tab -->
+        <div *ngIf="activeTab === 'rules'" class="rules-tab">
+          <app-format-rules 
+            [tournament]="tournament" 
+            [customRules]="customRules">
+          </app-format-rules>
+        </div>
       </div>
     </div>
   </div>
