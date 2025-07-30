@@ -4,11 +4,12 @@ import { MaterialModule } from '../material/material/material.module';
 import { NotificationsComponent } from '../shared-components/notifications/notifications.component';
 import { ChallengeResponseDialogComponent } from '../shared-components/challenge-response-dialog/challenge-response-dialog.component';
 import { ElevatorLoadingComponent } from '../shared-components/elevator-loading/elevator-loading.component';
+import { LocalDatePipe } from '../shared-pipe/local-date.pipe';
 
 
 
 @NgModule({
-  declarations: [NotificationsComponent, ChallengeResponseDialogComponent, NotificationsComponent, ElevatorLoadingComponent],
+  declarations: [NotificationsComponent, ChallengeResponseDialogComponent, NotificationsComponent, ElevatorLoadingComponent, LocalDatePipe],
   imports: [
     CommonModule,
     MaterialModule
@@ -17,7 +18,8 @@ import { ElevatorLoadingComponent } from '../shared-components/elevator-loading/
     CommonModule,
     MaterialModule,
     NotificationsComponent,
-    ElevatorLoadingComponent
+    ElevatorLoadingComponent,
+    LocalDatePipe
   ]
 })
 export class SharedModule { }

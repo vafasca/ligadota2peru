@@ -23,7 +23,7 @@ import { ConfirmChallengeDialogComponent } from './shared-components/confirm-cha
 @NgModule({
   declarations: [
     AppComponent,
-    ConfirmChallengeDialogComponent
+    ConfirmChallengeDialogComponent,
   ],
   imports: [
     BrowserModule,

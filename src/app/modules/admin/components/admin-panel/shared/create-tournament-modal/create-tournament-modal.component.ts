@@ -1,6 +1,7 @@
 import { Component, EventEmitter, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Tournament } from 'src/app/modules/admin/models/tournament.model';
+import { toZonedTime } from 'date-fns-tz';
 
 @Component({
   selector: 'app-create-tournament-modal',
@@ -13,6 +14,7 @@ export class CreateTournamentModalComponent {
   @Output() tournamentCreated = new EventEmitter<Tournament>();
   
   tournamentForm: FormGroup;
+  readonly timeZone = 'America/La_Paz';
 
   constructor(private fb: FormBuilder) {
     this.tournamentForm = this.fb.group({
@@ -20,7 +22,7 @@ export class CreateTournamentModalComponent {
       game: ['Dota 2', Validators.required],
       format: ['Single Elimination', Validators.required],
       maxTeams: [16, [Validators.required, Validators.min(4), Validators.max(32)]],
-      startDate: ['', Validators.required],
+      startDate: ['', Validators.required], // ahora será datetime-local
       prizePool: [''],
       entryFee: [0, [Validators.min(0)]],
       rules: ['']
@@ -32,18 +34,22 @@ export class CreateTournamentModalComponent {
   }
 
   onSubmit(): void {
-  if (this.tournamentForm.valid) {
-    // Obtener la fecha del formulario (ej: 31/07/2025)
-    const selectedDate = new Date(this.tournamentForm.value.startDate);
+    if (this.tournamentForm.invalid) return;
 
-    // Ajustar la fecha para evitar el cambio de día al guardar en UTC
-    // Sumamos 4 horas (UTC-4 → UTC) para que se guarde correctamente
-    const adjustedDate = new Date(selectedDate);
-    adjustedDate.setHours(selectedDate.getHours() + 4); // Ajuste para UTC-4 (Cochabamba)
+    const formValue = this.tournamentForm.value;
+
+    let startDateUTC: Date;
+    try {
+      // ✅ Interpretar la fecha local como si fuera en America/La_Paz y obtener su equivalente UTC
+      startDateUTC = toZonedTime(formValue.startDate, this.timeZone);
+    } catch (e) {
+      console.error('Fecha inválida:', formValue.startDate);
+      return;
+    }
 
     const tournamentData: Tournament = {
-      ...this.tournamentForm.value,
-      startDate: adjustedDate, // Guardamos con el ajuste horario
+      ...formValue,
+      startDate: startDateUTC,
       currentTeams: 0,
       status: 'Programado',
       createdBy: 'moderator-id',
@@ -54,5 +60,4 @@ export class CreateTournamentModalComponent {
     this.tournamentCreated.emit(tournamentData);
     this.onClose();
   }
-}
 }

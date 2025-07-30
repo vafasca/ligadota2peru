@@ -9,14 +9,16 @@ export interface Tournament {
   currentTeams: number;
   startDate: Date | string;
   endDate?: Date | string;
+  registrationStartDate: Date | string;
+  registrationEndDate: Date | string;
   prizePool?: string;
   entryFee: number;
   rules?: string;
   status: TournamentStatus;
-  createdBy: string; // ID del moderador/administrador que lo creó
+  createdBy: string;
   createdAt: Date | string;
   updatedAt?: Date | string;
-  teams?: string[]; // IDs de los equipos participantes
+  teams?: string[];
 }
 
 export type TournamentStatus = 'Programado' | 'En progreso' | 'Finalizado' | 'Cancelado';

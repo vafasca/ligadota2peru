@@ -6,23 +6,18 @@
         <i class="fas fa-times"></i>
       </button>
     </div>
-    
     <form [formGroup]="tournamentForm" (ngSubmit)="onSubmit()" class="tournament-form">
       <div class="form-group">
         <label for="tournament-name">Nombre del Torneo</label>
         <input type="text" id="tournament-name" formControlName="name" placeholder="Ej: Dota 2 Championship">
       </div>
-      
       <div class="form-row">
         <div class="form-group">
           <label for="game">Juego</label>
           <select id="game" formControlName="game">
             <option value="Dota 2">Dota 2</option>
-            <!-- <option value="CS:GO">CS:GO</option>
-            <option value="Valorant">Valorant</option> -->
           </select>
         </div>
-        
         <div class="form-group">
           <label for="format">Formato</label>
           <select id="format" formControlName="format">
@@ -32,36 +27,31 @@
           </select>
         </div>
       </div>
-      
       <div class="form-row">
         <div class="form-group">
           <label for="max-teams">Máx. Equipos</label>
           <input type="number" id="max-teams" formControlName="maxTeams" min="4" max="32">
         </div>
-        
         <div class="form-group">
-          <label for="start-date">Fecha de Inicio</label>
-          <input type="date" id="start-date" formControlName="startDate">
+          <label for="start-date">Fecha y Hora de Inicio</label>
+          <!-- CAMBIO: type="datetime-local" -->
+          <input type="datetime-local" id="start-date" formControlName="startDate">
         </div>
       </div>
-      
       <div class="form-row">
         <div class="form-group">
           <label for="prize-pool">Premio (opcional)</label>
           <input type="text" id="prize-pool" formControlName="prizePool" placeholder="Ej: $1000">
         </div>
-        
         <div class="form-group">
           <label for="entry-fee">Cuota de Entrada</label>
           <input type="number" id="entry-fee" formControlName="entryFee" min="0">
         </div>
       </div>
-      
       <div class="form-group">
         <label for="rules">Reglas (opcional)</label>
         <textarea id="rules" formControlName="rules" rows="4" placeholder="Describe las reglas específicas del torneo..."></textarea>
       </div>
-      
       <div class="form-actions">
         <button type="button" class="cancel-button" (click)="onClose()">Cancelar</button>
         <button type="submit" class="submit-button" [disabled]="!tournamentForm.valid">Crear Torneo</button>

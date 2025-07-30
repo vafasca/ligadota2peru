@@ -22,7 +22,8 @@
           <td matTooltip="{{tournament.name}}" [matTooltipDisabled]="tournament.name.length <= 20">{{ tournament.name }}</td>
           <td><span class="status-badge" [class]="getStatusClass(tournament.status)">{{ tournament.status }}</span></td>
           <td>{{ tournament.currentTeams }}</td>
-          <td>{{ tournament.startDate | date:'mediumDate' }}</td>
+          <td>{{ tournament.startDate | localDate:'dd/MM/yyyy' }}</td>
+          <!-- <td>{{ tournament.startDate | localDate:'dd/MM/yyyy HH:mm' : 'America/La_Paz' }}</td> sin hora -->
           <td>
             <button class="table-action" matTooltip="Editar"><i class="fas fa-edit"></i></button>
             <button class="table-action" matTooltip="Configurar"><i class="fas fa-cog"></i></button>
