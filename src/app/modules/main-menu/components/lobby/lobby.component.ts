@@ -784,7 +784,7 @@ openTournamentDialog(): void {
   }
 
   const dialogRef = this.dialog.open(RegisterTeamDialogComponent, {
-    width: '500px',
+    width: '90vh',
     data: { 
       team: {
         id: this.userTeam.id,

@@ -1,46 +1,124 @@
-<h2 mat-dialog-title>Inscribir equipo a torneo</h2>
-<mat-dialog-content>
-  <div class="tournament-dialog-container">
-    <mat-spinner *ngIf="isLoading" diameter="40"></mat-spinner>
-    
-    <div *ngIf="!isLoading">
-      <mat-form-field appearance="fill" class="full-width">
-        <mat-label>Seleccionar torneo</mat-label>
-        <mat-select [(value)]="selectedTournament" (selectionChange)="onTournamentSelect()">
-          <mat-option *ngFor="let tournament of tournaments" [value]="tournament.id">
-            {{ tournament.name }} - {{ tournament.game }} ({{ tournament.currentTeams }}/{{ tournament.maxTeams }} equipos)
-          </mat-option>
-        </mat-select>
-      </mat-form-field>
+<div class="dota2-dialog-container">
+  <h2 mat-dialog-title class="dota2-title">INSCRIBIR EQUIPO A TORNEO</h2>
+  <mat-dialog-content>
+    <div class="dota2-content">
+      <mat-spinner *ngIf="isLoading" diameter="40" color="accent"></mat-spinner>
+      
+      <div *ngIf="!isLoading" class="dota2-form">
+        <!-- Sección de logo del equipo -->
+        <div class="dota2-logo-section">
+          <h3 class="dota2-section-title">
+            <mat-icon class="dota2-icon">sports_esports</mat-icon>
+            LOGO DEL EQUIPO
+          </h3>
+          <div class="dota2-logo-preview" [class.empty]="!logoPreview">
+            <img *ngIf="logoPreview" [src]="logoPreview" alt="Logo del equipo">
+            <mat-icon *ngIf="!logoPreview" class="dota2-placeholder">group</mat-icon>
+          </div>
+          
+          <div class="dota2-logo-actions">
+            <label class="dota2-upload-btn">
+              <mat-icon>cloud_upload</mat-icon>
+              SELECCIONAR LOGO
+              <input type="file" accept="image/*" (change)="onLogoSelected($event)" hidden>
+            </label>
+            <button *ngIf="logoPreview" type="button" class="dota2-remove-btn" (click)="removeLogo()">
+              <mat-icon>delete</mat-icon>
+              ELIMINAR
+            </button>
+          </div>
+          
+          <div *ngIf="logoError" class="dota2-error-message">
+            <mat-icon>warning</mat-icon>
+            {{logoError}}
+          </div>
+          
+          <div class="dota2-requirements">
+            <small>Requisitos: Máx. 500KB, relación de aspecto entre 0.5 y 2</small>
+          </div>
+        </div>
 
-      <div *ngIf="selectedTournament" class="registration-status">
-        <div *ngIf="isChecking" class="checking-status">
-          <mat-spinner diameter="20"></mat-spinner>
-          <span>Verificando requisitos...</span>
+        <!-- Información del equipo -->
+        <div class="dota2-team-info">
+          <h3 class="dota2-section-title">
+            <mat-icon class="dota2-icon">groups</mat-icon>
+            INFORMACIÓN DEL EQUIPO
+          </h3>
+          
+          <div class="dota2-team-card">
+            <div class="dota2-team-header">
+              <h4>{{data.team.name}}</h4>
+            </div>
+            
+            <div class="dota2-players-list">
+              <div *ngFor="let player of data.team.players" class="dota2-player">
+                <div class="dota2-player-role" [class]="'role-' + player.role.toLowerCase()">
+                  {{getRoleAbbreviation(player.role)}}
+                </div>
+                <div class="dota2-player-info">
+                  <span class="dota2-player-nick">{{player.nick}}</span>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
-        
-        <div *ngIf="!isChecking && canRegister" class="can-register">
-          <mat-icon class="success-icon">check_circle</mat-icon>
-          <span>Puedes inscribirte a este torneo</span>
-        </div>
-        
-        <div *ngIf="!isChecking && !canRegister && registrationMessage" class="cannot-register">
-          <mat-icon class="error-icon">error</mat-icon>
-          <span>{{ registrationMessage }}</span>
-        </div>
-      </div>
 
-      <div *ngIf="tournaments.length === 0" class="no-tournaments">
-        No hay torneos disponibles para inscribirse
+        <!-- Selección de torneo -->
+        <div class="dota2-tournament-select">
+          <h3 class="dota2-section-title">
+            <mat-icon class="dota2-icon">tour</mat-icon>
+            SELECCIONAR TORNEO
+          </h3>
+          
+          <mat-form-field appearance="outline" class="dota2-select-field">
+            <mat-label>Torneo disponible</mat-label>
+            <mat-select [(value)]="selectedTournament" (selectionChange)="onTournamentSelect()">
+              <mat-option *ngFor="let tournament of tournaments" [value]="tournament.id">
+                <div class="dota2-tournament-option">
+                  <span class="dota2-tournament-name">{{ tournament.name }}</span>
+                  <span class="dota2-tournament-game">{{ tournament.game }}</span>
+                  <span class="dota2-tournament-slots">{{ tournament.currentTeams }}/{{ tournament.maxTeams }} equipos</span>
+                </div>
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <div *ngIf="selectedTournament" class="dota2-registration-status">
+            <div *ngIf="isChecking" class="dota2-checking-status">
+              <mat-spinner diameter="24" color="accent"></mat-spinner>
+              <span>VERIFICANDO REQUISITOS...</span>
+            </div>
+            
+            <div *ngIf="!isChecking && canRegister" class="dota2-can-register">
+              <mat-icon class="dota2-success-icon">check_circle</mat-icon>
+              <span>¡PUEDES INSCRIBIRTE A ESTE TORNEO!</span>
+            </div>
+            
+            <div *ngIf="!isChecking && !canRegister && registrationMessage" class="dota2-cannot-register">
+              <mat-icon class="dota2-error-icon">error</mat-icon>
+              <span>{{ registrationMessage }}</span>
+            </div>
+          </div>
+
+          <div *ngIf="tournaments.length === 0" class="dota2-no-tournaments">
+            <mat-icon>info</mat-icon>
+            NO HAY TORNEOS DISPONIBLES PARA INSCRIBIRSE
+          </div>
+        </div>
       </div>
     </div>
-  </div>
-</mat-dialog-content>
-<mat-dialog-actions align="end">
-  <button mat-button (click)="onCancel()">Cancelar</button>
-  <button mat-raised-button color="primary" 
+  </mat-dialog-content>
+  <mat-dialog-actions align="end" class="dota2-actions">
+    <button mat-button (click)="onCancel()" class="dota2-cancel-btn">
+      <mat-icon>close</mat-icon>
+      CANCELAR
+    </button>
+    <button mat-raised-button color="primary" 
           (click)="onRegister()" 
-          [disabled]="!selectedTournament || !canRegister">
-    Inscribir
-  </button>
-</mat-dialog-actions>
+          [disabled]="!selectedTournament || !canRegister || logoError"
+          class="dota2-register-btn">
+      <mat-icon>how_to_reg</mat-icon>
+      INSCRIBIR EQUIPO
+    </button>
+  </mat-dialog-actions>
+</div>

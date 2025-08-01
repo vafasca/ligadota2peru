@@ -12,6 +12,7 @@ export interface TournamentTeam {
   createdAt: Date;
   isActive: boolean;
   icon?: string;
+  logo?: string;
   stats?: {
     wins: number;
     losses: number;

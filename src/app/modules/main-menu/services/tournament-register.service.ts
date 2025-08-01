@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { addDoc, arrayUnion, collection, doc, Firestore, getDoc, increment, onSnapshot, query, updateDoc, where } from '@angular/fire/firestore';
 import { Tournament } from '../../admin/models/tournament.model';
-import { catchError, forkJoin, from, map, Observable, of, switchMap, throwError } from 'rxjs';
+import { catchError, forkJoin, from, map, Observable, of, switchMap, take, throwError } from 'rxjs';
 import { TournamentTeam } from '../../tournament/models/team.model';
 import { Team } from '../../admin/models/equipos.model';
 import { PlayerDivision } from '../../admin/models/jugador.model';
@@ -86,6 +86,7 @@ private tournamentTeamsCollection;
         idDota: p.idDota || 0
       })),
       division: team.division,
+      logo: team.logo || '../assets/default-logo.png',
       createdAt: new Date(),
       isActive: true,
       stats: {
@@ -153,16 +154,18 @@ private tournamentTeamsCollection;
 
 canRegisterToTournament(teamId: string, tournamentId: string): Observable<{ canRegister: boolean; message?: string }> {
     return forkJoin([
-      this.getTournament(tournamentId),
-      this.teamService.getTeam(teamId)
+      this.getTournament(tournamentId).pipe(take(1)),
+      this.teamService.getTeam(teamId).pipe(take(1)),
+      this.getTournamentTeams(tournamentId).pipe(take(1))
     ]).pipe(
-      map(([tournament, team]) => {
+      map(([tournament, team, tournamentTeams]) => {
+        // Verificaciones iniciales
         if (!tournament) {
-          return { canRegister: false, message: 'Torneo no encontrado' };
+          throw new Error('Torneo no encontrado');
         }
 
         if (tournament.status !== 'Programado') {
-          return { canRegister: false, message: 'El torneo no está aceptando inscripciones' };
+          throw new Error('El torneo no está aceptando inscripciones');
         }
 
         const now = new Date();
@@ -170,33 +173,45 @@ canRegisterToTournament(teamId: string, tournamentId: string): Observable<{ canR
         const endDate = new Date(tournament.registrationEndDate);
 
         if (now < startDate) {
-          return { canRegister: false, message: `Las inscripciones comienzan el ${this.formatDate(startDate)}` };
+          throw new Error(`Las inscripciones comienzan el ${this.formatDate(startDate)}`);
         }
 
         if (now > endDate) {
-          return { canRegister: false, message: 'El período de inscripciones ha finalizado' };
+          throw new Error('El período de inscripciones ha finalizado');
         }
 
         if (!team || team.players.length !== 5) {
-          return { canRegister: false, message: 'El equipo debe tener exactamente 5 jugadores' };
+          throw new Error('El equipo debe tener exactamente 5 jugadores');
         }
 
         if (tournament.teams && tournament.teams.includes(teamId)) {
-          return { canRegister: false, message: 'El equipo ya está inscrito en este torneo' };
+          throw new Error('El equipo ya está inscrito en este torneo');
         }
 
         if (tournament.currentTeams >= tournament.maxTeams) {
-          return { canRegister: false, message: 'No hay cupos disponibles en este torneo' };
+          throw new Error('No hay cupos disponibles en este torneo');
+        }
+
+        // Verificar jugadores duplicados
+        const allPlayersInTournament = tournamentTeams.flatMap(t => t.players.map(p => p.uid));
+        const duplicatePlayers = team.players.filter(p => allPlayersInTournament.includes(p.uid));
+        
+        if (duplicatePlayers.length > 0) {
+          const playerNames = duplicatePlayers.map(p => p.nick).join(', ');
+          throw new Error(`Jugadores ya inscritos: ${playerNames}`);
         }
 
         return { canRegister: true };
       }),
       catchError(error => {
-        console.error('Error checking registration:', error);
-        return of({ canRegister: false, message: 'Error al verificar inscripción' });
+        console.error('Error en verificación:', error);
+        return of({
+          canRegister: false,
+          message: error.message || 'Error al verificar inscripción'
+        });
       })
     );
-  }
+}
 
 private formatDate(date: Date): string {
     return date.toLocaleDateString('es-ES', {
