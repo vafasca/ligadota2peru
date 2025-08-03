@@ -52,7 +52,7 @@
             
             <div class="dota2-players-list">
               <div *ngFor="let player of data.team.players" class="dota2-player">
-                <div class="dota2-player-role" [class]="'role-' + player.role.toLowerCase()">
+                <div class="dota2-player-role" [ngClass]="getRoleClass(player.role)">
                   {{getRoleAbbreviation(player.role)}}
                 </div>
                 <div class="dota2-player-info">
@@ -71,13 +71,17 @@
           </h3>
           
           <mat-form-field appearance="outline" class="dota2-select-field">
-            <mat-label>Torneo disponible</mat-label>
+            <mat-label class="label-ttitle-t">Torneo disponible</mat-label>
             <mat-select [(value)]="selectedTournament" (selectionChange)="onTournamentSelect()">
               <mat-option *ngFor="let tournament of tournaments" [value]="tournament.id">
                 <div class="dota2-tournament-option">
-                  <span class="dota2-tournament-name">{{ tournament.name }}</span>
-                  <span class="dota2-tournament-game">{{ tournament.game }}</span>
-                  <span class="dota2-tournament-slots">{{ tournament.currentTeams }}/{{ tournament.maxTeams }} equipos</span>
+                  <div class="dota2-tournament-row">
+                    <span class="dota2-tournament-name">{{ tournament.name }}</span>
+                    <span class="dota2-tournament-game">{{ tournament.game }}</span>
+                  </div>
+                  <div class="dota2-tournament-row">
+                    <span class="dota2-tournament-slots">{{ tournament.currentTeams }}/{{ tournament.maxTeams }} equipos</span>
+                  </div>
                 </div>
               </mat-option>
             </mat-select>

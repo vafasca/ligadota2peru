@@ -24,6 +24,7 @@ export class RegisterTeamDialogComponent {
   logoPreview: SafeUrl | string | null = null;
   maxLogoSize = 500 * 1024; // 500KB
   logoError: string | null = null;
+  isLogoRequired = true;
 
   constructor(
     public dialogRef: MatDialogRef<RegisterTeamDialogComponent>,
@@ -57,46 +58,66 @@ export class RegisterTeamDialogComponent {
   }
 
   onLogoSelected(event: Event): void {
-    const input = event.target as HTMLInputElement;
-    if (input.files && input.files[0]) {
-      const file = input.files[0];
-      
-      // Resetear error previo
-      this.logoError = null;
+  const input = event.target as HTMLInputElement;
+  if (input.files && input.files[0]) {
+    const file = input.files[0];
+    
+    // Resetear error previo
+    this.logoError = null;
 
-      // Validar tamaño
-      if (file.size > this.maxLogoSize) {
-        this.logoError = `El logo es demasiado grande (${Math.round(file.size / 1024)}KB). Máximo: 500KB`;
+    // Validar tamaño máximo (500KB)
+    const MAX_SIZE = 500 * 1024;
+    if (file.size > MAX_SIZE) {
+      this.logoError = `El logo es demasiado grande (${Math.round(file.size / 1024)}KB). Máximo: 500KB`;
+      input.value = ''; // Limpiar el input
+      return;
+    }
+
+    const img = new Image();
+    const reader = new FileReader();
+
+    img.onload = () => {
+      const width = img.width;
+      const height = img.height;
+      const aspectRatio = width / height;
+      
+      if (aspectRatio < 0.5 || aspectRatio > 2) {
+        this.logoError = 'El logo debe tener proporciones entre 0.5 y 2 (ancho/alto)';
         return;
       }
+      
+      // Si pasa todas las validaciones, guardar la imagen
+      this.selectedLogo = file;
+      this.logoPreview = reader.result as string; // Usamos el resultado del FileReader (Base64)
+    };
 
-      // Validar dimensiones
-      const img = new Image();
-      img.onload = () => {
-        const width = img.width;
-        const height = img.height;
-        const aspectRatio = width / height;
-        
-        if (aspectRatio < 0.5 || aspectRatio > 2) {
-          this.logoError = 'El logo debe tener proporciones entre 0.5 y 2 (ancho/alto)';
-          return;
-        }
-        
-        this.selectedLogo = file;
-        this.logoPreview = this.sanitizer.bypassSecurityTrustUrl(URL.createObjectURL(file));
-      };
-      img.onerror = () => {
-        this.logoError = 'La imagen no es válida';
-      };
-      img.src = URL.createObjectURL(file);
-    }
+    img.onerror = () => {
+      this.logoError = 'La imagen no es válida';
+    };
+
+    reader.onload = () => {
+      // Cuando el FileReader termine de leer, cargamos la imagen para validar dimensiones
+      img.src = reader.result as string;
+    };
+
+    reader.onerror = () => {
+      this.logoError = 'Error al leer la imagen';
+    };
+
+    // Iniciamos la lectura del archivo como Data URL (Base64)
+    reader.readAsDataURL(file);
   }
+}
 
   removeLogo(): void {
-    this.selectedLogo = null;
-    this.logoPreview = null;
-    this.logoError = '';
+  this.selectedLogo = null;
+  this.logoPreview = null;
+  this.logoError = null;
+  const fileInput = document.querySelector('input[type="file"]') as HTMLInputElement;
+  if (fileInput) {
+    fileInput.value = '';
   }
+}
 
   checkRegistrationStatus(): void {
     if (!this.selectedTournament) return;
@@ -138,33 +159,49 @@ export class RegisterTeamDialogComponent {
   }
 
   onRegister(): void {
-    if (!this.selectedTournament || !this.data.team || !this.canRegister) {
-      this.notificationService.showError('No se puede completar la inscripción');
-      return;
+  if (!this.selectedTournament || !this.data.team || !this.canRegister) {
+    this.notificationService.showError('No se puede completar la inscripción');
+    return;
+  }
+
+  // Validar que el logo esté presente si es requerido
+  if (this.isLogoRequired && !this.logoPreview) {
+    this.notificationService.showError('El logo del equipo es obligatorio');
+    return;
+  }
+
+  this.isLoading = true;
+  
+  const logoUrl = typeof this.logoPreview === 'string' 
+    ? this.logoPreview 
+    : this.logoPreview?.toString() || '';
+
+  // Si el logo es requerido y no hay URL, mostrar error
+  if (this.isLogoRequired && !logoUrl) {
+    this.notificationService.showError('El logo del equipo es obligatorio');
+    this.isLoading = false;
+    return;
+  }
+
+  const teamToRegister: Team = {
+    ...this.data.team,
+    logo: logoUrl || 'assets/default-team-logo.png'
+  };
+
+  this.tournamentService.registerTeamToTournament(
+    this.selectedTournament, 
+    teamToRegister
+  ).subscribe({
+    next: (teamId) => {
+      this.notificationService.showSuccess('Equipo registrado en el torneo');
+      this.dialogRef.close(teamId);
+    },
+    error: (err) => {
+      console.error('Registration error:', err);
+      this.notificationService.showError(err.message || 'Error al registrar equipo');
+      this.isLoading = false;
     }
-
-    this.isLoading = true;
-    
-    // Crear objeto de equipo con logo
-    const teamToRegister = {
-      ...this.data.team,
-      logo: this.logoPreview?.toString() || this.data.team.logo || 'assets/default-team-logo.png'
-    };
-
-    this.tournamentService.registerTeamToTournament(
-      this.selectedTournament, 
-      teamToRegister
-    ).subscribe({
-      next: (teamId) => {
-        this.notificationService.showSuccess('Equipo registrado en el torneo');
-        this.dialogRef.close(teamId);
-      },
-      error: (err) => {
-        console.error('Registration error:', err);
-        this.notificationService.showError(err.message || 'Error al registrar equipo');
-        this.isLoading = false;
-      }
-    });
+  });
 }
 
   // Añade este método a tu componente para mostrar abreviaturas de roles
@@ -178,6 +215,20 @@ getRoleAbbreviation(role: string): string {
   };
   return abbreviations[role.toUpperCase()] || role.charAt(0).toUpperCase();
 }
+
+getRoleClass(role: string): string {
+  if (!role) return '';
+  return 'role-' +
+    role
+      .toLowerCase()
+      .replace(/\(.*?\)/g, '')
+      .replace(/\s+/g, '-')
+      .replace(/-+$/g, '')
+      .trim();
+}
+
+
+
 
   onCancel(): void {
     this.dialogRef.close();

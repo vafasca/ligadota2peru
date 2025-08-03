@@ -313,7 +313,6 @@ getDivisionName(division: PlayerDivision): string {
 
   openCreateTeamDialog(): void {
     const dialogRef = this.dialog.open(CreateTeamDialogComponent, {
-      width: '500px',
       data: { 
         captainId: this.player.uid,
         captainName: this.player.nick,

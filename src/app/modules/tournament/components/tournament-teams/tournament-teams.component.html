@@ -3,7 +3,7 @@
     <div class="team-card" *ngFor="let team of teams">
       <div class="team-header">
         <div class="team-logo-container">
-          <img [src]="team.icon || 'assets/default-team-logo.png'" class="team-logo">
+          <img [src]="team.logo || 'assets/default-team-logo.png'" class="team-logo">
         </div>
         <h3 class="team-name">{{ team.name }}</h3>
         <span class="team-category">{{ team.division }}</span>

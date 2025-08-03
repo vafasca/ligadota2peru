@@ -1,255 +1,353 @@
-/* Estilos modernos con temática Dota 2 */
+/* Estilos modernos con temática Dota 2 mejorada */
 @import url('https://fonts.googleapis.com/css2?family=Radley&family=Oswald:wght@400;500;700&display=swap');
 
 .dota2-dialog-container {
-  height:85vh;
-  background: linear-gradient(135deg, #0c162d 0%, #1a2a4a 100%);
-  color: #e0e0e0;
+  height: 85vh;
+  min-width: 800px;
+  background: linear-gradient(145deg, #4a5d82 0%, #6b7baa 100%);
+  color: #f0f0f0;
   font-family: 'Oswald', sans-serif;
-  border: 1px solid #4a638f;
-  box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+  border: 2px solid #e4ae0d;
+  border-radius: 10px;
+  box-shadow: 0 0 30px rgba(228, 174, 13, 0.4);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
 }
 
 .dota2-title {
   font-family: 'Oswald', sans-serif;
   font-weight: 700;
+  font-size: 26px;
   text-transform: uppercase;
-  letter-spacing: 1px;
+  letter-spacing: 2px;
   color: #f8d56b;
   text-align: center;
-  padding: 15px 0;
+  padding: 20px 0;
   margin: 0;
-  background: linear-gradient(to right, #1a2a4a, #0c162d);
-  border-bottom: 2px solid #4a638f;
+  background: linear-gradient(90deg, #1a2a4a 0%, #0c162d 100%);
+  border-bottom: 2px solid #e4ae0d;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+  position: relative;
+  overflow: hidden;
+}
+
+.dota2-title::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(228, 174, 13, 0.1) 50%,
+    transparent 100%
+  );
+  animation: shine 3s infinite;
+}
+
+@keyframes shine {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
 }
 
 .dota2-content {
-  padding: 20px;
+  padding: 25px;
+  flex: 1;
+  overflow-y: auto;
 }
 
 .dota2-form {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 25px;
+  gap: 30px;
 }
 
-.dota2-section-title {
-  font-family: 'Oswald', sans-serif;
-  font-weight: 500;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  color: #f8d56b;
-  margin: 0 0 15px 0;
-  font-size: 16px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.dota2-icon {
-  color: #7a93c4;
-  font-size: 20px;
-}
-
-/* Sección de logo */
+/* Sección de logo mejorada - ahora obligatoria */
 .dota2-logo-section {
   grid-column: 1;
-  padding: 15px;
-  background: rgba(12, 22, 45, 0.6);
+  padding: 20px;
+  background: rgba(12, 22, 45, 0.7);
   border: 1px solid #4a638f;
-  border-radius: 4px;
+  border-radius: 8px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  position: relative;
+}
+
+.dota2-logo-section::before {
+  content: 'LOGO OBLIGATORIO';
+  position: absolute;
+  top: -10px;
+  right: 20px;
+  background: #e4ae0d;
+  color: #0c162d;
+  font-size: 10px;
+  font-weight: bold;
+  padding: 3px 10px;
+  border-radius: 10px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
 }
 
 .dota2-logo-preview {
-  width: 180px;
-  height: 180px;
-  margin: 0 auto 15px;
-  border-radius: 8px;
-  background: rgba(26, 42, 74, 0.8);
+  width: 200px;
+  height: 200px;
+  margin: 0 auto 20px;
+  border-radius: 10px;
+  background: rgba(26, 42, 74, 0.9);
   display: flex;
   align-items: center;
   justify-content: center;
   overflow: hidden;
-  border: 2px solid #4a638f;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+  border: 3px solid #e4ae0d;
+  box-shadow: 0 0 20px rgba(228, 174, 13, 0.3);
+  transition: all 0.3s ease;
+  position: relative;
 }
 
 .dota2-logo-preview.empty {
-  color: rgba(122, 147, 196, 0.3);
+  border: 3px dashed #7a93c4;
+}
+
+.dota2-logo-preview.empty::after {
+  content: 'SIN LOGO';
+  position: absolute;
+  bottom: 10px;
+  left: 0;
+  right: 0;
+  text-align: center;
+  color: #ff6b6b;
+  font-size: 14px;
+  font-weight: bold;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
 }
 
 .dota2-logo-preview img {
   width: 100%;
   height: 100%;
   object-fit: contain;
+  transition: transform 0.3s ease;
+}
+
+.dota2-logo-preview:hover img {
+  transform: scale(1.05);
 }
 
 .dota2-placeholder {
   font-size: 60px;
   width: 60px;
   height: 60px;
-  color: rgba(122, 147, 196, 0.5);
+  color: rgba(122, 147, 196, 0.3);
+  transition: all 0.3s ease;
+}
+
+.dota2-logo-preview:hover .dota2-placeholder {
+  color: rgba(228, 174, 13, 0.5);
+  transform: scale(1.1);
 }
 
 .dota2-logo-actions {
   display: flex;
   justify-content: center;
-  gap: 10px;
-  margin-bottom: 10px;
+  gap: 15px;
+  margin-bottom: 15px;
 }
 
 .dota2-upload-btn, .dota2-remove-btn {
-  padding: 8px 15px;
-  border-radius: 4px;
+  padding: 10px 20px;
+  border-radius: 6px;
   cursor: pointer;
   display: flex;
   align-items: center;
-  gap: 5px;
-  font-size: 12px;
-  font-weight: 500;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
+  letter-spacing: 1px;
   border: none;
   transition: all 0.3s ease;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
 }
 
 .dota2-upload-btn {
-  background: linear-gradient(to bottom, #4a638f, #3a527a);
+  background: linear-gradient(135deg, #4a638f 0%, #3a527a 100%);
   color: #f8d56b;
 }
 
 .dota2-upload-btn:hover {
-  background: linear-gradient(to bottom, #5a73a0, #4a628a);
-  box-shadow: 0 0 10px rgba(122, 147, 196, 0.5);
+  background: linear-gradient(135deg, #5a73a0 0%, #4a628a 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 5px 10px rgba(122, 147, 196, 0.4);
 }
 
 .dota2-remove-btn {
-  background: linear-gradient(to bottom, #8f4a4a, #7a3a3a);
+  background: linear-gradient(135deg, #8f4a4a 0%, #7a3a3a 100%);
   color: #f8d56b;
 }
 
 .dota2-remove-btn:hover {
-  background: linear-gradient(to bottom, #a05a5a, #8a4a4a);
-  box-shadow: 0 0 10px rgba(196, 122, 122, 0.5);
+  background: linear-gradient(135deg, #a05a5a 0%, #8a4a4a 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 5px 10px rgba(196, 122, 122, 0.4);
 }
 
 .dota2-error-message {
   color: #ff6b6b;
-  font-size: 12px;
+  font-size: 14px;
   text-align: center;
-  margin: 10px 0;
+  margin: 15px 0;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 5px;
+  gap: 8px;
+  padding: 10px;
+  background: rgba(143, 74, 74, 0.1);
+  border-radius: 6px;
+  border: 1px solid rgba(143, 74, 74, 0.3);
+  animation: pulseError 2s infinite;
+}
+
+@keyframes pulseError {
+  0% { opacity: 0.8; }
+  50% { opacity: 1; }
+  100% { opacity: 0.8; }
 }
 
 .dota2-requirements {
   text-align: center;
   color: #7a93c4;
-  font-size: 11px;
-  margin-top: 5px;
+  font-size: 18px;
+  margin-top: 10px;
+  font-style: italic;
 }
 
-/* Información del equipo */
+/* Información del equipo mejorada */
 .dota2-team-info {
   grid-column: 2;
-  padding: 15px;
-  background: rgba(12, 22, 45, 0.6);
+  padding: 20px;
+  background: rgba(12, 22, 45, 0.7);
   border: 1px solid #4a638f;
-  border-radius: 4px;
+  border-radius: 8px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
 }
 
 .dota2-team-card {
-  background: rgba(26, 42, 74, 0.8);
-  border-radius: 4px;
-  padding: 15px;
+  background: rgba(26, 42, 74, 0.9);
+  border-radius: 8px;
+  padding: 20px;
   border: 1px solid #4a638f;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
 }
 
 .dota2-team-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 15px;
-  padding-bottom: 10px;
+  margin-bottom: 20px;
+  padding-bottom: 15px;
   border-bottom: 1px solid #4a638f;
 }
 
 .dota2-team-header h4 {
   margin: 0;
   color: #f8d56b;
-  font-size: 18px;
+  font-size: 22px;
   font-weight: 500;
+  text-shadow: 0 0 8px rgba(248, 213, 107, 0.3);
 }
 
 .dota2-team-tag {
   background: #4a638f;
   color: #f8d56b;
-  padding: 3px 8px;
-  border-radius: 3px;
+  padding: 4px 10px;
+  border-radius: 4px;
   font-size: 12px;
-  font-weight: 500;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
 }
 
 .dota2-players-list {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 12px;
 }
 
 .dota2-player {
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 8px;
-  background: rgba(12, 22, 45, 0.6);
-  border-radius: 4px;
-  border-left: 3px solid #4a638f;
+  gap: 12px;
+  padding: 12px;
+  background: rgba(12, 22, 45, 0.7);
+  border-radius: 6px;
+  border-left: 4px solid #4a638f;
+  transition: all 0.3s ease;
+}
+
+.dota2-player:hover {
+  transform: translateX(5px);
+  border-left-color: #e4ae0d;
+  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
 }
 
 .dota2-player-role {
-  width: 24px;
-  height: 24px;
+  width: 30px;
+  height: 30px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   font-weight: 700;
-  font-size: 12px;
+  font-size: 14px;
   color: #0c162d;
   flex-shrink: 0;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
 }
 
-.role-carry { background: #f8d56b; }
-.role-mid { background: #7a93c4; }
-.role-offlane { background: #4a8f7a; }
-.role-support { background: #c47a93; }
-.role-hard-support { background: #8f4a7a; }
+.role-carry {
+  background: #FF9800;
+}
+.role-mid-lane {
+  background: #3F51B5;
+}
+.role-offlane {
+  background: #4CAF50;
+}
+.role-soft-support {
+  background: #c47a93;
+}
+.role-hard-support {
+  background: #8f4a7a;
+}
+
 
 .dota2-player-info {
   display: flex;
   flex-direction: column;
+  flex-grow: 1;
 }
 
 .dota2-player-nick {
-  font-weight: 500;
+  font-weight: 600;
   color: #f8d56b;
-  font-size: 14px;
+  font-size: 16px;
+  margin-bottom: 3px;
 }
 
 .dota2-player-name {
-  font-size: 11px;
+  font-size: 12px;
   color: #7a93c4;
 }
 
-/* Selección de torneo */
+/* Selección de torneo mejorada */
 .dota2-tournament-select {
   grid-column: 1 / span 2;
-  padding: 15px;
-  background: rgba(12, 22, 45, 0.6);
+  padding: 20px;
+  background: rgba(12, 22, 45, 0.7);
   border: 1px solid #4a638f;
-  border-radius: 4px;
+  border-radius: 8px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
 }
 
 .dota2-select-field {
@@ -261,11 +359,16 @@
 }
 
 .dota2-select-field .mat-form-field-label {
-  color: #7a93c4 !important;
+  color: #ffffff !important;
 }
 
 .dota2-select-field .mat-select-value {
   color: #f8d56b !important;
+  font-weight: 500;
+}
+
+.dota2-select-field .mat-select-arrow {
+  color: #f8d56b;
 }
 
 .dota2-tournament-option {
@@ -273,10 +376,16 @@
   align-items: center;
   justify-content: space-between;
   width: 100%;
+  padding: 10px;
+  transition: all 0.2s ease;
+}
+
+.dota2-tournament-option:hover {
+  background: rgba(74, 99, 143, 0.2) !important;
 }
 
 .dota2-tournament-name {
-  font-weight: 500;
+  font-weight: 600;
   color: #f8d56b;
   flex: 2;
 }
@@ -285,26 +394,27 @@
   color: #7a93c4;
   flex: 1;
   text-align: center;
-  font-size: 12px;
+  font-size: 13px;
 }
 
 .dota2-tournament-slots {
   color: #4a8f7a;
   flex: 1;
   text-align: right;
-  font-size: 12px;
+  font-size: 13px;
+  font-weight: 600;
 }
 
-/* Estado de registro */
+/* Estado de registro mejorado */
 .dota2-registration-status {
-  margin-top: 15px;
-  padding: 12px;
-  border-radius: 4px;
+  margin-top: 20px;
+  padding: 15px;
+  border-radius: 8px;
   display: flex;
   align-items: center;
-  gap: 10px;
-  font-size: 14px;
-  font-weight: 500;
+  gap: 12px;
+  font-size: 16px;
+  font-weight: 600;
 }
 
 .dota2-checking-status {
@@ -312,71 +422,260 @@
 }
 
 .dota2-can-register {
-  background: rgba(74, 143, 122, 0.1);
+  background: rgba(74, 143, 122, 0.15);
   color: #4a8f7a;
   border: 1px solid rgba(74, 143, 122, 0.3);
+  animation: pulseSuccess 2s infinite;
 }
 
 .dota2-cannot-register {
-  background: rgba(143, 74, 74, 0.1);
+  background: rgba(143, 74, 74, 0.15);
   color: #ff6b6b;
   border: 1px solid rgba(143, 74, 74, 0.3);
 }
 
+@keyframes pulseSuccess {
+  0% { box-shadow: 0 0 0 0 rgba(74, 143, 122, 0.4); }
+  70% { box-shadow: 0 0 0 10px rgba(74, 143, 122, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(74, 143, 122, 0); }
+}
+
 .dota2-success-icon {
   color: #4a8f7a;
+  font-size: 24px;
 }
 
 .dota2-error-icon {
   color: #ff6b6b;
+  font-size: 24px;
 }
 
 .dota2-no-tournaments {
-  padding: 15px;
+  padding: 20px;
   text-align: center;
   color: #7a93c4;
   font-style: italic;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
+  gap: 10px;
+  font-size: 16px;
+  border: 1px dashed #4a638f;
+  border-radius: 8px;
 }
 
-/* Acciones del diálogo */
+/* Acciones del diálogo mejoradas */
 .dota2-actions {
-  padding: 15px 20px;
-  background: linear-gradient(to right, #0c162d, #1a2a4a);
+  padding: 20px;
+  background: linear-gradient(90deg, #0c162d 0%, #1a2a4a 100%);
   border-top: 1px solid #4a638f;
+  display: flex;
+  justify-content: flex-end;
+  gap: 20px;
 }
 
 .dota2-cancel-btn {
   color: #7a93c4 !important;
-  font-weight: 500;
+  font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
+  letter-spacing: 1px;
   display: flex;
   align-items: center;
-  gap: 5px;
+  gap: 8px;
+  transition: all 0.3s ease;
+  padding: 10px 25px;
+  border-radius: 6px;
+  border: 1px solid #4a638f;
+}
+
+.dota2-cancel-btn:hover {
+  color: #f8d56b !important;
+  background: rgba(122, 147, 196, 0.1);
+  transform: translateY(-2px);
+  box-shadow: 0 5px 10px rgba(122, 147, 196, 0.2);
 }
 
 .dota2-register-btn {
-  background: linear-gradient(to bottom, #f8d56b, #e0b84a) !important;
+  background: linear-gradient(135deg, #f8d56b 0%, #e0b84a 100%) !important;
   color: #0c162d !important;
-  font-weight: 500;
+  font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
+  letter-spacing: 1px;
   display: flex;
   align-items: center;
-  gap: 5px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
-}
-
-.dota2-register-btn:disabled {
-  background: linear-gradient(to bottom, #7a93c4, #5a73a0) !important;
-  color: #0c162d !important;
-  opacity: 0.7;
+  gap: 8px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+  transition: all 0.3s ease;
+  padding: 10px 25px;
+  border-radius: 6px;
+  border: none;
 }
 
 .dota2-register-btn:hover:not([disabled]) {
-  box-shadow: 0 0 15px rgba(248, 213, 107, 0.5);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(248, 213, 107, 0.4);
+  background: linear-gradient(135deg, #f8e08b 0%, #e8c85a 100%) !important;
+}
+
+.dota2-register-btn:disabled {
+  background: linear-gradient(135deg, #7a93c4 0%, #5a73a0 100%) !important;
+  opacity: 0.7;
+  cursor: not-allowed;
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+/* Efectos de hover para opciones */
+.mat-option:hover:not(.mat-option-disabled),
+.mat-option:focus:not(.mat-option-disabled) {
+  background: rgba(143, 96, 74, 0.3) !important;
+}
+
+/* Estilo mejorado para las opciones de torneo */
+.mat-option {
+  padding: 0 !important;
+  height: auto !important;
+  min-height: 48px;
+}
+
+.dota2-tournament-option {
+  width: 100%;
+  padding: 8px 16px;
+}
+
+.dota2-tournament-row {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  align-items: center;
+}
+
+.dota2-tournament-name {
+  flex: 1;
+  font-weight: 600;
+  color: #f8d56b;
+  text-align: left;
+  padding-right: 10px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.dota2-tournament-game {
+  flex: 1;
+  color: #7a93c4;
+  text-align: center;
+  padding: 0 10px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.dota2-tournament-slots {
+  flex: 1;
+  color: #4a8f7a;
+  text-align: right;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Efecto hover mejorado */
+.mat-option:hover .dota2-tournament-option,
+.mat-option:focus .dota2-tournament-option {
+  background: rgba(74, 99, 143, 0.2);
+}
+
+/* Alternativa con blanco puro */
+.dota2-section-title {
+  color: #ffffff !important;
+}
+
+.dota2-icon {
+  color: #ffffff !important;
+}
+
+/* O con un azul muy claro */
+.dota2-section-title {
+  color: #e0e9ff !important;
+}
+
+.dota2-icon {
+  color: #e0e9ff !important;
+}
+
+
+/* Ajustes para pantallas pequeñas */
+@media (max-width: 600px) {
+  .dota2-tournament-name,
+  .dota2-tournament-game,
+  .dota2-tournament-slots {
+    font-size: 12px;
+  }
+  
+  .dota2-tournament-option {
+    padding: 6px 12px;
+  }
+}
+
+/* Responsive design */
+@media (max-width: 900px) {
+  .dota2-dialog-container {
+    min-width: auto;
+    width: 95vw;
+    height: 90vh;
+  }
+  
+  .dota2-content {
+    padding: 15px;
+  }
+  
+  .dota2-form {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+  
+  .dota2-logo-section, 
+  .dota2-team-info {
+    grid-column: 1;
+  }
+  
+  .dota2-title {
+    font-size: 22px;
+    padding: 15px 0;
+  }
+  
+  .dota2-actions {
+    padding: 15px;
+    gap: 10px;
+  }
+}
+
+@media (max-width: 500px) {
+  .dota2-logo-preview {
+    width: 150px;
+    height: 150px;
+  }
+  
+  .dota2-logo-actions {
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .dota2-upload-btn, 
+  .dota2-remove-btn {
+    width: 100%;
+    justify-content: center;
+  }
+  
+  .dota2-actions {
+    flex-direction: column-reverse;
+  }
+  
+  .dota2-cancel-btn,
+  .dota2-register-btn {
+    width: 100%;
+    justify-content: center;
+  }
 }
