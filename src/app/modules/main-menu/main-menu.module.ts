@@ -18,6 +18,7 @@ import { AddPlayerDialogComponent } from './components/add-player-dialog/add-pla
 import { MatListModule } from '@angular/material/list';
 import { SharedModule } from 'src/app/shared-module/shared.module';
 import { RegisterTeamDialogComponent } from './components/register-team-dialog/register-team-dialog.component';
+import { TournamentInvitationDialogComponent } from './components/tournament-invitation-dialog/tournament-invitation-dialog.component';
 
 @NgModule({
   declarations: [
@@ -26,7 +27,8 @@ import { RegisterTeamDialogComponent } from './components/register-team-dialog/r
     CreateTeamDialogComponent,
     FilterByRolePipePipe,
     AddPlayerDialogComponent,
-    RegisterTeamDialogComponent
+    RegisterTeamDialogComponent,
+    TournamentInvitationDialogComponent
   ],
   imports: [
     CommonModule,

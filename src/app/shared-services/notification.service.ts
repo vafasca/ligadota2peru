@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Firestore, collection, addDoc, doc, updateDoc, onSnapshot, query, where, getDocs } from '@angular/fire/firestore';
-import { from, map, Observable, switchMap } from 'rxjs';
+import { catchError, from, map, Observable, of, switchMap } from 'rxjs';
 import { Notification } from '../modules/admin/models/notification.model'; // Adjust the import path as necessary
 import { MatSnackBar } from '@angular/material/snack-bar';
 
@@ -16,28 +16,42 @@ private notificationsCollection = collection(this.firestore, 'notifications');
   ) {}
 
   getNotifications(userId: string): Observable<Notification[]> {
-    const q = query(
-      this.notificationsCollection,
-      where('userId', '==', userId),
-      where('read', '==', false)
-    );
+  const q = query(
+    this.notificationsCollection,
+    where('userId', '==', userId),
+    where('read', '==', false)
+  );
 
-    return new Observable<Notification[]>(observer => {
-      const unsubscribe = onSnapshot(q, (snapshot) => {
-        const notifications = snapshot.docs.map(doc => ({
+  return new Observable<Notification[]>(observer => {
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      const notifications = snapshot.docs.map(doc => {
+        const data = doc.data();
+        // Asegúrate de convertir correctamente el Timestamp
+        const createdAt = data['createdAt']?.toDate 
+          ? data['createdAt'].toDate() 
+          : new Date(data['createdAt']?.seconds * 1000 || Date.now());
+        
+        return {
           id: doc.id,
-          ...doc.data()
-        } as Notification));
-        observer.next(notifications);
+          ...data,
+          createdAt: createdAt
+        } as Notification;
       });
-      return () => unsubscribe();
+      observer.next(notifications);
     });
-  }
+    return () => unsubscribe();
+  });
+}
 
   markAsRead(notificationId: string): Observable<void> {
-    const notificationDocRef = doc(this.firestore, `notifications/${notificationId}`);
-    return from(updateDoc(notificationDocRef, { read: true }));
-  }
+  const notificationDocRef = doc(this.firestore, `notifications/${notificationId}`);
+  return from(updateDoc(notificationDocRef, { read: true })).pipe(
+    catchError(err => {
+      console.error('Error marking notification as read:', err);
+      return of(undefined); // No fallar si no se puede marcar como leída
+    })
+  );
+}
 
   createNotification(notification: Omit<Notification, 'id'> & { description?: string }): Observable<string> {
     return from(addDoc(this.notificationsCollection, notification)).pipe(
