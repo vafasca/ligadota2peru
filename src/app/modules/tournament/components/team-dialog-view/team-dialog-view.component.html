@@ -1,0 +1,83 @@
+<div class="team-dialog-container">
+  <div class="dialog-header">
+    <div class="team-logo-container">
+      <img [src]="team.logo || 'assets/default-team-logo.png'" class="team-logo">
+      <div class="logo-glow"></div>
+    </div>
+    <div class="team-title">
+      <h2 class="team-name">{{ team.name }}</h2>
+      <span class="team-division">{{ team.division }}</span>
+    </div>
+    <button mat-icon-button class="close-button" (click)="onClose()">
+      <i class="fas fa-times"></i>
+    </button>
+  </div>
+
+  <div class="dialog-content">
+    <div class="team-stats-section">
+      <h3><i class="fas fa-chart-line"></i> Estadísticas del Equipo</h3>
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-icon wins">
+            <i class="fas fa-trophy"></i>
+          </div>
+          <div class="stat-info">
+            <span class="stat-value">{{ team.stats ? team.stats.wins : 0 }}</span>
+            <span class="stat-label">Victorias</span>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon losses">
+            <i class="fas fa-skull"></i>
+          </div>
+          <div class="stat-info">
+            <span class="stat-value">{{ team.stats ? team.stats.losses : 0 }}</span>
+            <span class="stat-label">Derrotas</span>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon winrate">
+            <i class="fas fa-percentage"></i>
+          </div>
+          <div class="stat-info">
+            <span class="stat-value">{{ team.stats.wins && team.stats.losses ? ((team.stats.wins / (team.stats.wins + team.stats.losses)) * 100).toFixed(1) : '0' }}%</span>
+            <span class="stat-label">Win Rate</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="players-section">
+      <h3><i class="fas fa-users"></i> Roster del Equipo</h3>
+      <div class="players-list">
+        <div class="player-card" *ngFor="let player of team.players">
+          <div class="player-avatar-container">
+            <img [src]="player.avatar || 'assets/default-avatar.png'" class="player-avatar">
+            <div class="player-role-badge" [class]="'role-' + (player.role ? player.role.toLowerCase() : 'support')">
+              {{ player.role }}
+            </div>
+          </div>
+          <div class="player-details">
+            <div class="player-name">{{ player.nick }}</div>
+            <div class="player-mmr">
+              <i class="fas fa-medal"></i>
+              {{ player.mmr }} MMR
+            </div>
+          </div>
+          <div class="player-actions">
+            <button class="view-profile-btn">
+              <i class="fab fa-steam"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="team-status-section">
+      <div class="status-indicator" [class.active]="team.isActive">
+        <div class="status-dot"></div>
+        <span>{{ team.isActive ? 'Equipo Activo' : 'Equipo Inactivo' }}</span>
+      </div>
+    </div>
+  </div>
+</div>

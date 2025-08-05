@@ -13,7 +13,7 @@ export interface TournamentTeam {
   isActive: boolean;
   icon?: string;
   logo?: string;
-  stats?: {
+  stats: {
     wins: number;
     losses: number;
     pointsFor: number;

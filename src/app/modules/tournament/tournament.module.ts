@@ -10,6 +10,7 @@ import { TournamentViewComponent } from './components/tournament-view/tournament
 import { TournamentTeamsComponent } from './components/tournament-teams/tournament-teams.component';
 import { SharedModule } from 'src/app/shared-module/shared.module';
 import { FormatRulesComponent } from './components/format-rules/format-rules.component';
+import { TeamDialogViewComponent } from './components/team-dialog-view/team-dialog-view.component';
 
 
 @NgModule({
@@ -20,6 +21,7 @@ import { FormatRulesComponent } from './components/format-rules/format-rules.com
     TournamentViewComponent,
     TournamentTeamsComponent,
     FormatRulesComponent,
+    TeamDialogViewComponent,
   ],
   imports: [
     CommonModule,

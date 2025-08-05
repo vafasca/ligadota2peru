@@ -1,43 +1,51 @@
 <div class="teams-container">
-  <div class="teams-grid">
-    <div class="team-card" *ngFor="let team of teams">
-      <div class="team-header">
-        <div class="team-logo-container">
-          <img [src]="team.logo || 'assets/default-team-logo.png'" class="team-logo">
+  <div class="teams-header">
+    <h2 class="teams-title">
+      <i class="fas fa-shield-alt"></i>
+      Equipos Registrados
+      <span class="teams-count">({{ teams.length }})</span>
+    </h2>
+  </div>
+
+  <div class="teams-grid" *ngIf="teams.length > 0">
+    <div 
+      class="team-compact-card" 
+      *ngFor="let team of teams; trackBy: trackByTeamId"
+      (click)="openTeamDetails(team)"
+    >
+      <div class="card-glow"></div>
+      <div class="team-logo-wrapper">
+        <img [src]="team.logo || 'assets/default-team-logo.png'" class="team-logo" [alt]="team.name">
+        <div class="logo-border"></div>
+        <div class="status-indicator" [class.active]="team.isActive">
+          <div class="status-dot"></div>
         </div>
+      </div>
+      
+      <div class="team-info">
         <h3 class="team-name">{{ team.name }}</h3>
-        <span class="team-category">{{ team.division }}</span>
-      </div>
-      
-      <div class="team-players">
-        <h4 class="players-title">Jugadores</h4>
-        <div class="player-list">
-          <div class="player-item" *ngFor="let player of team.players">
-            <img [src]="player.avatar || 'assets/default-avatar.png'" class="player-avatar">
-            <div class="player-info">
-              <span class="player-nick">{{ player.nick }}</span>
-              <div class="player-details">
-                <span class="player-role">{{ player.role }}</span>
-                <span class="player-mmr">{{ player.mmr }} MMR</span>
-              </div>
-            </div>
-          </div>
+        <div class="team-meta">
+          <span class="team-division">{{ team.division }}</span>
+          <span class="team-record">
+            {{ team.stats.wins || 0 }}W - {{ team.stats.losses || 0 }}L
+          </span>
         </div>
       </div>
-      
-      <div class="team-footer">
-        <span class="team-status" [class.active]="team.isActive">
-          {{ team.isActive ? 'Activo' : 'Inactivo' }}
-        </span>
-        <span class="team-stats">
-          {{ team.stats?.wins || 0 }}W - {{ team.stats?.losses || 0 }}L
-        </span>
+
+      <div class="team-hover-overlay">
+        <div class="overlay-content">
+          <i class="fas fa-eye"></i>
+          <span>Ver Detalles</span>
+        </div>
       </div>
     </div>
   </div>
-</div>
 
-<div class="no-teams" *ngIf="teams.length === 0">
-  <i class="fas fa-users-slash"></i>
-  <p>No hay equipos registrados en este torneo</p>
+  <div class="no-teams-state" *ngIf="teams.length === 0">
+    <div class="no-teams-icon">
+      <i class="fas fa-users-slash"></i>
+    </div>
+    <h3>No hay equipos registrados</h3>
+    <p>Los equipos aparecerán aquí una vez que se registren en el torneo</p>
+  </div>
 </div>
