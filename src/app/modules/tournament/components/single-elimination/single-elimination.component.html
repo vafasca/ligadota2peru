@@ -1,41 +1,123 @@
-<!-- tournament.component.html -->
-<div class="tournament-container">
-  <div class="header">
-    <h1>Tournament Bracket</h1>
+<div class="tournament-arena">
+  <!-- Animated Background -->
+  <div class="background-effects">
+    <div class="particles"></div>
+  </div>
+
+  <!-- Header Section -->
+  <div class="tournament-header">
+    <div class="title-container">
+      <div class="tournament-logo">⚔️</div>
+      <h1 class="tournament-title">
+        <span class="title-text">TOURNAMENT</span>
+        <span class="title-subtitle">CHAMPIONSHIP BRACKET</span>
+      </h1>
+    </div>
+    
     <div class="controls" *ngIf="teams.length > 0">
-      <button (click)="randomizeAllMatches()" class="randomize-btn">Simulate Results</button>
+      <button (click)="randomizeAllMatches()" class="action-btn simulate-btn">
+        <span class="btn-icon">🎲</span>
+        <span class="btn-text">SIMULATE BATTLES</span>
+      </button>
     </div>
   </div>
 
-  <div class="bracket-container" *ngIf="matches.length > 0">
-    <div class="round" *ngFor="let round of rounds">
-      <div class="round-header">
-        <h3>{{ getRoundName(round) }}</h3>
-      </div>
-      <div class="matches">
-        <div 
-          class="match" 
-          *ngFor="let match of getMatchesForRound(round)"
-          [class.completed]="match.isCompleted"
-          (click)="teams.length > 0 && simulateMatch(match)"
-        >
-          <div class="match-header">
-            <span class="match-label">PARTIDA {{ match.id.split('-')[3] }}</span>
-          </div>
-          <div class="teams">
-            <div class="team" [class.winner]="match.winner === match.team1">
-              <div class="team-info">
-                <span class="team-icon">{{ match.team1?.icon || '❓' }}</span>
-                <span class="team-name">{{ match.team1?.name || 'TBD' }}</span>
-              </div>
-              <span class="score">{{ match.score1 ?? '' }}</span>
+  <!-- Zoom Controls -->
+  <div class="zoom-controls">
+    <button (click)="zoomOut()" class="zoom-btn" title="Alejar">
+      <i class="fas fa-search-minus"></i>
+    </button>
+    <span class="zoom-level">{{ (zoom * 100).toFixed(0) }}%</span>
+    <button (click)="zoomIn()" class="zoom-btn" title="Acercar">
+      <i class="fas fa-search-plus"></i>
+    </button>
+    <button (click)="resetZoom()" class="zoom-btn" title="Resetear zoom">
+      <i class="fas fa-sync-alt"></i>
+    </button>
+  </div>
+
+  <!-- Tournament Bracket -->
+  <div class="bracket-container" 
+       (wheel)="onWheel($event)"
+       (mousedown)="onMouseDown($event)"
+       (mousemove)="onMouseMove($event)"
+       (mouseup)="onMouseUp($event)"
+       (mouseleave)="onMouseLeave()"
+       [style.cursor]="isDragging ? 'grabbing' : 'grab'">
+     
+    <div class="bracket-arena" [style.transform]="'scale(' + zoom + ')'">
+      <div class="rounds-container">
+        <div class="tournament-round" *ngFor="let round of rounds; let roundIndex = index">
+          <div class="round-header">
+            <div class="round-badge">
+              <span class="round-number">{{ round }}</span>
             </div>
-            <div class="team" [class.winner]="match.winner === match.team2">
-              <div class="team-info">
-                <span class="team-icon">{{ match.team2?.icon || '❓' }}</span>
-                <span class="team-name">{{ match.team2?.name || 'TBD' }}</span>
+            <h3 class="round-title">{{ getRoundName(round) }}</h3>
+            <div class="round-decoration"></div>
+          </div>
+          
+          <div class="matches-grid">
+            <div 
+              class="battle-match" 
+              *ngFor="let match of getMatchesForRound(round); let matchIndex = index"
+              [class.completed]="match.isCompleted"
+              [class.clickable]="teams.length > 0"
+              (click)="teams.length > 0 && simulateMatch(match)"
+            >
+              <!-- Match Header -->
+              <div class="match-info">
+                <span class="match-id">BATTLE {{ matchIndex + 1 }}</span>
+                <div class="match-status" [class.active]="match.isCompleted">
+                  <span *ngIf="!match.isCompleted">⏳</span>
+                  <span *ngIf="match.isCompleted">⚡</span>
+                </div>
               </div>
-              <span class="score">{{ match.score2 ?? '' }}</span>
+
+              <!-- Teams Battle -->
+              <div class="teams-battle">
+                <!-- Team 1 -->
+                <div class="team-card" [class.victor]="match.winner === match.team1" [class.defeated]="match.isCompleted && match.winner !== match.team1">
+                  <div class="team-avatar">
+                    <div class="avatar-frame">
+                      <span class="team-icon">{{ match.team1?.icon || '❓' }}</span>
+                    </div>
+                    <div class="team-glow" *ngIf="match.winner === match.team1"></div>
+                  </div>
+                  <div class="team-details">
+                    <span class="team-name">{{ match.team1?.name || 'TBD' }}</span>
+                    <div class="team-score">
+                      <span class="score-value">{{ match.score1 ?? '-' }}</span>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- VS Divider -->
+                <div class="vs-divider">
+                  <div class="vs-symbol">VS</div>
+                  <div class="battle-line"></div>
+                </div>
+
+                <!-- Team 2 -->
+                <div class="team-card" [class.victor]="match.winner === match.team2" [class.defeated]="match.isCompleted && match.winner !== match.team2">
+                  <div class="team-avatar">
+                    <div class="avatar-frame">
+                      <span class="team-icon">{{ match.team2?.icon || '❓' }}</span>
+                    </div>
+                    <div class="team-glow" *ngIf="match.winner === match.team2"></div>
+                  </div>
+                  <div class="team-details">
+                    <span class="team-name">{{ match.team2?.name || 'TBD' }}</span>
+                    <div class="team-score">
+                      <span class="score-value">{{ match.score2 ?? '-' }}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Match Effects -->
+              <div class="match-effects" *ngIf="match.isCompleted">
+                <div class="victory-sparkles"></div>
+              </div>
             </div>
           </div>
         </div>
@@ -43,13 +125,39 @@
     </div>
   </div>
 
-  <div class="champion" *ngIf="champion && champion.id !== 'empty'">
-    <div class="champion-container">
-      <h2>🏆 CHAMPION</h2>
-      <div class="champion-team">
-        <span class="champion-icon">{{ champion.icon }}</span>
-        <span class="champion-name">{{ champion.name }}</span>
+  <!-- Champion Section -->
+  <div class="champion-shrine" *ngIf="champion && champion.id.indexOf('empty') === -1">
+    <div class="shrine-container">
+      <div class="champion-effects">
+        <div class="golden-rays"></div>
+        <div class="floating-particles"></div>
       </div>
+      
+      <div class="champion-pedestal">
+        <div class="champion-crown">👑</div>
+        <h2 class="champion-title">AEGIS CHAMPION</h2>
+        
+        <div class="champion-card">
+          <div class="champion-avatar">
+            <div class="avatar-legendary">
+              <span class="champion-icon">{{ champion.icon }}</span>
+            </div>
+            <div class="legendary-aura"></div>
+          </div>
+          <div class="champion-info">
+            <span class="champion-name">{{ champion.name }}</span>
+            <span class="champion-subtitle">Tournament Victor</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <div class="loading-screen" *ngIf="isLoading">
+    <div class="loading-content">
+      <div class="loading-symbol">⚔️</div>
+      <span class="loading-text">Loading Tournament...</span>
     </div>
   </div>
 </div>

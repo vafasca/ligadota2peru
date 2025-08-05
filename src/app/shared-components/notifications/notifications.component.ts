@@ -98,7 +98,6 @@ export class NotificationsComponent {
 
       const invitation = snapshot.docs[0].data();
       const dialogRef = this.dialog.open(TournamentInvitationDialogComponent, {
-        width: '500px',
         data: {
           invitationId: snapshot.docs[0].id, // ID de la invitación real
           tournamentName: this.extractTournamentName(notification.message),

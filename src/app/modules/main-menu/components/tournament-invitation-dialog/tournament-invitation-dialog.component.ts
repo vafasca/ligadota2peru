@@ -3,6 +3,7 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { TournamentRegisterService } from '../../services/tournament-register.service';
 import { NotificationService } from 'src/app/shared-services/notification.service';
 import { doc, Firestore, updateDoc } from '@angular/fire/firestore';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-tournament-invitation-dialog',
@@ -11,6 +12,7 @@ import { doc, Firestore, updateDoc } from '@angular/fire/firestore';
 })
 export class TournamentInvitationDialogComponent {
 isLoading = false;
+  animationState = 'enter';
 
   constructor(
     public dialogRef: MatDialogRef<TournamentInvitationDialogComponent>,
@@ -18,7 +20,7 @@ isLoading = false;
       invitationId: string,
       tournamentName: string,
       teamName: string,
-      notificationId?: string // Añade este campo
+      notificationId?: string
     },
     private tournamentService: TournamentRegisterService,
     private notificationService: NotificationService,
@@ -28,15 +30,13 @@ isLoading = false;
   respondToInvitation(accept: boolean): void {
     this.isLoading = true;
     
-    // Actualizar primero la invitación en tournament_invitations
     const invitationRef = doc(this.firestore, `tournament_invitations/${this.data.invitationId}`);
     
     updateDoc(invitationRef, { 
       status: accept ? 'accepted' : 'rejected',
       respondedAt: new Date(),
-      'notification.read': true // Marcar la notificación como leída
+      'notification.read': true
     }).then(() => {
-      // Si tenemos un ID de notificación separado, marcarlo como leído
       if (this.data.notificationId) {
         this.notificationService.markAsRead(this.data.notificationId).subscribe({
           next: () => this.handleResponseComplete(accept),
@@ -56,10 +56,18 @@ isLoading = false;
   }
 
   private handleResponseComplete(accepted: boolean): void {
-    this.notificationService.showSuccess(
-      accepted ? 'Invitación aceptada' : 'Invitación rechazada'
-    );
-    this.isLoading = false;
-    this.dialogRef.close(true);
+    this.animationState = 'exit';
+    setTimeout(() => {
+      this.notificationService.showSuccess(
+        accepted ? 'Invitación aceptada' : 'Invitación rechazada'
+      );
+      this.isLoading = false;
+      this.dialogRef.close(true);
+    }, 300);
+  }
+
+  closeDialog(): void {
+    this.animationState = 'exit';
+    setTimeout(() => this.dialogRef.close(), 300);
   }
 }

@@ -1,15 +1,38 @@
-<h2 mat-dialog-title>Invitación a Torneo</h2>
-<mat-dialog-content>
-  <p>El equipo <strong>{{data.teamName}}</strong> te invita a participar en el torneo:</p>
-  <h3>{{data.tournamentName}}</h3>
-  <p>¿Aceptas la invitación?</p>
-</mat-dialog-content>
-<mat-dialog-actions align="end">
-  <button mat-button (click)="dialogRef.close()">Cancelar</button>
-  <button mat-button color="warn" (click)="respondToInvitation(false)" [disabled]="isLoading">
-    Rechazar
-  </button>
-  <button mat-raised-button color="primary" (click)="respondToInvitation(true)" [disabled]="isLoading">
-    Aceptar
-  </button>
-</mat-dialog-actions>
+<div class="invitation-container" [class.enter]="animationState === 'enter'" [class.exit]="animationState === 'exit'">
+  <div class="dota-header">
+    <div class="dota-logo"></div>
+    <h2 class="invitation-title">INVITACIÓN AL TORNEO</h2>
+  </div>
+
+  <div class="invitation-content">
+    <div class="radiant-border"></div>
+    
+    <div class="message-container">
+      <p class="invitation-text">¡El equipo <span class="team-name">{{data.teamName}}</span> te invita a unirte con ellos al torneo épico!</p>
+      
+      <div class="tournament-card">
+        <div class="tournament-icon">
+          <img src="../../../../../assets/trofeo_icon_dialog_tournament.png" alt="Tournament Trophy">
+        </div>
+        <h3 class="tournament-name">{{data.tournamentName}}</h3>
+      </div>
+      
+      <p class="action-text">¿Aceptarás el desafío?</p>
+    </div>
+    
+    <div class="dire-border"></div>
+  </div>
+
+  <div class="invitation-actions">
+    <div class="action-buttons">
+      <button mat-button (click)="respondToInvitation(false)" [disabled]="isLoading" class="reject-btn">
+        <span class="btn-icon">✖</span>
+        <span class="btn-text">Rechazar</span>
+      </button>
+      <button mat-raised-button (click)="respondToInvitation(true)" [disabled]="isLoading" class="accept-btn">
+        <span class="btn-icon">✓</span>
+        <span class="btn-text">Aceptar</span>
+      </button>
+    </div>
+  </div>
+</div>

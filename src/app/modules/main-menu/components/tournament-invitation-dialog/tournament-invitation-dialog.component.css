@@ -1,0 +1,344 @@
+@import url('https://fonts.googleapis.com/css2?family=Radley:ital@0;1&family=Oswald:wght@400;700&display=swap');
+
+.invitation-container {
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+  border: 2px solid #4a4a6a;
+  border-radius: 8px;
+  overflow: hidden;
+  width: 100vh;
+  max-width: 100vw;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+  transition: all 0.3s ease;
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
+.invitation-container.enter {
+  animation: fadeInUp 0.3s ease-out;
+}
+
+.invitation-container.exit {
+  opacity: 0;
+  transform: translateY(20px) scale(0.95);
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.dota-header {
+  background: linear-gradient(to right, #8b0000, #b22222);
+  padding: 15px 20px;
+  text-align: center;
+  position: relative;
+  border-bottom: 2px solid #ffd700;
+}
+
+.dota-logo {
+  position: absolute;
+  top: 10px;
+  left: 20px;
+  width: 40px;
+  height: 40px;
+  background-image: url('../../../../../assets/dota2_icon.png');
+  background-size: contain;
+  background-repeat: no-repeat;
+}
+
+.invitation-title {
+  font-family: 'Oswald', sans-serif;
+  color: #ffd700;
+  margin: 0;
+  font-size: 1.5rem;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  text-shadow: 1px 1px 2px #000;
+}
+
+.invitation-content {
+  padding: 20px;
+  background: url('../../../../../assets/dota_dialog_tournament.png') center/cover;
+  position: relative;
+}
+
+.radiant-border, .dire-border {
+  height: 3px;
+  background: linear-gradient(90deg, transparent, #4CAF50, transparent);
+  margin: 10px 0;
+}
+
+.dire-border {
+  background: linear-gradient(90deg, transparent, #F44336, transparent);
+}
+
+.message-container {
+  background: rgba(26, 26, 46, 0.8);
+  padding: 20px;
+  border-radius: 5px;
+  border: 1px solid #4a4a6a;
+  margin: 15px 0;
+}
+
+.invitation-text {
+  font-family: 'Radley', serif;
+  color: #e0e0e0;
+  font-size: 1.1rem;
+  text-align: center;
+  margin-bottom: 20px;
+  line-height: 1.5;
+}
+
+.team-name {
+  color: #4CAF50;
+  font-weight: bold;
+  text-shadow: 0 0 5px rgba(76, 175, 80, 0.5);
+}
+
+.tournament-card {
+  background: linear-gradient(135deg, #2c3e50 0%, #1a1a2e 100%);
+  border: 1px solid #ffd700;
+  border-radius: 5px;
+  padding: 15px;
+  margin: 20px 0;
+  text-align: center;
+  transition: transform 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.tournament-card:hover {
+  transform: scale(1.02);
+}
+
+.tournament-icon {
+  width: 60px;
+  height: 60px;
+  margin: 0 auto 10px;
+}
+
+.tournament-icon img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.tournament-name {
+  font-family: 'Oswald', sans-serif;
+  color: #ffd700;
+  margin: 0;
+  font-size: 1.3rem;
+  text-transform: uppercase;
+  word-break: break-word;
+}
+
+.action-text {
+  font-family: 'Radley', serif;
+  color: #e0e0e0;
+  font-size: 1rem;
+  text-align: center;
+  font-style: italic;
+  margin-top: 20px;
+}
+
+.invitation-actions {
+  padding: 20px;
+  background: linear-gradient(to right, #1a1a2e, #16213e);
+  border-top: 1px solid #4a4a6a;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 15px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+/* Botones mejorados */
+.reject-btn, .accept-btn {
+  font-family: 'Oswald', sans-serif;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  transition: all 0.3s ease;
+  border-radius: 6px;
+  padding: 12px 24px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: bold;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  min-width: 120px;
+  justify-content: center;
+  border: none;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.reject-btn {
+  background: linear-gradient(to right, #f44336, #d32f2f);
+  color: white;
+}
+
+.reject-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: 0.5s;
+}
+
+.reject-btn:hover::before {
+  left: 100%;
+}
+
+.reject-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(244, 67, 54, 0.3);
+}
+
+.accept-btn {
+  background: linear-gradient(to right, #4CAF50, #2E7D32);
+  color: white;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.accept-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: 0.5s;
+}
+
+.accept-btn:hover::before {
+  left: 100%;
+}
+
+.accept-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(76, 175, 80, 0.3);
+}
+
+.btn-icon {
+  font-size: 1.2rem;
+  transition: transform 0.3s ease;
+}
+
+.btn-text {
+  font-size: 0.95rem;
+  transition: transform 0.3s ease;
+}
+
+.reject-btn:hover .btn-icon,
+.accept-btn:hover .btn-icon {
+  transform: scale(1.1);
+}
+
+/* Efecto de pulsación */
+.reject-btn:active,
+.accept-btn:active {
+  transform: translateY(1px) !important;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2) !important;
+}
+
+/* Loading state */
+.mat-button[disabled] {
+  opacity: 0.8;
+  cursor: not-allowed;
+  transform: none !important;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1) !important;
+}
+
+.mat-button[disabled] .btn-text {
+  position: relative;
+  padding-left: 25px;
+}
+
+.mat-button[disabled] .btn-text::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 14px;
+  height: 14px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: translateY(-50%) rotate(360deg); }
+}
+
+/* Responsive adjustments */
+@media (max-width: 500px) {
+  .invitation-title {
+    font-size: 1.3rem;
+    padding-left: 40px;
+  }
+  
+  .dota-logo {
+    width: 30px;
+    height: 30px;
+  }
+  
+  .invitation-content {
+    padding: 15px;
+  }
+  
+  .message-container {
+    padding: 15px;
+  }
+  
+  .tournament-card {
+    padding: 12px;
+    margin: 15px 0;
+  }
+  
+  .tournament-icon {
+    width: 50px;
+    height: 50px;
+  }
+  
+  .tournament-name {
+    font-size: 1.1rem;
+  }
+  
+  .reject-btn, .accept-btn {
+    padding: 10px 18px;
+    min-width: 110px;
+    font-size: 0.9rem;
+  }
+  
+  .btn-icon {
+    font-size: 1.1rem;
+  }
+}
+
+@media (max-width: 400px) {
+  .action-buttons {
+    flex-direction: column;
+    gap: 10px;
+    width: 100%;
+  }
+  
+  .reject-btn, .accept-btn {
+    width: 100%;
+  }
+}
