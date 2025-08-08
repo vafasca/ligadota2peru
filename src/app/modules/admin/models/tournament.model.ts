@@ -21,6 +21,8 @@ export interface Tournament {
   teams?: string[];
   isRegistrationOpen?: boolean;
   bannerImage?: string;
+  matchFormat: 'BO1' | 'BO3' | 'BO5';
+  finalMatchFormat: 'BO1' | 'BO3' | 'BO5';
 }
 
 export type TournamentStatus = 'Programado' | 'En progreso' | 'Finalizado' | 'Cancelado';

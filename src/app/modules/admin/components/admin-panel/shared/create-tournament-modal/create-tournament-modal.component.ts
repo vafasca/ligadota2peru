@@ -22,14 +22,11 @@ export class CreateTournamentModalComponent {
   game: ['Dota 2', Validators.required],
   format: ['Single Elimination', Validators.required],
   maxTeams: [16, [Validators.required, Validators.min(4), Validators.max(32)]],
-
-  // ✅ Cambiado a datetime-local
   startDate: ['', Validators.required],
-
-  // 🔽 Nuevos controles
   registrationStartDate: ['', Validators.required],
   registrationEndDate: ['', Validators.required],
-
+  matchFormat: ['BO1', Validators.required],
+  finalMatchFormat: ['BO3', Validators.required],
   prizePool: [''],
   entryFee: [0, [Validators.min(0)]],
   rules: ['']

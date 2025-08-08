@@ -14,8 +14,8 @@
       </h1>
     </div>
     
-    <div class="controls" *ngIf="teams.length > 0">
-      <button (click)="randomizeAllMatches()" class="action-btn simulate-btn">
+    <div class="controls">
+      <button (click)="teams.length > 0 ? randomizeAllMatches() : null" class="action-btn simulate-btn">
         <span class="btn-icon">🎲</span>
         <span class="btn-text">SIMULATE BATTLES</span>
       </button>
@@ -64,59 +64,69 @@
               [class.clickable]="teams.length > 0"
               (click)="teams.length > 0 && simulateMatch(match)"
             >
-              <!-- Match Header -->
-              <div class="match-info">
-                <span class="match-id">BATTLE {{ matchIndex + 1 }}</span>
-                <div class="match-status" [class.active]="match.isCompleted">
-                  <span *ngIf="!match.isCompleted">⏳</span>
-                  <span *ngIf="match.isCompleted">⚡</span>
-                </div>
-              </div>
-
-              <!-- Teams Battle -->
-              <div class="teams-battle">
-                <!-- Team 1 -->
-                <div class="team-card" [class.victor]="match.winner === match.team1" [class.defeated]="match.isCompleted && match.winner !== match.team1">
-                  <div class="team-avatar">
-                    <div class="avatar-frame">
-                      <span class="team-icon">{{ match.team1?.icon || '❓' }}</span>
-                    </div>
-                    <div class="team-glow" *ngIf="match.winner === match.team1"></div>
-                  </div>
-                  <div class="team-details">
-                    <span class="team-name">{{ match.team1?.name || 'TBD' }}</span>
-                    <div class="team-score">
-                      <span class="score-value">{{ match.score1 ?? '-' }}</span>
-                    </div>
+              <!-- Video Background -->
+              <video class="match-video-bg" autoplay loop muted playsinline>
+                <source src="../../../../../assets/bg_fire.mp4" type="video/mp4">
+              </video>
+              
+              <!-- Match Content -->
+              <div class="match-content">
+                <!-- Match Header -->
+                <div class="match-info">
+                  <span class="match-id">BATTLE {{ matchIndex + 1 }}</span>
+                  <div class="match-status" [class.active]="match.isCompleted">
+                    <span *ngIf="!match.isCompleted">⏳</span>
+                    <span *ngIf="match.isCompleted">⚡</span>
                   </div>
                 </div>
 
-                <!-- VS Divider -->
-                <div class="vs-divider">
-                  <div class="vs-symbol">VS</div>
-                  <div class="battle-line"></div>
+                <!-- Teams Battle -->
+                <div class="teams-battle">
+                  <!-- Team 1 -->
+                  <div class="team-card" [class.victor]="match.winner === match.team1" [class.defeated]="match.isCompleted && match.winner !== match.team1">
+                    <div class="team-avatar">
+                      <div class="avatar-frame">
+                        <span class="team-icon">{{ match.team1?.icon || '❓' }}</span>
+                      </div>
+                      <div class="team-glow" *ngIf="match.winner === match.team1"></div>
+                    </div>
+                    <div class="team-details">
+                      <span class="team-name">{{ match.team1?.name || 'TBD' }}</span>
+                      <div class="team-score">
+                        <span class="score-value">{{ match.score1 ?? '-' }}</span>
+                      </div>
+                    </div>
+                    <div class="eliminated-overlay" *ngIf="match.isCompleted && match.winner !== match.team1"></div>
+                  </div>
+
+                  <!-- VS Divider -->
+                  <div class="vs-divider">
+                    <div class="vs-symbol">VS</div>
+                    <div class="battle-line"></div>
+                  </div>
+
+                  <!-- Team 2 -->
+                  <div class="team-card" [class.victor]="match.winner === match.team2" [class.defeated]="match.isCompleted && match.winner !== match.team2">
+                    <div class="team-avatar">
+                      <div class="avatar-frame">
+                        <span class="team-icon">{{ match.team2?.icon || '❓' }}</span>
+                      </div>
+                      <div class="team-glow" *ngIf="match.winner === match.team2"></div>
+                    </div>
+                    <div class="team-details">
+                      <span class="team-name">{{ match.team2?.name || 'TBD' }}</span>
+                      <div class="team-score">
+                        <span class="score-value">{{ match.score2 ?? '-' }}</span>
+                      </div>
+                    </div>
+                    <div class="eliminated-overlay" *ngIf="match.isCompleted && match.winner !== match.team2"></div>
+                  </div>
                 </div>
 
-                <!-- Team 2 -->
-                <div class="team-card" [class.victor]="match.winner === match.team2" [class.defeated]="match.isCompleted && match.winner !== match.team2">
-                  <div class="team-avatar">
-                    <div class="avatar-frame">
-                      <span class="team-icon">{{ match.team2?.icon || '❓' }}</span>
-                    </div>
-                    <div class="team-glow" *ngIf="match.winner === match.team2"></div>
-                  </div>
-                  <div class="team-details">
-                    <span class="team-name">{{ match.team2?.name || 'TBD' }}</span>
-                    <div class="team-score">
-                      <span class="score-value">{{ match.score2 ?? '-' }}</span>
-                    </div>
-                  </div>
+                <!-- Match Effects -->
+                <div class="match-effects" *ngIf="match.isCompleted">
+                  <div class="victory-sparkles"></div>
                 </div>
-              </div>
-
-              <!-- Match Effects -->
-              <div class="match-effects" *ngIf="match.isCompleted">
-                <div class="victory-sparkles"></div>
               </div>
             </div>
           </div>
@@ -127,31 +137,34 @@
 
   <!-- Champion Section -->
   <div class="champion-shrine" *ngIf="champion && champion.id.indexOf('empty') === -1">
-    <div class="shrine-container">
-      <div class="champion-effects">
-        <div class="golden-rays"></div>
-        <div class="floating-particles"></div>
-      </div>
+  <div class="shrine-container">
+    <div class="champion-effects">
+      <div class="golden-rays"></div>
+      <div class="floating-particles"></div>
+    </div>
+    
+    <div class="champion-pedestal">
+      <div class="champion-crown">👑</div>
+      <h2 class="champion-title">AEGIS CHAMPION</h2>
       
-      <div class="champion-pedestal">
-        <div class="champion-crown">👑</div>
-        <h2 class="champion-title">AEGIS CHAMPION</h2>
-        
-        <div class="champion-card">
-          <div class="champion-avatar">
-            <div class="avatar-legendary">
-              <span class="champion-icon">{{ champion.icon }}</span>
-            </div>
-            <div class="legendary-aura"></div>
+      <div class="champion-card">
+        <div class="champion-avatar">
+          <div class="avatar-legendary">
+            <!-- Cambiamos el icono por una imagen -->
+            <img [src]="champion.icon || '../../../../../assets/aegis_bg.png'"
+                 alt="Champion" 
+                 class="champion-image">
           </div>
-          <div class="champion-info">
-            <span class="champion-name">{{ champion.name }}</span>
-            <span class="champion-subtitle">Tournament Victor</span>
-          </div>
+          <div class="legendary-aura"></div>
+        </div>
+        <div class="champion-info">
+          <span class="champion-name">{{ champion.name }}</span>
+          <span class="champion-subtitle">Victory</span>
         </div>
       </div>
     </div>
   </div>
+</div>
 
   <!-- Loading State -->
   <div class="loading-screen" *ngIf="isLoading">

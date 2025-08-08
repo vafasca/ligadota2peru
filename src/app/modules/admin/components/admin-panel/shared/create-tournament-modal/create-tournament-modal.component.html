@@ -50,6 +50,24 @@
       </div>
       <div class="form-row">
         <div class="form-group">
+          <label for="match-format">Formato de Partidas</label>
+          <select id="match-format" formControlName="matchFormat">
+            <option value="BO1">Best of 1</option>
+            <option value="BO3">Best of 3</option>
+            <option value="BO5">Best of 5</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="final-match-format">Formato de la Final</label>
+          <select id="final-match-format" formControlName="finalMatchFormat">
+            <option value="BO1">Best of 1</option>
+            <option value="BO3">Best of 3</option>
+            <option value="BO5">Best of 5</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
           <label for="prize-pool">Premio (opcional)</label>
           <input type="text" id="prize-pool" formControlName="prizePool" placeholder="Ej: $1000">
         </div>
