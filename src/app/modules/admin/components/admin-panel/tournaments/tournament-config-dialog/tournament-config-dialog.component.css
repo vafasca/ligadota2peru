@@ -1,0 +1,698 @@
+/* Estilos generales */
+.dota2-dialog-container {
+  background: #f5f5f5 url('../../../../../../../assets/vs_bg.webp') no-repeat center center;
+  background-size: cover;
+  color: #333;
+  width: 100%;
+  font-family: 'Radiance', 'Arial', sans-serif;
+}
+
+.dota2-title {
+  color: #d4af37;
+  text-align: center;
+  font-family: 'Radiance', sans-serif;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  padding: 15px;
+  margin: 0;
+  font-size: 1.5rem;
+  border-bottom: 1px solid rgba(212, 175, 55, 0.3);
+}
+
+.tournament-header {
+  margin-bottom: 20px;
+}
+
+.tournament-banner {
+  background: linear-gradient(
+    135deg,
+    rgba(176, 224, 230, 0.3) 0%,
+    rgba(135, 206, 235, 0.2) 100%
+  );
+  border: 1px solid rgba(173, 216, 230, 0.5);
+  backdrop-filter: blur(2px);
+  padding: 15px;
+  border-radius: 8px;
+  border-left: 4px solid #d4af37;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+::ng-deep .team-tabs-group .mat-mdc-tab .mdc-tab__text-label {
+  color: white !important;
+  opacity: 0.8;
+}
+
+::ng-deep .team-tabs-group .mat-mdc-tab.mdc-tab--active .mdc-tab__text-label {
+  color: white !important;
+  opacity: 1;
+}
+
+
+::ng-deep .team-tabs-group .mdc-tab-indicator__content--underline {
+  border-color: white !important;
+}
+
+.tournament-banner h3 {
+  color: #d4af37;
+  margin: 0 0 10px 0;
+  font-size: 1.3rem;
+}
+
+.tournament-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.tournament-meta span {
+  padding: 5px 12px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: white;
+}
+
+.format {
+  background: #4299e1;
+}
+
+.match-format {
+  background: #ed8936;
+}
+
+.teams-count {
+  background: #38a169;
+}
+
+/* Pestañas */
+.mat-tab-group {
+  margin-top: 15px;
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 8px;
+  padding: 10px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.mat-tab-label {
+  color: #555;
+  opacity: 1;
+  font-weight: 500;
+}
+
+.mat-tab-label-active {
+  color: #d4af37;
+}
+
+.mat-ink-bar {
+  background-color: #d4af37 !important;
+  height: 3px;
+}
+
+/* Contenedor de equipos pendientes */
+.pending-teams-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 20px;
+  padding: 10px;
+}
+
+.pending-team-card {
+  background: white;
+  border-radius: 8px;
+  padding: 15px;
+  border-left: 4px solid #FFA500;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+}
+
+.pending-team-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 12px rgba(212, 175, 55, 0.3);
+}
+
+.team-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.team-logo {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-right: 15px;
+  border: 2px solid #d4af37;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.team-info {
+  flex: 1;
+}
+
+.team-info h4 {
+  margin: 0;
+  color: #333;
+  font-size: 1.1rem;
+}
+
+.team-meta {
+  display: flex;
+  gap: 10px;
+  margin-top: 5px;
+}
+
+.mmr-total {
+  background: #4a8f7a;
+  color: white;
+  padding: 3px 10px;
+  border-radius: 12px;
+  font-weight: bold;
+  font-size: 0.8rem;
+}
+
+.division-badge {
+  padding: 3px 10px;
+  border-radius: 12px;
+  font-size: 0.8rem;
+  font-weight: bold;
+  color: white;
+}
+
+.division-badge.ancient {
+  background: #9c27b0;
+}
+
+.division-badge.legend {
+  background: #e91e63;
+}
+
+.division-badge.divine {
+  background: #4caf50;
+}
+
+.division-badge.immortal {
+  background: #ff9800;
+}
+
+/* Grid de jugadores */
+.players-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+.player-card {
+  background: #f0f0f0;
+  border-radius: 6px;
+  padding: 8px;
+  display: flex;
+  align-items: center;
+  transition: all 0.2s ease;
+}
+
+.player-card:hover {
+  background: #e0e0e0;
+  transform: translateX(3px);
+}
+
+.player-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  margin-right: 10px;
+  border: 1px solid rgba(212, 175, 55, 0.5);
+}
+
+.player-info {
+  flex: 1;
+}
+
+.player-name {
+  display: block;
+  font-size: 0.85rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: #333;
+}
+
+.player-stats {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 3px;
+}
+
+.player-mmr {
+  font-size: 0.75rem;
+  color: #4a8f7a;
+  font-weight: bold;
+}
+
+.player-role {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  padding: 2px 6px;
+  border-radius: 4px;
+  color: white;
+  background: #666;
+}
+
+/* Roles de jugadores */
+.player-card.CARRY {
+  border-left: 3px solid #ff9800;
+}
+
+.player-card.MID {
+  border-left: 3px solid #3f51b5;
+}
+
+.player-card.OFFLANE {
+  border-left: 3px solid #4caf50;
+}
+
+.player-card.SUPPORT {
+  border-left: 3px solid #e91e63;
+}
+
+.player-card.HARD_SUPPORT {
+  border-left: 3px solid #9c27b0;
+}
+
+/* Botones de acciones */
+.team-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.approve-btn {
+  background: linear-gradient(135deg, #38a169 0%, #2f855a 100%);
+  color: white;
+  flex: 1;
+}
+
+.reject-btn {
+  background: linear-gradient(135deg, #e53e3e 0%, #c53030 100%);
+  color: white;
+  flex: 1;
+}
+
+/* Contenedor de equipos aprobados */
+.approved-teams-container {
+  padding: 10px;
+}
+
+.first-round-controls {
+  background: linear-gradient(
+    135deg,
+    rgba(176, 224, 230, 0.3) 0%,
+    rgba(135, 206, 235, 0.2) 100%
+  );
+  padding: 15px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(2px);
+  border: 1px solid rgba(173, 216, 230, 0.5);
+}
+
+.first-round-controls h3 {
+  margin-top: 0;
+  color: #d4af37;
+  font-size: 1.1rem;
+}
+
+.controls-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 15px;
+  margin-top: 10px;
+}
+
+.format-options {
+  margin-right: 15px;
+}
+
+.generate-btn:disabled {
+  opacity: 0.5;
+  background: #666 !important;
+}
+
+.format-option .mat-radio-label-content {
+  color: #555;
+}
+
+.mat-radio-checked .mat-radio-label-content {
+  color: #d4af37;
+}
+
+.generate-btn {
+  background: linear-gradient(135deg, #d4af37 0%, #b38f2a 100%);
+  color: #333;
+  font-weight: bold;
+}
+
+/* Vista previa de enfrentamientos */
+.matches-preview {
+  background: linear-gradient(
+    135deg,
+    rgba(176, 224, 230, 0.3) 0%,
+    rgba(135, 206, 235, 0.2) 100%
+  );
+  padding: 15px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  backdrop-filter: blur(2px);
+  border: 1px solid rgba(173, 216, 230, 0.5);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.matches-preview h4 {
+  margin-top: 0;
+  color: #d4af37;
+  font-size: 1rem;
+}
+
+.matches-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 15px;
+  margin-top: 15px;
+}
+
+.match-preview {
+  background: #f9f9f9;
+  border-radius: 6px;
+  padding: 12px;
+  border: 1px solid rgba(212, 175, 55, 0.3);
+}
+
+.match-header {
+  color: #d4af37;
+  font-size: 0.9rem;
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+.match-teams {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.team-preview {
+  display: flex;
+  align-items: center;
+  flex: 1;
+}
+
+.team-preview span {
+  margin-left: 8px;
+  font-size: 0.9rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: #333;
+}
+
+.team-logo-small {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  border: 1px solid rgba(212, 175, 55, 0.5);
+}
+
+.vs-circle {
+  background: #d4af37;
+  color: white;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  margin: 0 10px;
+  font-size: 0.8rem;
+}
+
+.approved-team-card.used {
+  opacity: 0.6;
+  background: rgba(16, 22, 37, 0.4);
+  cursor: not-allowed;
+}
+
+.approved-team-card.used .team-details h4 {
+  text-decoration: line-through;
+}
+
+.used-indicator {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  background: #e53e3e;
+  color: white;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+}
+
+/* Acciones para match manual */
+.manual-match-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 15px;
+}
+
+.cancel-match-btn {
+  color: #e53e3e;
+  border-color: #e53e3e;
+}
+
+/* Grid de equipos aprobados */
+.approved-teams-grid {
+  margin-top: 20px;
+}
+
+.approved-team-card {
+  background: white;
+  border-radius: 8px;
+  padding: 12px;
+  display: flex;
+  align-items: center;
+  transition: all 0.2s ease;
+  cursor: pointer;
+  border-left: 4px solid #38a169;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.approved-team-card:hover {
+  background: #f0f0f0;
+  transform: translateY(-3px);
+}
+
+.approved-team-card .team-logo {
+  width: 40px;
+  height: 40px;
+  margin-right: 12px;
+}
+
+.team-details {
+  flex: 1;
+}
+
+.team-details h4 {
+  margin: 0;
+  font-size: 0.95rem;
+  color: #333;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.team-stats {
+  display: flex;
+  gap: 8px;
+  margin-top: 5px;
+}
+
+.team-stats .mmr-total {
+  font-size: 0.75rem;
+  background: #4a8f7a;
+  color: white;
+}
+
+/* Acciones del diálogo */
+.dialog-actions {
+  padding: 15px;
+  border-top: 1px solid rgba(212, 175, 55, 0.2);
+  margin-top: 10px;
+  border-radius: 0 0 8px 8px;
+}
+
+.cancel-btn {
+  color: #666;
+}
+
+.save-btn {
+  background: linear-gradient(135deg, #d4af37 0%, #b38f2a 100%);
+  color: #333;
+  font-weight: bold;
+}
+
+.save-btn:disabled {
+  background: #ccc !important;
+  color: #666 !important;
+}
+
+/* Radio buttons personalizados */
+.mat-radio-outer-circle {
+  border-color: #666;
+}
+
+.mat-radio-checked .mat-radio-outer-circle {
+  border-color: #d4af37;
+}
+
+.mat-radio-inner-circle {
+  background-color: #d4af37;
+}
+
+/* Modo manual */
+.manual-selection-container {
+  background: rgba(16, 22, 37, 0.8);
+  padding: 15px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+}
+
+.manual-instructions {
+  text-align: center;
+  color: #a0aec0;
+  margin-bottom: 15px;
+}
+
+.manual-instructions p {
+  margin: 0 0 15px 0;
+  font-size: 0.95rem;
+}
+
+.match-preview-before-add {
+  background: rgba(26, 42, 74, 0.6);
+  border-radius: 8px;
+  padding: 15px;
+  margin-top: 15px;
+}
+
+.vs-matchup {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 15px;
+  margin-bottom: 15px;
+  font-weight: 500;
+}
+
+.vs-matchup span {
+  flex: 1;
+  text-align: center;
+}
+
+.vs-text {
+  color: #d4af37;
+  font-weight: bold;
+  flex: 0;
+}
+
+.add-match-btn {
+  background: linear-gradient(135deg, rgba(56, 161, 105, 0.8) 0%, rgba(56, 161, 105, 0.5) 100%);
+  color: white;
+  width: 100%;
+}
+
+/* Selección de equipos */
+.approved-team-card {
+  position: relative;
+}
+
+.approved-team-card.selected {
+  background: rgba(26, 42, 74, 0.9);
+  border: 2px solid #d4af37;
+}
+
+.selection-indicator {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  background: #d4af37;
+  color: #0c1021;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+}
+
+/* Enfrentamientos */
+.match-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.delete-match {
+  color: #e53e3e;
+  width: 24px;
+  height: 24px;
+  line-height: 24px;
+}
+
+.delete-match mat-icon {
+  font-size: 18px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .pending-teams-container {
+    grid-template-columns: 1fr;
+  }
+  
+  .approved-teams-grid {
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  }
+  
+  .controls-row {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .format-options {
+    width: 100%;
+    justify-content: space-between;
+  }
+  
+  .generate-btn {
+    width: 100%;
+    margin-top: 10px;
+  }
+}
+
+@media (max-width: 480px) {
+  .players-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .approved-teams-grid {
+    grid-template-columns: 1fr;
+  }
+}

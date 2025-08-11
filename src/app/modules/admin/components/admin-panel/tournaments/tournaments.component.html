@@ -50,7 +50,8 @@
             <button class="table-action edit" matTooltip="Editar">
               <i class="fas fa-edit"></i>
             </button>
-            <button class="table-action config" matTooltip="Configurar">
+            <button class="table-action config" matTooltip="Configurar"
+                    (click)="openConfigDialog(tournament)">
               <i class="fas fa-cog"></i>
             </button>
             <button class="table-action view" matTooltip="Ver torneo"

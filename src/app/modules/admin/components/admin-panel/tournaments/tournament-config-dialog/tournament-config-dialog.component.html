@@ -1,0 +1,159 @@
+<div class="dota2-dialog-container">
+  <h2 mat-dialog-title class="dota2-title">CONFIGURACIÓN DE TORNEO</h2>
+  <mat-dialog-content>
+    <div class="tournament-header">
+      <div class="tournament-banner">
+        <h3>{{data.tournament.name}}</h3>
+        <div class="tournament-meta">
+          <span class="format">{{data.tournament.format}}</span>
+          <span class="match-format">{{data.tournament.matchFormat}}</span>
+          <span class="teams-count">{{approvedTeams.length}} / {{data.tournament.maxTeams}} EQUIPOS</span>
+        </div>
+      </div>
+    </div>
+
+    <mat-tab-group class="team-tabs-group" [(selectedIndex)]="selectedTabIndex" animationDuration="500ms">
+      <!-- Pestaña de equipos pendientes -->
+      <mat-tab label="SOLICITUDES ({{pendingTeams.length}})" class="white-label-tab">
+        <div class="pending-teams-container">
+          <div *ngFor="let team of pendingTeams" class="pending-team-card">
+            <div class="team-header">
+              <img [src]="team.logo" class="team-logo" alt="Logo de {{team.name}}">
+              <div class="team-info">
+                <h4>{{team.name}}</h4>
+                <div class="team-meta">
+                  <span class="mmr-total">{{calculateTotalMMR(team)}} MMR</span>
+                  <span class="division-badge {{team.division.toLowerCase()}}">{{team.division}}</span>
+                </div>
+              </div>
+            </div>
+            
+            <div class="players-grid">
+              <div *ngFor="let player of team.players" class="player-card {{player.role}}">
+                <img [src]="player.avatar" class="player-avatar" alt="{{player.nick}}">
+                <div class="player-info">
+                  <span class="player-name">{{player.nick}}</span>
+                  <div class="player-stats">
+                    <span class="player-mmr">{{player.mmr}}</span>
+                    <span class="player-role">{{player.role}}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="team-actions">
+              <button mat-raised-button class="approve-btn" (click)="approveTeam(team.id)">
+                <mat-icon>check_circle</mat-icon> APROBAR
+              </button>
+              <button mat-raised-button class="reject-btn" (click)="rejectTeam(team.id)">
+                <mat-icon>cancel</mat-icon> RECHAZAR
+              </button>
+            </div>
+          </div>
+        </div>
+      </mat-tab>
+
+      <!-- Pestaña de equipos aprobados -->
+      <mat-tab label="EQUIPOS ({{approvedTeams.length}})" class="white-label-tab">
+        <div class="approved-teams-container">
+          <div class="first-round-controls">
+            <h3>CONFIGURAR PRIMERA RONDA</h3>
+            <div class="controls-row">
+              <mat-radio-group [(ngModel)]="matchFormat" class="format-options" (change)="cancelManualSelection()">
+                <mat-radio-button value="random" class="format-option">Aleatorio</mat-radio-button>
+                <mat-radio-button value="manual" class="format-option">Manual</mat-radio-button>
+              </mat-radio-group>
+              
+              <button mat-raised-button class="generate-btn" (click)="generateFirstRound()" 
+                      [disabled]="approvedTeams.length < 2 || matchFormat !== 'random'">
+                <mat-icon>shuffle</mat-icon> GENERAR
+              </button>
+            </div>
+          </div>
+
+          <!-- Modo manual - Selección de equipos -->
+          <div *ngIf="matchFormat === 'manual'" class="manual-selection-container">
+            <div class="manual-instructions">
+              <p *ngIf="firstRoundMatches.length === 0">Selecciona 2 equipos para crear un enfrentamiento</p>
+              <p *ngIf="firstRoundMatches.length > 0">Puedes agregar más enfrentamientos con equipos disponibles</p>
+              
+              <div *ngIf="manualMatchInProgress.teamA && manualMatchInProgress.teamB" class="match-preview-before-add">
+                <div class="vs-matchup">
+                  <span>{{getTeamById(manualMatchInProgress.teamA)?.name}}</span>
+                  <span class="vs-text">VS</span>
+                  <span>{{getTeamById(manualMatchInProgress.teamB)?.name}}</span>
+                </div>
+                <div class="manual-match-actions">
+                  <button mat-raised-button class="add-match-btn" (click)="addManualMatch()">
+                    <mat-icon>add</mat-icon> AGREGAR
+                  </button>
+                  <button mat-stroked-button class="cancel-match-btn" (click)="cancelManualSelection()">
+                    <mat-icon>close</mat-icon> CANCELAR
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Lista de enfrentamientos creados -->
+          <div *ngIf="firstRoundMatches.length > 0" class="matches-preview">
+            <h4>ENFRENTAMIENTOS CONFIGURADOS ({{firstRoundMatches.length}})</h4>
+            <div class="matches-grid">
+              <div *ngFor="let match of firstRoundMatches; let i = index" class="match-preview">
+                <div class="match-header">
+                  <span>Enfrentamiento #{{i + 1}} ({{data.tournament.matchFormat}})</span>
+                  <button mat-icon-button class="delete-match" (click)="matchFormat === 'manual' ? removeMatch(i) : removeRandomMatch(i)">
+                    <mat-icon>close</mat-icon>
+                  </button>
+                </div>
+                <div class="match-teams">
+                  <div class="team-preview">
+                    <img [src]="getTeamById(match.teamA)?.logo" class="team-logo-small">
+                    <span>{{getTeamById(match.teamA)?.name}}</span>
+                  </div>
+                  <div class="vs-circle">VS</div>
+                  <div class="team-preview">
+                    <img [src]="getTeamById(match.teamB)?.logo" class="team-logo-small">
+                    <span>{{getTeamById(match.teamB)?.name}}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Lista de equipos aprobados -->
+          <div class="approved-teams-grid">
+            <div *ngFor="let team of approvedTeams" 
+                 class="approved-team-card" 
+                 [class.selected]="isTeamSelected(team.id)"
+                 [class.used]="isTeamUsed(team.id)"
+                 (click)="toggleTeamSelection(team.id)">
+              <img [src]="team.logo" class="team-logo" alt="Logo de {{team.name}}">
+              <div class="team-details">
+                <h4>{{team.name}}</h4>
+                <div class="team-stats">
+                  <span class="mmr-total">{{calculateTotalMMR(team)}} MMR</span>
+                  <span class="division-badge {{team.division.toLowerCase()}}">{{team.division}}</span>
+                </div>
+              </div>
+              <div class="selection-indicator" *ngIf="isTeamSelected(team.id)">
+                <mat-icon>check_circle</mat-icon>
+              </div>
+              <div class="used-indicator" *ngIf="isTeamUsed(team.id) && !isTeamSelected(team.id)">
+                <mat-icon>lock</mat-icon>
+              </div>
+            </div>
+          </div>
+        </div>
+      </mat-tab>
+    </mat-tab-group>
+  </mat-dialog-content>
+
+  <mat-dialog-actions align="end" class="dialog-actions">
+    <button mat-button mat-dialog-close class="cancel-btn">CANCELAR</button>
+    <button mat-raised-button color="primary" (click)="saveConfiguration()" 
+            class="save-btn" [disabled]="firstRoundMatches.length === 0 && approvedTeams.length > 1">
+      <mat-icon>save</mat-icon> GUARDAR CONFIGURACIÓN
+    </button>
+  </mat-dialog-actions>
+</div>

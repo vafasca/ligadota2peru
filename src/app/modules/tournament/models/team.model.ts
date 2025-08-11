@@ -13,6 +13,7 @@ export interface TournamentTeam {
   isActive: boolean;
   icon?: string;
   logo?: string;
+  status?: 'pending' | 'approved' | 'rejected';
   stats: {
     wins: number;
     losses: number;

@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { addDoc, arrayUnion, collection, doc, Firestore, getDoc, getDocs, increment, onSnapshot, query, updateDoc, where } from '@angular/fire/firestore';
+import { addDoc, arrayUnion, collection, doc, Firestore, getDoc, getDocs, increment, onSnapshot, query, setDoc, updateDoc, where } from '@angular/fire/firestore';
 import { Tournament } from '../../admin/models/tournament.model';
 import { catchError, forkJoin, from, map, Observable, of, switchMap, take, throwError } from 'rxjs';
 import { TournamentTeam } from '../../tournament/models/team.model';
@@ -93,7 +93,8 @@ private invitationsCollection = collection(this.firestore, 'tournament_invitatio
       division: team.division,
       logo: team.logo || '../assets/default-logo.png',
       createdAt: new Date(),
-      isActive: true,
+      isActive: false, // Cambiado a false (no activo hasta ser aprobado)
+      status: 'pending', // Nuevo estado inicial
       stats: {
         wins: 0,
         losses: 0,
@@ -105,24 +106,46 @@ private invitationsCollection = collection(this.firestore, 'tournament_invitatio
     // Verificar que no haya valores undefined
     this.validateTournamentTeamData(tournamentTeamData);
 
-    // Primero creamos el equipo en tournament_teams
+    // Solo creamos el equipo en tournament_teams (sin actualizar el torneo todavía)
     return from(addDoc(this.tournamentTeamsCollection, tournamentTeamData)).pipe(
-      // Luego actualizamos el torneo para añadir el equipo
-      switchMap(docRef => {
-        const tournamentDocRef = doc(this.firestore, `tournaments/${tournamentId}`);
-        return from(updateDoc(tournamentDocRef, {
-          teams: arrayUnion(team.id),
-          currentTeams: increment(1)
-        })).pipe(
-          map(() => docRef.id) // Devolvemos el ID del equipo en tournament_teams
-        );
-      }),
+      map(docRef => docRef.id),
       catchError(error => {
         console.error('Error registering team:', error);
         return throwError(() => new Error('Error al inscribir equipo'));
       })
     );
-  }
+}
+
+// Método adicional para aprobar equipos
+approveTeamRegistration(teamId: string, tournamentId: string, originalTeamId: string): Observable<void> {
+  const teamDocRef = doc(this.firestore, `tournament_teams/${teamId}`);
+  const tournamentDocRef = doc(this.firestore, `tournaments/${tournamentId}`);
+
+  return from(updateDoc(teamDocRef, {
+    status: 'approved',
+    isActive: true
+  })).pipe(
+    switchMap(() => from(updateDoc(tournamentDocRef, {
+      teams: arrayUnion(originalTeamId),
+      currentTeams: increment(1)
+    })))
+  );
+}
+
+// Método para rechazar equipos
+rejectTeamRegistration(teamId: string): Observable<void> {
+    const teamDocRef = doc(this.firestore, `tournament_teams/${teamId}`);
+
+    return from(updateDoc(teamDocRef, {
+        status: 'rejected',
+        isActive: false
+    })).pipe(
+        catchError(error => {
+            console.error('Error rejecting team:', error);
+            return throwError(() => new Error('Error al rechazar equipo'));
+        })
+    );
+}
 
   private validateTournamentTeamData(data: Omit<TournamentTeam, 'id'>): void {
     Object.entries(data).forEach(([key, value]) => {
@@ -141,7 +164,7 @@ private invitationsCollection = collection(this.firestore, 'tournament_invitatio
   const q = query(
     this.tournamentTeamsCollection,
     where('tournamentId', '==', tournamentId),
-    where('isActive', '==', true)
+    where('status', '==', 'approved') // Solo equipos aprobados
   );
 
   return new Observable<TournamentTeam[]>(observer => {
@@ -155,6 +178,46 @@ private invitationsCollection = collection(this.firestore, 'tournament_invitatio
     
     return () => unsubscribe();
   });
+}
+
+getPendingTeams(tournamentId: string): Observable<TournamentTeam[]> {
+  const q = query(
+    this.tournamentTeamsCollection,
+    where('tournamentId', '==', tournamentId),
+    where('status', '==', 'pending')
+  );
+
+  return from(getDocs(q)).pipe(
+    map(snapshot => snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as TournamentTeam)))
+  );
+}
+
+getApprovedTeams(tournamentId: string): Observable<TournamentTeam[]> {
+  const q = query(
+    this.tournamentTeamsCollection,
+    where('tournamentId', '==', tournamentId),
+    where('status', '==', 'approved')
+  );
+
+  return from(getDocs(q)).pipe(
+    map(snapshot => snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as TournamentTeam)))
+  );
+}
+
+generateBracket(tournament: Tournament, matches: { teamA: string, teamB: string }[]): Observable<void> {
+  const bracketDocRef = doc(this.firestore, `tournament_brackets/${tournament.id}`);
+  return from(setDoc(bracketDocRef, {
+    tournamentId: tournament.id,
+    rounds: {
+      '1': matches.map(match => ({
+        ...match,
+        format: tournament.matchFormat,
+        completed: false,
+        winner: null
+      }))
+    },
+    createdAt: new Date()
+  }));
 }
 
 canRegisterToTournament(teamId: string, tournamentId: string): Observable<{ canRegister: boolean; message?: string }> {
